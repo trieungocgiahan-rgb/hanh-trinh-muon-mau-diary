@@ -9,38 +9,157 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedThongKeRouteImport } from './routes/_authenticated/thong-ke'
+import { Route as AuthenticatedThanhVienRouteImport } from './routes/_authenticated/thanh-vien'
+import { Route as AuthenticatedLichRouteImport } from './routes/_authenticated/lich'
+import { Route as AuthenticatedDanhSachRouteImport } from './routes/_authenticated/danh-sach'
+import { Route as AuthenticatedBaoCaoRouteImport } from './routes/_authenticated/bao-cao'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedThongKeRoute = AuthenticatedThongKeRouteImport.update({
+  id: '/thong-ke',
+  path: '/thong-ke',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedThanhVienRoute = AuthenticatedThanhVienRouteImport.update({
+  id: '/thanh-vien',
+  path: '/thanh-vien',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLichRoute = AuthenticatedLichRouteImport.update({
+  id: '/lich',
+  path: '/lich',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDanhSachRoute = AuthenticatedDanhSachRouteImport.update({
+  id: '/danh-sach',
+  path: '/danh-sach',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBaoCaoRoute = AuthenticatedBaoCaoRouteImport.update({
+  id: '/bao-cao',
+  path: '/bao-cao',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/bao-cao': typeof AuthenticatedBaoCaoRoute
+  '/danh-sach': typeof AuthenticatedDanhSachRoute
+  '/lich': typeof AuthenticatedLichRoute
+  '/thanh-vien': typeof AuthenticatedThanhVienRoute
+  '/thong-ke': typeof AuthenticatedThongKeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/bao-cao': typeof AuthenticatedBaoCaoRoute
+  '/danh-sach': typeof AuthenticatedDanhSachRoute
+  '/lich': typeof AuthenticatedLichRoute
+  '/thanh-vien': typeof AuthenticatedThanhVienRoute
+  '/thong-ke': typeof AuthenticatedThongKeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/bao-cao': typeof AuthenticatedBaoCaoRoute
+  '/_authenticated/danh-sach': typeof AuthenticatedDanhSachRoute
+  '/_authenticated/lich': typeof AuthenticatedLichRoute
+  '/_authenticated/thanh-vien': typeof AuthenticatedThanhVienRoute
+  '/_authenticated/thong-ke': typeof AuthenticatedThongKeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/bao-cao'
+    | '/danh-sach'
+    | '/lich'
+    | '/thanh-vien'
+    | '/thong-ke'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/bao-cao'
+    | '/danh-sach'
+    | '/lich'
+    | '/thanh-vien'
+    | '/thong-ke'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/_authenticated/bao-cao'
+    | '/_authenticated/danh-sach'
+    | '/_authenticated/lich'
+    | '/_authenticated/thanh-vien'
+    | '/_authenticated/thong-ke'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +167,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/thong-ke': {
+      id: '/_authenticated/thong-ke'
+      path: '/thong-ke'
+      fullPath: '/thong-ke'
+      preLoaderRoute: typeof AuthenticatedThongKeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/thanh-vien': {
+      id: '/_authenticated/thanh-vien'
+      path: '/thanh-vien'
+      fullPath: '/thanh-vien'
+      preLoaderRoute: typeof AuthenticatedThanhVienRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lich': {
+      id: '/_authenticated/lich'
+      path: '/lich'
+      fullPath: '/lich'
+      preLoaderRoute: typeof AuthenticatedLichRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/danh-sach': {
+      id: '/_authenticated/danh-sach'
+      path: '/danh-sach'
+      fullPath: '/danh-sach'
+      preLoaderRoute: typeof AuthenticatedDanhSachRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/bao-cao': {
+      id: '/_authenticated/bao-cao'
+      path: '/bao-cao'
+      fullPath: '/bao-cao'
+      preLoaderRoute: typeof AuthenticatedBaoCaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBaoCaoRoute: typeof AuthenticatedBaoCaoRoute
+  AuthenticatedDanhSachRoute: typeof AuthenticatedDanhSachRoute
+  AuthenticatedLichRoute: typeof AuthenticatedLichRoute
+  AuthenticatedThanhVienRoute: typeof AuthenticatedThanhVienRoute
+  AuthenticatedThongKeRoute: typeof AuthenticatedThongKeRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBaoCaoRoute: AuthenticatedBaoCaoRoute,
+  AuthenticatedDanhSachRoute: AuthenticatedDanhSachRoute,
+  AuthenticatedLichRoute: AuthenticatedLichRoute,
+  AuthenticatedThanhVienRoute: AuthenticatedThanhVienRoute,
+  AuthenticatedThongKeRoute: AuthenticatedThongKeRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
