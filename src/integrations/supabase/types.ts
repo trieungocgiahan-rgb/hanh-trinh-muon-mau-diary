@@ -14,16 +14,243 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          author_id: string
+          created_at: string
+          date: string
+          highlight: string | null
+          id: string
+          issues: string | null
+          location: string | null
+          next_steps: string | null
+          participant_count: number | null
+          project_id: string
+          status: Database["public"]["Enums"]["activity_status"]
+          summary: string | null
+          title: string
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          date: string
+          highlight?: string | null
+          id?: string
+          issues?: string | null
+          location?: string | null
+          next_steps?: string | null
+          participant_count?: number | null
+          project_id: string
+          status?: Database["public"]["Enums"]["activity_status"]
+          summary?: string | null
+          title: string
+          type?: Database["public"]["Enums"]["activity_type"]
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          date?: string
+          highlight?: string | null
+          id?: string
+          issues?: string | null
+          location?: string | null
+          next_steps?: string | null
+          participant_count?: number | null
+          project_id?: string
+          status?: Database["public"]["Enums"]["activity_status"]
+          summary?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["activity_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attachments: {
+        Row: {
+          activity_id: string
+          created_at: string
+          file_name: string | null
+          id: string
+          kind: Database["public"]["Enums"]["attachment_kind"]
+          mime_type: string | null
+          storage_path: string | null
+          url: string | null
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["attachment_kind"]
+          mime_type?: string | null
+          storage_path?: string | null
+          url?: string | null
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["attachment_kind"]
+          mime_type?: string | null
+          storage_path?: string | null
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attachments_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memberships: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          role: Database["public"]["Enums"]["project_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          role?: Database["public"]["Enums"]["project_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          role?: Database["public"]["Enums"]["project_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memberships_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          org_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          org_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      activity_in_my_project: {
+        Args: { _activity_id: string }
+        Returns: boolean
+      }
+      can_write_activity_attachment: {
+        Args: { _activity_id: string }
+        Returns: boolean
+      }
+      is_org_admin: { Args: { _org_id: string }; Returns: boolean }
+      is_org_member: { Args: { _org_id: string }; Returns: boolean }
+      is_project_admin: { Args: { _project_id: string }; Returns: boolean }
+      is_project_member: { Args: { _project_id: string }; Returns: boolean }
+      shares_project_with: { Args: { _other_user: string }; Returns: boolean }
+      user_project_role: {
+        Args: { _project_id: string }
+        Returns: Database["public"]["Enums"]["project_role"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      activity_status: "completed" | "ongoing" | "planned" | "issue"
+      activity_type:
+        | "workshop"
+        | "team_meeting"
+        | "partner_meeting"
+        | "site_visit"
+        | "event"
+        | "other"
+      attachment_kind: "photo" | "audio" | "video" | "document" | "link"
+      project_role: "admin" | "member" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +377,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      activity_status: ["completed", "ongoing", "planned", "issue"],
+      activity_type: [
+        "workshop",
+        "team_meeting",
+        "partner_meeting",
+        "site_visit",
+        "event",
+        "other",
+      ],
+      attachment_kind: ["photo", "audio", "video", "document", "link"],
+      project_role: ["admin", "member", "viewer"],
+    },
   },
 } as const
