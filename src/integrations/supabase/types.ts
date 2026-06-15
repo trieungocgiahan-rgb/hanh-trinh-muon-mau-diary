@@ -235,6 +235,8 @@ export type Database = {
       is_project_admin: { Args: { _project_id: string }; Returns: boolean }
       is_project_member: { Args: { _project_id: string }; Returns: boolean }
       shares_project_with: { Args: { _other_user: string }; Returns: boolean }
+      storage_path_project_member: { Args: { _name: string }; Returns: boolean }
+      storage_path_project_writer: { Args: { _name: string }; Returns: boolean }
       user_project_role: {
         Args: { _project_id: string }
         Returns: Database["public"]["Enums"]["project_role"]
