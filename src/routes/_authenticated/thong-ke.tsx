@@ -1,0 +1,141 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useMemo } from "react";
+import { useProject } from "@/hooks/use-project";
+import { useActivities } from "@/hooks/use-activities";
+import { ACTIVITY_TYPES, ACTIVITY_STATUSES, typeMeta } from "@/lib/activity-constants";
+import { CalendarRange, Sparkles, Users, CheckCircle2, Loader2 } from "lucide-react";
+
+export const Route = createFileRoute("/_authenticated/thong-ke")({
+  head: () => ({ meta: [{ title: "Thống kê — Nhật Ký Hành Trình" }] }),
+  component: StatsPage,
+});
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  gradient,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string | number;
+  gradient: string;
+}) {
+  return (
+    <div className={`rounded-3xl p-5 text-primary-foreground shadow-soft ${gradient}`}>
+      <Icon className="mb-3 h-7 w-7 opacity-90" />
+      <div className="font-display text-3xl font-bold">{value}</div>
+      <div className="text-sm opacity-90">{label}</div>
+    </div>
+  );
+}
+
+function StatsPage() {
+  const { current } = useProject();
+  const { data: activities, isLoading } = useActivities(current?.id);
+
+  const stats = useMemo(() => {
+    const list = activities ?? [];
+    const total = list.length;
+    const workshops = list.filter((a) => a.type === "workshop").length;
+    const participants = list.reduce((s, a) => s + (a.participant_count ?? 0), 0);
+    const completed = list.filter((a) => a.status === "completed").length;
+    const byType = ACTIVITY_TYPES.map((t) => ({
+      ...t,
+      count: list.filter((a) => a.type === t.value).length,
+    }));
+    const byStatus = ACTIVITY_STATUSES.map((s) => ({
+      ...s,
+      count: list.filter((a) => a.status === s.value).length,
+    }));
+    return { total, workshops, participants, completed, byType, byStatus };
+  }, [activities]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const maxType = Math.max(1, ...stats.byType.map((t) => t.count));
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="font-display text-2xl font-bold">Thống kê</h1>
+        <p className="text-sm text-muted-foreground">Tổng quan hành trình của {current?.name}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard icon={CalendarRange} label="Tổng hoạt động" value={stats.total} gradient="bg-gradient-hero" />
+        <StatCard icon={Sparkles} label="Workshop" value={stats.workshops} gradient="bg-gradient-sun" />
+        <StatCard
+          icon={Users}
+          label="Lượt tham gia"
+          value={stats.participants}
+          gradient="bg-grape"
+        />
+        <StatCard
+          icon={CheckCircle2}
+          label="Đã hoàn thành"
+          value={stats.completed}
+          gradient="bg-[var(--type-site)]"
+        />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+          <h2 className="mb-4 font-display text-lg font-semibold">Theo loại hoạt động</h2>
+          <div className="space-y-3">
+            {stats.byType.map((t) => (
+              <div key={t.value}>
+                <div className="mb-1 flex items-center justify-between text-sm">
+                  <span>
+                    {t.emoji} {t.label}
+                  </span>
+                  <span className="font-semibold">{t.count}</span>
+                </div>
+                <div className="h-2.5 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{ width: `${(t.count / maxType) * 100}%`, backgroundColor: t.colorVar }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+          <h2 className="mb-4 font-display text-lg font-semibold">Theo trạng thái</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {stats.byStatus.map((s) => (
+              <div key={s.value} className={`rounded-2xl p-4 ${s.className}`}>
+                <div className="font-display text-2xl font-bold">{s.count}</div>
+                <div className="text-sm">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <h2 className="mb-3 font-display text-lg font-semibold">Phân bố nhanh</h2>
+        <div className="flex h-6 overflow-hidden rounded-full">
+          {stats.byType
+            .filter((t) => t.count > 0)
+            .map((t) => (
+              <div
+                key={t.value}
+                style={{ flex: t.count, backgroundColor: t.colorVar }}
+                title={`${t.label}: ${t.count}`}
+              />
+            ))}
+          {stats.total === 0 && <div className="flex-1 bg-muted" />}
+        </div>
+      </div>
+    </div>
+  );
+}

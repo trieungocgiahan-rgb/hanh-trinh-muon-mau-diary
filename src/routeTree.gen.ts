@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedLichRouteImport } from './routes/_authenticated/lich'
+import { Route as AuthenticatedDanhSachRouteImport } from './routes/_authenticated/danh-sach'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -33,15 +34,22 @@ const AuthenticatedLichRoute = AuthenticatedLichRouteImport.update({
   path: '/lich',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDanhSachRoute = AuthenticatedDanhSachRouteImport.update({
+  id: '/danh-sach',
+  path: '/danh-sach',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/danh-sach': typeof AuthenticatedDanhSachRoute
   '/lich': typeof AuthenticatedLichRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/danh-sach': typeof AuthenticatedDanhSachRoute
   '/lich': typeof AuthenticatedLichRoute
 }
 export interface FileRoutesById {
@@ -49,14 +57,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/danh-sach': typeof AuthenticatedDanhSachRoute
   '/_authenticated/lich': typeof AuthenticatedLichRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/lich'
+  fullPaths: '/' | '/auth' | '/danh-sach' | '/lich'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/lich'
-  id: '__root__' | '/' | '/_authenticated' | '/auth' | '/_authenticated/lich'
+  to: '/' | '/auth' | '/danh-sach' | '/lich'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/danh-sach'
+    | '/_authenticated/lich'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,14 +110,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLichRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/danh-sach': {
+      id: '/_authenticated/danh-sach'
+      path: '/danh-sach'
+      fullPath: '/danh-sach'
+      preLoaderRoute: typeof AuthenticatedDanhSachRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDanhSachRoute: typeof AuthenticatedDanhSachRoute
   AuthenticatedLichRoute: typeof AuthenticatedLichRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDanhSachRoute: AuthenticatedDanhSachRoute,
   AuthenticatedLichRoute: AuthenticatedLichRoute,
 }
 
