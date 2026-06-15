@@ -16,6 +16,7 @@ import { Route as AuthenticatedThongKeRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedThanhVienRouteImport } from './routes/_authenticated/thanh-vien'
 import { Route as AuthenticatedLichRouteImport } from './routes/_authenticated/lich'
 import { Route as AuthenticatedDanhSachRouteImport } from './routes/_authenticated/danh-sach'
+import { Route as AuthenticatedBaoCaoRouteImport } from './routes/_authenticated/bao-cao'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -51,10 +52,16 @@ const AuthenticatedDanhSachRoute = AuthenticatedDanhSachRouteImport.update({
   path: '/danh-sach',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBaoCaoRoute = AuthenticatedBaoCaoRouteImport.update({
+  id: '/bao-cao',
+  path: '/bao-cao',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/bao-cao': typeof AuthenticatedBaoCaoRoute
   '/danh-sach': typeof AuthenticatedDanhSachRoute
   '/lich': typeof AuthenticatedLichRoute
   '/thanh-vien': typeof AuthenticatedThanhVienRoute
@@ -63,6 +70,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/bao-cao': typeof AuthenticatedBaoCaoRoute
   '/danh-sach': typeof AuthenticatedDanhSachRoute
   '/lich': typeof AuthenticatedLichRoute
   '/thanh-vien': typeof AuthenticatedThanhVienRoute
@@ -73,6 +81,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/bao-cao': typeof AuthenticatedBaoCaoRoute
   '/_authenticated/danh-sach': typeof AuthenticatedDanhSachRoute
   '/_authenticated/lich': typeof AuthenticatedLichRoute
   '/_authenticated/thanh-vien': typeof AuthenticatedThanhVienRoute
@@ -83,17 +92,26 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/bao-cao'
     | '/danh-sach'
     | '/lich'
     | '/thanh-vien'
     | '/thong-ke'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/danh-sach' | '/lich' | '/thanh-vien' | '/thong-ke'
+  to:
+    | '/'
+    | '/auth'
+    | '/bao-cao'
+    | '/danh-sach'
+    | '/lich'
+    | '/thanh-vien'
+    | '/thong-ke'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/bao-cao'
     | '/_authenticated/danh-sach'
     | '/_authenticated/lich'
     | '/_authenticated/thanh-vien'
@@ -157,10 +175,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDanhSachRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bao-cao': {
+      id: '/_authenticated/bao-cao'
+      path: '/bao-cao'
+      fullPath: '/bao-cao'
+      preLoaderRoute: typeof AuthenticatedBaoCaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBaoCaoRoute: typeof AuthenticatedBaoCaoRoute
   AuthenticatedDanhSachRoute: typeof AuthenticatedDanhSachRoute
   AuthenticatedLichRoute: typeof AuthenticatedLichRoute
   AuthenticatedThanhVienRoute: typeof AuthenticatedThanhVienRoute
@@ -168,6 +194,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBaoCaoRoute: AuthenticatedBaoCaoRoute,
   AuthenticatedDanhSachRoute: AuthenticatedDanhSachRoute,
   AuthenticatedLichRoute: AuthenticatedLichRoute,
   AuthenticatedThanhVienRoute: AuthenticatedThanhVienRoute,
