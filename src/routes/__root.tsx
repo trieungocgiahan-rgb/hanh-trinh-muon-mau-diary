@@ -95,6 +95,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Nhật Ký Hành Trình" },
+      { name: "description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
+      { property: "og:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
+      { name: "twitter:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9e972639-45be-4c02-8ae4-27017dabdfc3/id-preview-ec0478c3--15bd3bcd-e36b-4ab3-a0bc-7bc510ceee33.lovable.app-1781537729925.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9e972639-45be-4c02-8ae4-27017dabdfc3/id-preview-ec0478c3--15bd3bcd-e36b-4ab3-a0bc-7bc510ceee33.lovable.app-1781537729925.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
