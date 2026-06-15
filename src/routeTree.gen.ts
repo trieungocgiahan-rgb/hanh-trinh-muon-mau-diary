@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedThongKeRouteImport } from './routes/_authenticated/thong-ke'
 import { Route as AuthenticatedLichRouteImport } from './routes/_authenticated/lich'
 import { Route as AuthenticatedDanhSachRouteImport } from './routes/_authenticated/danh-sach'
 
@@ -29,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedThongKeRoute = AuthenticatedThongKeRouteImport.update({
+  id: '/thong-ke',
+  path: '/thong-ke',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLichRoute = AuthenticatedLichRouteImport.update({
   id: '/lich',
   path: '/lich',
@@ -45,12 +51,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/danh-sach': typeof AuthenticatedDanhSachRoute
   '/lich': typeof AuthenticatedLichRoute
+  '/thong-ke': typeof AuthenticatedThongKeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/danh-sach': typeof AuthenticatedDanhSachRoute
   '/lich': typeof AuthenticatedLichRoute
+  '/thong-ke': typeof AuthenticatedThongKeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +67,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/danh-sach': typeof AuthenticatedDanhSachRoute
   '/_authenticated/lich': typeof AuthenticatedLichRoute
+  '/_authenticated/thong-ke': typeof AuthenticatedThongKeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/danh-sach' | '/lich'
+  fullPaths: '/' | '/auth' | '/danh-sach' | '/lich' | '/thong-ke'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/danh-sach' | '/lich'
+  to: '/' | '/auth' | '/danh-sach' | '/lich' | '/thong-ke'
   id:
     | '__root__'
     | '/'
@@ -72,6 +81,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/danh-sach'
     | '/_authenticated/lich'
+    | '/_authenticated/thong-ke'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -103,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/thong-ke': {
+      id: '/_authenticated/thong-ke'
+      path: '/thong-ke'
+      fullPath: '/thong-ke'
+      preLoaderRoute: typeof AuthenticatedThongKeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/lich': {
       id: '/_authenticated/lich'
       path: '/lich'
@@ -123,11 +140,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDanhSachRoute: typeof AuthenticatedDanhSachRoute
   AuthenticatedLichRoute: typeof AuthenticatedLichRoute
+  AuthenticatedThongKeRoute: typeof AuthenticatedThongKeRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDanhSachRoute: AuthenticatedDanhSachRoute,
   AuthenticatedLichRoute: AuthenticatedLichRoute,
+  AuthenticatedThongKeRoute: AuthenticatedThongKeRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
