@@ -115,6 +115,26 @@ export function ActivityDetailSheet() {
     qc.invalidateQueries({ queryKey: ["engagement", a.id] });
   }
 
+  function MediaCredit({ x }: { x: AttachmentRow }) {
+    if (!isContributed(x) && !canRemoveMedia(x)) return null;
+    return (
+      <div className="flex items-center gap-2 px-1 text-[11px] text-muted-foreground">
+        {isContributed(x) && <span>Thêm bởi {contributorName(x)}</span>}
+        {canRemoveMedia(x) && (
+          <button
+            type="button"
+            onClick={() => removeAttachment(x)}
+            className="ml-auto text-destructive hover:underline"
+          >
+            Xóa
+          </button>
+        )}
+      </div>
+    );
+  }
+
+
+
   return (
     <>
       <Sheet open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
