@@ -29,9 +29,12 @@ import {
 import { useActivityDialog } from "@/hooks/use-activity-dialog";
 import { useProject } from "@/hooks/use-project";
 import { useAuth } from "@/hooks/use-auth";
+import { useEngagement } from "@/hooks/use-engagement";
+import { ActivityEngagement } from "./ActivityEngagement";
 import { supabase } from "@/integrations/supabase/client";
 import { removeMedia } from "@/lib/media";
 import { typeMeta, statusMeta } from "@/lib/activity-constants";
+import type { AttachmentRow } from "@/lib/activity-constants";
 import { toast } from "sonner";
 import {
   CalendarDays,
@@ -64,6 +67,7 @@ export function ActivityDetailSheet() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const { data: eng } = useEngagement(detail?.id);
 
   const a = detail;
   if (!a) return null;
@@ -78,6 +82,12 @@ export function ActivityDetailSheet() {
   const docs = a.attachments.filter((x) => x.kind === "document");
   const links = a.attachments.filter((x) => x.kind === "link");
 
+  const isContributed = (x: AttachmentRow) => !!x.created_by && x.created_by !== a.author_id;
+  const contributorName = (x: AttachmentRow) =>
+    (x.created_by && eng?.contributorNames[x.created_by]) || "thành viên";
+  const canRemoveMedia = (x: AttachmentRow) =>
+    isAdmin || a.author_id === user?.id || x.created_by === user?.id;
+
   async function handleDelete() {
     if (!a) return;
     const paths = a.attachments.filter((x) => x.storage_path).map((x) => x.storage_path!);
@@ -91,6 +101,39 @@ export function ActivityDetailSheet() {
     qc.invalidateQueries({ queryKey: ["activities"] });
     setDetail(null);
   }
+
+  async function removeAttachment(x: AttachmentRow) {
+    if (!a) return;
+    const { error } = await supabase.from("attachments").delete().eq("id", x.id);
+    if (error) {
+      toast.error("Không xóa được");
+      return;
+    }
+    if (x.storage_path) await removeMedia(x.storage_path);
+    toast.success("Đã xóa");
+    qc.invalidateQueries({ queryKey: ["activities"] });
+    qc.invalidateQueries({ queryKey: ["engagement", a.id] });
+  }
+
+  function MediaCredit({ x }: { x: AttachmentRow }) {
+    if (!isContributed(x) && !canRemoveMedia(x)) return null;
+    return (
+      <div className="flex items-center gap-2 px-1 text-[11px] text-muted-foreground">
+        {isContributed(x) && <span>Thêm bởi {contributorName(x)}</span>}
+        {canRemoveMedia(x) && (
+          <button
+            type="button"
+            onClick={() => removeAttachment(x)}
+            className="ml-auto text-destructive hover:underline"
+          >
+            Xóa
+          </button>
+        )}
+      </div>
+    );
+  }
+
+
 
   return (
     <>
@@ -144,18 +187,33 @@ export function ActivityDetailSheet() {
             {photos.length > 0 && (
               <div className="grid grid-cols-3 gap-2">
                 {photos.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setLightbox(p.storage_path!)}
-                    className="aspect-square overflow-hidden rounded-xl"
-                  >
-                    <SignedImage
-                      path={p.storage_path!}
-                      alt={p.file_name ?? "ảnh"}
-                      className="h-full w-full cursor-pointer object-cover transition-transform hover:scale-105"
-                    />
-                  </button>
+                  <div key={p.id} className="group relative aspect-square overflow-hidden rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setLightbox(p.storage_path!)}
+                      className="h-full w-full"
+                    >
+                      <SignedImage
+                        path={p.storage_path!}
+                        alt={p.file_name ?? "ảnh"}
+                        className="h-full w-full cursor-pointer object-cover transition-transform group-hover:scale-105"
+                      />
+                    </button>
+                    {isContributed(p) && (
+                      <span className="absolute inset-x-0 bottom-0 truncate bg-black/45 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                        + {contributorName(p)}
+                      </span>
+                    )}
+                    {canRemoveMedia(p) && (
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(p)}
+                        className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
             )}
@@ -168,7 +226,10 @@ export function ActivityDetailSheet() {
               <div className="space-y-2">
                 <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ghi âm</h4>
                 {audios.map((x) => (
-                  <SignedAudio key={x.id} path={x.storage_path!} />
+                  <div key={x.id} className="space-y-0.5">
+                    <SignedAudio path={x.storage_path!} />
+                    <MediaCredit x={x} />
+                  </div>
                 ))}
               </div>
             )}
@@ -177,7 +238,10 @@ export function ActivityDetailSheet() {
               <div className="space-y-2">
                 <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Video</h4>
                 {videos.map((x) => (
-                  <SignedVideo key={x.id} path={x.storage_path!} />
+                  <div key={x.id} className="space-y-0.5">
+                    <SignedVideo path={x.storage_path!} />
+                    <MediaCredit x={x} />
+                  </div>
                 ))}
               </div>
             )}
@@ -188,7 +252,10 @@ export function ActivityDetailSheet() {
                   Tài liệu &amp; liên kết
                 </h4>
                 {docs.map((x) => (
-                  <SignedDocLink key={x.id} path={x.storage_path!} fileName={x.file_name} />
+                  <div key={x.id} className="space-y-0.5">
+                    <SignedDocLink path={x.storage_path!} fileName={x.file_name} />
+                    <MediaCredit x={x} />
+                  </div>
                 ))}
                 {links.map((x) => (
                   <a
@@ -204,6 +271,8 @@ export function ActivityDetailSheet() {
                 ))}
               </div>
             )}
+
+            <ActivityEngagement activity={a} engagement={eng} />
 
             {canEdit && (
               <div className="flex gap-2 border-t pt-4">

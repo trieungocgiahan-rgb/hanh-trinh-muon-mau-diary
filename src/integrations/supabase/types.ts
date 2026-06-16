@@ -76,10 +76,104 @@ export type Database = {
           },
         ]
       }
+      activity_attendance: {
+        Row: {
+          activity_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_attendance_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_comments: {
+        Row: {
+          activity_id: string
+          body: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          body: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          activity_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_comments_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_likes: {
+        Row: {
+          activity_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_likes_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attachments: {
         Row: {
           activity_id: string
           created_at: string
+          created_by: string | null
           file_name: string | null
           id: string
           kind: Database["public"]["Enums"]["attachment_kind"]
@@ -90,6 +184,7 @@ export type Database = {
         Insert: {
           activity_id: string
           created_at?: string
+          created_by?: string | null
           file_name?: string | null
           id?: string
           kind: Database["public"]["Enums"]["attachment_kind"]
@@ -100,6 +195,7 @@ export type Database = {
         Update: {
           activity_id?: string
           created_at?: string
+          created_by?: string | null
           file_name?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["attachment_kind"]
@@ -226,10 +322,15 @@ export type Database = {
         Args: { _activity_id: string }
         Returns: boolean
       }
+      can_interact_activity: {
+        Args: { _activity_id: string }
+        Returns: boolean
+      }
       can_write_activity_attachment: {
         Args: { _activity_id: string }
         Returns: boolean
       }
+      is_admin_of_activity: { Args: { _activity_id: string }; Returns: boolean }
       is_org_admin: { Args: { _org_id: string }; Returns: boolean }
       is_org_member: { Args: { _org_id: string }; Returns: boolean }
       is_project_admin: { Args: { _project_id: string }; Returns: boolean }
