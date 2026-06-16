@@ -67,6 +67,7 @@ export function ActivityDetailSheet() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const { data: eng } = useEngagement(detail?.id);
 
   const a = detail;
   if (!a) return null;
@@ -81,6 +82,12 @@ export function ActivityDetailSheet() {
   const docs = a.attachments.filter((x) => x.kind === "document");
   const links = a.attachments.filter((x) => x.kind === "link");
 
+  const isContributed = (x: AttachmentRow) => !!x.created_by && x.created_by !== a.author_id;
+  const contributorName = (x: AttachmentRow) =>
+    (x.created_by && eng?.contributorNames[x.created_by]) || "thành viên";
+  const canRemoveMedia = (x: AttachmentRow) =>
+    isAdmin || a.author_id === user?.id || x.created_by === user?.id;
+
   async function handleDelete() {
     if (!a) return;
     const paths = a.attachments.filter((x) => x.storage_path).map((x) => x.storage_path!);
@@ -93,6 +100,19 @@ export function ActivityDetailSheet() {
     toast.success("Đã xóa hoạt động");
     qc.invalidateQueries({ queryKey: ["activities"] });
     setDetail(null);
+  }
+
+  async function removeAttachment(x: AttachmentRow) {
+    if (!a) return;
+    const { error } = await supabase.from("attachments").delete().eq("id", x.id);
+    if (error) {
+      toast.error("Không xóa được");
+      return;
+    }
+    if (x.storage_path) await removeMedia(x.storage_path);
+    toast.success("Đã xóa");
+    qc.invalidateQueries({ queryKey: ["activities"] });
+    qc.invalidateQueries({ queryKey: ["engagement", a.id] });
   }
 
   return (
