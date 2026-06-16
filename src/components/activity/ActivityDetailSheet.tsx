@@ -29,9 +29,12 @@ import {
 import { useActivityDialog } from "@/hooks/use-activity-dialog";
 import { useProject } from "@/hooks/use-project";
 import { useAuth } from "@/hooks/use-auth";
+import { useEngagement } from "@/hooks/use-engagement";
+import { ActivityEngagement } from "./ActivityEngagement";
 import { supabase } from "@/integrations/supabase/client";
 import { removeMedia } from "@/lib/media";
 import { typeMeta, statusMeta } from "@/lib/activity-constants";
+import type { AttachmentRow } from "@/lib/activity-constants";
 import { toast } from "sonner";
 import {
   CalendarDays,
