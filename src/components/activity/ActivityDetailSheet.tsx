@@ -243,6 +243,8 @@ export function ActivityDetailSheet() {
               </div>
             )}
 
+            <ActivityEngagement activity={a} engagement={eng} />
+
             {canEdit && (
               <div className="flex gap-2 border-t pt-4">
                 <Button variant="outline" className="flex-1" onClick={() => openEdit(a)}>
