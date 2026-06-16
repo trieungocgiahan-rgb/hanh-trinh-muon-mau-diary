@@ -336,7 +336,7 @@ export function ActivityEngagement({
         ) : (
           <div className="space-y-3">
             {comments.map((c) => {
-              const canDelete = c.user_id === user?.id || useProjectIsAdmin();
+              const canDelete = c.user_id === user?.id || isAdmin;
               return (
                 <div key={c.id} className="flex items-start gap-2">
                   <Avatar name={c.name} />
