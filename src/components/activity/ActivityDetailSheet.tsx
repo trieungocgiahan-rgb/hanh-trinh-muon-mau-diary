@@ -206,7 +206,10 @@ export function ActivityDetailSheet() {
               <div className="space-y-2">
                 <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ghi âm</h4>
                 {audios.map((x) => (
-                  <SignedAudio key={x.id} path={x.storage_path!} />
+                  <div key={x.id} className="space-y-0.5">
+                    <SignedAudio path={x.storage_path!} />
+                    <MediaCredit x={x} />
+                  </div>
                 ))}
               </div>
             )}
@@ -215,7 +218,10 @@ export function ActivityDetailSheet() {
               <div className="space-y-2">
                 <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Video</h4>
                 {videos.map((x) => (
-                  <SignedVideo key={x.id} path={x.storage_path!} />
+                  <div key={x.id} className="space-y-0.5">
+                    <SignedVideo path={x.storage_path!} />
+                    <MediaCredit x={x} />
+                  </div>
                 ))}
               </div>
             )}
@@ -226,7 +232,10 @@ export function ActivityDetailSheet() {
                   Tài liệu &amp; liên kết
                 </h4>
                 {docs.map((x) => (
-                  <SignedDocLink key={x.id} path={x.storage_path!} fileName={x.file_name} />
+                  <div key={x.id} className="space-y-0.5">
+                    <SignedDocLink path={x.storage_path!} fileName={x.file_name} />
+                    <MediaCredit x={x} />
+                  </div>
                 ))}
                 {links.map((x) => (
                   <a
