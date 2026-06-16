@@ -66,6 +66,17 @@ export function ActivityCard({
             </span>
           )}
         </div>
+        {(activity.like_count > 0 ||
+          activity.comment_count > 0 ||
+          activity.attendance_count > 0) && (
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
+            {activity.like_count > 0 && <span>❤️ {activity.like_count}</span>}
+            {activity.comment_count > 0 && <span>💬 {activity.comment_count}</span>}
+            {activity.attendance_count > 0 && (
+              <span>👥 {activity.attendance_count} đã tham gia</span>
+            )}
+          </div>
+        )}
       </div>
     </button>
   );
