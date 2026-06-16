@@ -76,7 +76,7 @@ export function ActivityEngagement({
   engagement: EngagementData | undefined;
 }) {
   const { user } = useAuth();
-  const { canEdit } = useProject();
+  const { canEdit, isAdmin } = useProject();
   const qc = useQueryClient();
   const photoRef = useRef<HTMLInputElement>(null);
   const [commentText, setCommentText] = useState("");
