@@ -365,8 +365,3 @@ export function ActivityEngagement({
     </section>
   );
 }
-
-// helper to read admin flag without re-importing hook everywhere
-function useProjectIsAdmin() {
-  return useProject().isAdmin;
-}
