@@ -167,18 +167,33 @@ export function ActivityDetailSheet() {
             {photos.length > 0 && (
               <div className="grid grid-cols-3 gap-2">
                 {photos.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setLightbox(p.storage_path!)}
-                    className="aspect-square overflow-hidden rounded-xl"
-                  >
-                    <SignedImage
-                      path={p.storage_path!}
-                      alt={p.file_name ?? "ảnh"}
-                      className="h-full w-full cursor-pointer object-cover transition-transform hover:scale-105"
-                    />
-                  </button>
+                  <div key={p.id} className="group relative aspect-square overflow-hidden rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setLightbox(p.storage_path!)}
+                      className="h-full w-full"
+                    >
+                      <SignedImage
+                        path={p.storage_path!}
+                        alt={p.file_name ?? "ảnh"}
+                        className="h-full w-full cursor-pointer object-cover transition-transform group-hover:scale-105"
+                      />
+                    </button>
+                    {isContributed(p) && (
+                      <span className="absolute inset-x-0 bottom-0 truncate bg-black/45 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                        + {contributorName(p)}
+                      </span>
+                    )}
+                    {canRemoveMedia(p) && (
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(p)}
+                        className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
             )}
