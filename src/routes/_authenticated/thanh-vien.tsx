@@ -110,10 +110,11 @@ function MembersPage() {
       <div className="flex items-start gap-3 rounded-2xl bg-accent/50 p-4 text-sm text-accent-foreground">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <p>
-          Mời người mới bằng cách chia sẻ đường dẫn ứng dụng. Khi họ đăng ký, họ sẽ tự động tham gia dự án với vai trò{" "}
-          <strong>Thành viên</strong>. Quản trị viên có thể đổi vai trò bên dưới.
+          Mời người mới bằng cách chia sẻ đường dẫn ứng dụng. Khi họ đăng ký, họ sẽ ở trạng thái{" "}
+          <strong>Chờ duyệt</strong> cho đến khi quản trị viên duyệt ở mục bên dưới.
         </p>
       </div>
+
 
       {isLoading ? (
         <div className="flex h-40 items-center justify-center">
