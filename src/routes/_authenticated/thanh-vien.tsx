@@ -24,7 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Loader2, UserMinus, Info } from "lucide-react";
+import { Loader2, UserMinus, Info, Check, X } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/thanh-vien")({
   head: () => ({ meta: [{ title: "Thành viên — Nhật Ký Hành Trình" }] }),
