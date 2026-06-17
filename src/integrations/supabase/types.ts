@@ -353,7 +353,7 @@ export type Database = {
         | "event"
         | "other"
       attachment_kind: "photo" | "audio" | "video" | "document" | "link"
-      project_role: "admin" | "member" | "viewer"
+      project_role: "admin" | "member" | "viewer" | "pending"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -491,7 +491,7 @@ export const Constants = {
         "other",
       ],
       attachment_kind: ["photo", "audio", "video", "document", "link"],
-      project_role: ["admin", "member", "viewer"],
+      project_role: ["admin", "member", "viewer", "pending"],
     },
   },
 } as const
