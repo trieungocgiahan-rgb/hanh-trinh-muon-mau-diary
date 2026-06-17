@@ -32,6 +32,7 @@ import {
   Plus,
   LogOut,
   ChevronDown,
+  Hourglass,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -54,7 +55,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 function ShellInner({ children }: { children: ReactNode }) {
-  const { current, projects, setCurrentId, canEdit } = useProject();
+  const { current, projects, setCurrentId, canEdit, pendingApproval } = useProject();
   const { openCreate } = useActivityDialog();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -67,6 +68,30 @@ function ShellInner({ children }: { children: ReactNode }) {
     toast.success("Đã đăng xuất. Hẹn gặp lại!");
     navigate({ to: "/auth", replace: true });
   }
+
+  if (pendingApproval) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-hero px-4 py-10">
+        <div className="w-full max-w-md animate-pop-in rounded-3xl bg-card p-8 text-center shadow-pop">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-soft">
+            <Hourglass className="h-8 w-8 text-foreground/80" />
+          </div>
+          <h1 className="font-display text-2xl font-bold text-foreground">Chờ duyệt</h1>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Tài khoản của bạn đã được tạo và đang chờ quản trị viên duyệt. Khi được chấp
+            nhận, bạn sẽ có thể xem và ghi lại hành trình cùng cả đội.
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Hãy liên hệ quản trị viên nếu bạn cần được duyệt sớm.
+          </p>
+          <Button variant="outline" className="mt-6 rounded-full" onClick={signOut}>
+            <LogOut className="h-4 w-4" /> Đăng xuất
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">

@@ -1,154 +1,59 @@
-# Nhật Ký Hành Trình — Build Plan
+# Fix auth: login, approval gate, and session drops
 
-A shared, cloud-based activity journal for community/social-impact projects. Multi-tenant from day one (Organization → Project → Activity), Vietnamese UI, private media, role-based access.
+## What's wrong today (diagnosis)
 
-## 1. Backend (Lovable Cloud / Supabase)
+1. **Can't log in after signing up.** Email confirmation is turned ON in the backend. Email/password signups (e.g. several accounts in the DB) have no `email_confirmed_at` and have never signed in. After signup the app shows a success toast and pushes the user to `/lich`, but no session exists until they click an email link — so the auth gate silently bounces them back to the login page. Google sign-ins work because they're auto-confirmed.
 
-I'll enable Lovable Cloud (managed Supabase — database, auth, storage) and build the schema below.
+2. **No "Chờ duyệt" (pending) state exists.** The new-user trigger currently grants every signup full `member` access immediately. There is no approval gate or waiting screen anywhere — this needs to be built.
 
-### Schema (tables in `public`)
+3. **Random drops to the loading screen.** Three compounding causes:
+   - The protected-route gate runs a **network** `getUser()` on every auth event; a transient network blip throws → redirect to `/auth`.
+   - The root auth listener fires `invalidateQueries()` on `SIGNED_IN`, which also fires on tab-refocus/token-refresh, causing refetch churn.
+   - `AuthProvider.loading` can stay `true` forever if `getSession()` ever stalls (no timeout/fallback).
 
-```text
-organizations
-  id uuid pk
-  name text            -- seed: "Nét Mơ"
-  created_at timestamptz
+## Decisions (confirmed)
+- New signups are **auto-confirmed** (instant login, no email link).
+- New signups require **admin approval** before they can use the app.
 
-projects
-  id uuid pk
-  org_id uuid -> organizations(id) on delete cascade
-  name text            -- seed: "Season 2 — Chuyện của Mây"
-  description text
-  created_at timestamptz
+---
 
-memberships              -- a user's role within ONE project
-  id uuid pk
-  project_id uuid -> projects(id) on delete cascade
-  user_id uuid -> auth.users(id) on delete cascade
-  role project_role      -- enum: 'admin' | 'member' | 'viewer'
-  created_at timestamptz
-  unique (project_id, user_id)
+## 1. Backend: auto-confirm + repair stuck accounts
+- Enable auto-confirm for email signups (auth setting).
+- One-time data fix: mark the existing unconfirmed accounts as confirmed so those people can finally log in.
 
-profiles                 -- display info, auto-created on signup
-  id uuid pk -> auth.users(id) on delete cascade
-  full_name text
-  created_at timestamptz
+## 2. Backend: approval gate (schema + RLS)
+- Add a `pending` value to the `project_role` enum (alongside `admin`/`member`/`viewer`).
+- Change the `handle_new_user` trigger: the very first user (when no admin exists) still becomes `admin`; **every other new signup becomes `pending`** instead of `member`.
+- Harden the security-definer access functions so `pending` users can see **nothing** in the project: update `is_project_member`, `is_org_member`, `shares_project_with`, and `storage_path_project_member` to exclude the `pending` role. (Interaction/write functions already require `admin`/`member`, so pending is excluded there automatically.)
+- Add a `memberships` SELECT policy `user_id = auth.uid()` so a pending user can read **their own** membership row (to detect the pending state) without seeing the team or any project data.
 
-activities
-  id uuid pk
-  project_id uuid -> projects(id) on delete cascade
-  title text not null
-  date date not null
-  type activity_type      -- enum: workshop | team_meeting | partner_meeting | site_visit | event | other
-  status activity_status  -- enum: completed | ongoing | planned | issue
-  location text
-  participant_count int
-  summary text            -- Diễn biến chính
-  highlight text          -- Quote / Điểm nổi bật
-  issues text             -- Vấn đề phát sinh
-  next_steps text         -- Bước tiếp theo
-  author_id uuid -> auth.users(id)   -- Người ghi
-  created_at, updated_at timestamptz
+Net effect: a pending user is fully isolated — no activities, attachments, members, or media — and only knows that they are awaiting approval.
 
-attachments
-  id uuid pk
-  activity_id uuid -> activities(id) on delete cascade
-  kind attachment_kind   -- enum: photo | audio | video | document | link
-  storage_path text      -- bucket path (null for links)
-  url text               -- external link (null for files)
-  file_name text
-  mime_type text
-  created_at timestamptz
-```
+## 3. Frontend: detect pending + waiting screen
+- `use-project.tsx`: expose a `pendingApproval` flag (raw membership row has role `pending` and no approved project). Keep the existing dedupe logic.
+- `AppShell.tsx`: if `pendingApproval`, render a clean **"Chờ duyệt"** screen ("Tài khoản của bạn đang chờ quản trị viên duyệt…") with a sign-out button — instead of the nav + app content. Keep the existing "Bạn chưa thuộc dự án nào" message for the no-membership case.
+- `activity-constants.ts`: add `pending: "Chờ duyệt"` to `ROLE_LABELS`.
 
-Enums: `project_role`, `activity_type`, `activity_status`, `attachment_kind`.
+## 4. Frontend: admin approval UI (Thành viên page)
+- Add a **"Chờ duyệt"** section at the top listing pending members with **Duyệt** (approve → set role to `member`) and **Từ chối** (reject → delete membership) buttons. Admins already can read pending rows and update/delete memberships under existing policies.
 
-### Security-definer helper functions
+## 5. Frontend: stop the random drops
+- `_authenticated/route.tsx`: replace the network `getUser()` with a local `getSession()` check (instant, can't fail on a network blip); only redirect to `/auth` when there is genuinely no session. RLS still validates every request server-side.
+- `__root.tsx` listener: only `invalidateQueries()` when the signed-in **user id actually changes** (track previous id), so token-refresh / tab-refocus `SIGNED_IN` events no longer trigger refetch storms.
+- `use-auth.tsx`: add a timeout fallback (~8s) so `loading` can never hang forever, guard against setting state after unmount.
 
-To avoid recursive RLS and centralize permission checks:
+## 6. Frontend: signup flow copy
+- `auth.tsx`: after signup, since the user is auto-confirmed and logged in but pending, show an accurate message ("Tài khoản đã tạo — đang chờ quản trị viên duyệt") and navigate to `/lich` (which will resolve to the waiting screen).
 
-```text
-public.user_project_role(_project_id uuid) returns project_role  -- security definer
-public.is_project_member(_project_id uuid) returns boolean
-public.is_project_admin(_project_id uuid) returns boolean
-```
+## 7. Cleanup
+- Investigate and resolve the React #418 hydration warning surfaced in the preview while touching these files.
 
-### RLS policies (every table RLS-enabled, with GRANTs to authenticated/service_role)
+---
 
-```text
-organizations
-  SELECT: user is a member of at least one project in this org
-  ALL (write): is_project_admin of a project in this org
+## Technical notes
+- Enum change + trigger + RLS + policy go in one migration. Auto-confirm is an auth-config change; confirming existing accounts is a one-time data update.
+- Existing 11 members keep their current roles (admin/member) — only future signups land in `pending`.
+- The waiting screen intentionally needs no project data, so RLS can fully isolate pending users without breaking detection.
 
-projects
-  SELECT: is_project_member(id)
-  INSERT/UPDATE/DELETE: is_project_admin(id)
-
-memberships
-  SELECT: is_project_member(project_id)            -- members see their team
-  INSERT/UPDATE/DELETE: is_project_admin(project_id)  -- only admins manage members/roles
-
-profiles
-  SELECT: own row OR shares a project with the target user
-  UPDATE: own row only
-
-activities
-  SELECT: is_project_member(project_id)            -- admin, member, viewer all read
-  INSERT: role in (admin, member) AND author_id = auth.uid()
-  UPDATE/DELETE: is_project_admin(project_id) OR (role = member AND author_id = auth.uid())
-                 -- viewers can never write; members only their own
-
-attachments
-  SELECT: member of the parent activity's project
-  INSERT/DELETE: admin of project, OR member who owns the parent activity
-```
-
-A trigger creates a `profiles` row on new `auth.users` signup.
-
-### Private storage
-
-One **private** bucket `media` (photos, audio, video, documents). No public access. Files keyed by `project_id/activity_id/uuid-filename`. RLS on `storage.objects`:
-
-```text
-SELECT/INSERT/DELETE allowed only when the path's project_id is one the user
-is a member of (write requires admin or owning member).
-```
-
-The app fetches files via short-lived **signed URLs** generated server-side (server function) — never public URLs. This keeps photos of children/elderly confidential.
-
-### Seeding
-
-Migration seeds org "Nét Mơ" + project "Season 2 — Chuyện của Mây". The first user to sign up is auto-assigned **admin** of the seed project (via a one-time server function / trigger), so you can start logging immediately. Additional members are invited by admins.
-
-## 2. Auth
-
-Email/password + Google sign-in (Lovable defaults). `_authenticated` route gate for the app; public `/auth` page. Sign-up captures full name into `profiles`.
-
-## 3. Frontend (React + Tailwind + shadcn)
-
-- **Design system first** in `src/styles.css`: bright youthful palette (warm coral/peach, sunny yellow, friendly purple, soft mint on off-white), rounded corners, soft shadows, oklch tokens, gradients. Characterful display font for titles (e.g. Baloo 2 / Fredoka) + legible sans (e.g. Be Vietnam Pro for full Vietnamese diacritics) — body uses a Vietnamese-friendly font.
-- **Calendar view (main screen)** — monthly grid, activities color-coded by type, click day/activity → detail sheet. Toggle to list/timeline view.
-- **Quick logging** — prominent "+ Ghi hoạt động" button → activity form (all fields above), mobile-first.
-- **Attachments**: drag-drop multi-photo upload + thumbnail gallery with lightbox; in-browser voice recording (MediaRecorder) + audio upload + inline playback; video & PDF/Word upload; external link paste.
-- **Activity detail** — highlight quote shown prominently; smooth open transition; cheerful save toast.
-- **Search & filter** — by title/location/quote; filter by type & status.
-- **Dashboard stats** — total activities, workshops, total participants, completed count.
-- **Export report** — generate a downloadable Markdown report (overview stats + each activity detailed) for advisors/sponsors.
-- Fully responsive, Vietnamese throughout (labels, buttons, empty states).
-
-## 4. Technical notes
-
-- Media access via `createServerFn` (signed URLs, authenticated). Uploads via authenticated browser client to the private bucket under RLS.
-- GitHub sync is available via the Lovable GitHub integration (you connect it from the UI; I can't push directly, but the code stays standard React for any developer to review/extend).
-- Data loading via TanStack Query; routes under `src/routes/`.
-
-## Build order
-
-1. Enable Cloud → migration (schema + enums + functions + RLS + seed) → storage bucket + policies.
-2. Auth pages + route gate + profile trigger.
-3. Design system + app shell/nav.
-4. Calendar view + activity detail.
-5. Activity form + attachments (photos, voice, video, docs, links).
-6. Search/filter, dashboard stats, export report.
-
-Once you approve (especially the schema + RLS above), I'll start with the backend migration so you can see the exact SQL before the UI is built.
+## Walkthrough (delivered after the fix)
+I'll explain each root cause and the exact change that addresses it: (1) email confirmation blocking login, (2) the new pending/approval flow and waiting screen, (3) the gate/listener/timeout fixes that stop the random drops.

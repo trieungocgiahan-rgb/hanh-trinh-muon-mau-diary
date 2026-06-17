@@ -25,17 +25,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
+    // Listener first, so we never miss an auth event.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+      if (!mounted) return;
       setSession(s);
       setLoading(false);
     });
 
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!mounted) return;
+        setSession(data.session);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
 
-    return () => sub.subscription.unsubscribe();
+    // Safety net: never hang on the loading screen forever.
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 8000);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timeout);
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return (
