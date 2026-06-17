@@ -39,13 +39,22 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     queryKey: ["my-projects", user?.id],
     enabled: !!user,
     queryFn: async (): Promise<ProjectInfo[]> => {
+      if (!user) return [];
       const { data, error } = await supabase
         .from("memberships")
         .select("role, project:projects(id, name, description, org_id, organizations(name))")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
+      const seen = new Set<string>();
       return (data ?? [])
         .filter((m) => m.project)
+        .filter((m) => {
+          const id = (m.project as unknown as { id: string }).id;
+          if (seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        })
         .map((m) => {
           const p = m.project as unknown as {
             id: string;
