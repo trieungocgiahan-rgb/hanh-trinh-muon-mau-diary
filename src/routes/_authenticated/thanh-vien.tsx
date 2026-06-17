@@ -120,70 +120,138 @@ function MembersPage() {
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
-          {(members ?? []).map((m, idx) => (
-            <div
-              key={m.id}
-              className={`flex items-center gap-3 px-4 py-3.5 ${idx > 0 ? "border-t border-border" : ""}`}
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-grape text-sm font-semibold text-grape-foreground">
-                {(m.full_name ?? "?").charAt(0).toUpperCase()}
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="truncate font-medium">
-                  {m.full_name ?? "Người dùng"}
-                  {m.user_id === user?.id && (
-                    <span className="ml-1.5 text-xs text-muted-foreground">(bạn)</span>
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground">{ROLE_LABELS[m.role]}</div>
-              </div>
-
-              {isAdmin && m.user_id !== user?.id ? (
-                <div className="flex items-center gap-2">
-                  <Select value={m.role} onValueChange={(v) => changeRole(m, v as ProjectRole)}>
-                    <SelectTrigger className="h-9 w-32 rounded-full text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Quản trị</SelectItem>
-                      <SelectItem value="member">Thành viên</SelectItem>
-                      <SelectItem value="viewer">Người xem</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10">
-                        <UserMinus className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="rounded-2xl">
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Xóa thành viên này?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {m.full_name ?? "Người dùng"} sẽ không còn truy cập được dự án này.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Hủy</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => removeMember(m)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Xóa
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              ) : (
-                <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                  {ROLE_LABELS[m.role]}
+        <>
+          {isAdmin && pendingMembers.length > 0 && (
+            <div>
+              <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold">
+                Chờ duyệt
+                <span className="rounded-full bg-sunny px-2 py-0.5 text-xs font-semibold text-sunny-foreground">
+                  {pendingMembers.length}
                 </span>
-              )}
+              </h2>
+              <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
+                {pendingMembers.map((m, idx) => (
+                  <div
+                    key={m.id}
+                    className={`flex items-center gap-3 px-4 py-3.5 ${idx > 0 ? "border-t border-border" : ""}`}
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-grape text-sm font-semibold text-grape-foreground">
+                      {(m.full_name ?? "?").charAt(0).toUpperCase()}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate font-medium">{m.full_name ?? "Người dùng"}</div>
+                      <div className="text-xs text-muted-foreground">Đang chờ được duyệt</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="hero"
+                        size="sm"
+                        className="rounded-full"
+                        onClick={() => approveMember(m)}
+                      >
+                        <Check className="h-4 w-4" /> Duyệt
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:bg-destructive/10"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="rounded-2xl">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Từ chối yêu cầu này?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {m.full_name ?? "Người dùng"} sẽ không được tham gia dự án. Họ có thể
+                              đăng ký lại sau.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => removeMember(m)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Từ chối
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+
+          <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
+            {activeMembers.map((m, idx) => (
+              <div
+                key={m.id}
+                className={`flex items-center gap-3 px-4 py-3.5 ${idx > 0 ? "border-t border-border" : ""}`}
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-grape text-sm font-semibold text-grape-foreground">
+                  {(m.full_name ?? "?").charAt(0).toUpperCase()}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">
+                    {m.full_name ?? "Người dùng"}
+                    {m.user_id === user?.id && (
+                      <span className="ml-1.5 text-xs text-muted-foreground">(bạn)</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{ROLE_LABELS[m.role]}</div>
+                </div>
+
+                {isAdmin && m.user_id !== user?.id ? (
+                  <div className="flex items-center gap-2">
+                    <Select value={m.role} onValueChange={(v) => changeRole(m, v as ProjectRole)}>
+                      <SelectTrigger className="h-9 w-32 rounded-full text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admin">Quản trị</SelectItem>
+                        <SelectItem value="member">Thành viên</SelectItem>
+                        <SelectItem value="viewer">Người xem</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10">
+                          <UserMinus className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="rounded-2xl">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Xóa thành viên này?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {m.full_name ?? "Người dùng"} sẽ không còn truy cập được dự án này.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Hủy</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => removeMember(m)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Xóa
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                ) : (
+                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                    {ROLE_LABELS[m.role]}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
