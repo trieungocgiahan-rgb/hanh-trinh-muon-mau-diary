@@ -68,7 +68,7 @@ function AuthPage() {
       return;
     }
     toast.success("Tạo tài khoản thành công! 🌱", {
-      description: "Bạn có thể bắt đầu ghi nhật ký ngay.",
+      description: "Tài khoản của bạn đang chờ quản trị viên duyệt.",
     });
     navigate({ to: "/lich" });
   }
