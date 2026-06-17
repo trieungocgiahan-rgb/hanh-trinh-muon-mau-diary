@@ -13,6 +13,11 @@ export interface ProjectInfo {
   role: ProjectRole;
 }
 
+interface ProjectQueryResult {
+  projects: ProjectInfo[];
+  pendingApproval: boolean;
+}
+
 interface ProjectContextValue {
   projects: ProjectInfo[];
   current: ProjectInfo | null;
@@ -20,6 +25,7 @@ interface ProjectContextValue {
   loading: boolean;
   canEdit: boolean; // admin or member
   isAdmin: boolean;
+  pendingApproval: boolean;
 }
 
 const ProjectContext = createContext<ProjectContextValue>({
@@ -29,6 +35,7 @@ const ProjectContext = createContext<ProjectContextValue>({
   loading: true,
   canEdit: false,
   isAdmin: false,
+  pendingApproval: false,
 });
 
 export function ProjectProvider({ children }: { children: ReactNode }) {
@@ -38,16 +45,18 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const { data, isLoading } = useQuery({
     queryKey: ["my-projects", user?.id],
     enabled: !!user,
-    queryFn: async (): Promise<ProjectInfo[]> => {
-      if (!user) return [];
+    queryFn: async (): Promise<ProjectQueryResult> => {
+      if (!user) return { projects: [], pendingApproval: false };
       const { data, error } = await supabase
         .from("memberships")
         .select("role, project:projects(id, name, description, org_id, organizations(name))")
         .eq("user_id", user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
+
+      const rows = data ?? [];
       const seen = new Set<string>();
-      return (data ?? [])
+      const projects = rows
         .filter((m) => m.project)
         .filter((m) => {
           const id = (m.project as unknown as { id: string }).id;
@@ -72,10 +81,17 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
             role: m.role,
           };
         });
+
+      // A pending user has a membership row but RLS hides the project,
+      // so it never appears in `projects`.
+      const pendingApproval = projects.length === 0 && rows.some((m) => m.role === "pending");
+
+      return { projects, pendingApproval };
     },
   });
 
-  const projects = data ?? [];
+  const projects = data?.projects ?? [];
+  const pendingApproval = data?.pendingApproval ?? false;
   const current = useMemo(
     () => projects.find((p) => p.id === currentId) ?? projects[0] ?? null,
     [projects, currentId],
@@ -88,6 +104,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     loading: isLoading,
     canEdit: current?.role === "admin" || current?.role === "member",
     isAdmin: current?.role === "admin",
+    pendingApproval,
   };
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
