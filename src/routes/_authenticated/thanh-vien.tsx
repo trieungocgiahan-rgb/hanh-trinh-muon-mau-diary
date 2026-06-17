@@ -73,6 +73,19 @@ function MembersPage() {
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
   }
 
+  async function approveMember(member: Member) {
+    const { error } = await supabase
+      .from("memberships")
+      .update({ role: "member" })
+      .eq("id", member.id);
+    if (error) {
+      toast.error("Không duyệt được thành viên");
+      return;
+    }
+    toast.success(`Đã duyệt ${member.full_name ?? "thành viên"} 🎉`);
+    qc.invalidateQueries({ queryKey: ["members", current?.id] });
+  }
+
   async function removeMember(member: Member) {
     const { error } = await supabase.from("memberships").delete().eq("id", member.id);
     if (error) {
@@ -82,6 +95,10 @@ function MembersPage() {
     toast.success("Đã xóa thành viên khỏi dự án");
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
   }
+
+  const pendingMembers = (members ?? []).filter((m) => m.role === "pending");
+  const activeMembers = (members ?? []).filter((m) => m.role !== "pending");
+
 
   return (
     <div className="space-y-5">
