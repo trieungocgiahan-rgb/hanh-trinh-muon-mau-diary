@@ -32,6 +32,7 @@ export const ROLE_LABELS: Record<ProjectRole, string> = {
   admin: "Quản trị",
   member: "Thành viên",
   viewer: "Người xem",
+  pending: "Chờ duyệt",
 };
 
 export function typeMeta(t: ActivityType) {
