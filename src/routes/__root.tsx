@@ -135,15 +135,24 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const lastUserId = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      const nextUserId = session?.user?.id ?? null;
+      const changed = lastUserId.current !== nextUserId;
+      lastUserId.current = nextUserId;
+      // Only react to a real identity change. SIGNED_IN also fires on
+      // token refresh / tab refocus with the same user — ignoring those
+      // avoids refetch storms that snap pages back to the loading spinner.
+      if (!changed && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
+
 
   return (
     <QueryClientProvider client={queryClient}>
