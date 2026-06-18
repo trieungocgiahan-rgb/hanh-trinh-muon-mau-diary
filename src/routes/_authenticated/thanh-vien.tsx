@@ -111,7 +111,7 @@ function MembersPage() {
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <p>
           Mời người mới bằng cách chia sẻ đường dẫn ứng dụng. Khi họ đăng ký, họ sẽ ở trạng thái{" "}
-          <strong>Chờ duyệt</strong> cho đến khi quản trị viên duyệt ở mục bên dưới.
+          <strong>Chờ duyệt</strong> cho đến khi một thành viên trong dự án duyệt ở mục bên dưới.
         </p>
       </div>
 
