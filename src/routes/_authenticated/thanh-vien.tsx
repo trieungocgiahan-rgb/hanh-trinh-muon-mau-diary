@@ -122,7 +122,7 @@ function MembersPage() {
         </div>
       ) : (
         <>
-          {isAdmin && pendingMembers.length > 0 && (
+          {pendingMembers.length > 0 && (
             <div>
               <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold">
                 Chờ duyệt
