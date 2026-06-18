@@ -111,7 +111,7 @@ function MembersPage() {
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <p>
           Mời người mới bằng cách chia sẻ đường dẫn ứng dụng. Khi họ đăng ký, họ sẽ ở trạng thái{" "}
-          <strong>Chờ duyệt</strong> cho đến khi quản trị viên duyệt ở mục bên dưới.
+          <strong>Chờ duyệt</strong> cho đến khi một thành viên trong dự án duyệt ở mục bên dưới.
         </p>
       </div>
 
@@ -122,7 +122,7 @@ function MembersPage() {
         </div>
       ) : (
         <>
-          {isAdmin && pendingMembers.length > 0 && (
+          {pendingMembers.length > 0 && (
             <div>
               <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold">
                 Chờ duyệt
