@@ -110,7 +110,7 @@ export function LandingHero() {
           </div>
 
           {/* Polaroid dán băng keo */}
-          <div className="absolute -bottom-16 -left-4 w-36 -rotate-6 rounded-xl bg-card p-2 pb-6 shadow-pop sm:-left-16 sm:w-44 lg:-bottom-10 lg:-left-48">
+          <div className="absolute -bottom-16 -left-4 w-36 -rotate-6 rounded-xl bg-card p-2 pb-6 shadow-pop sm:-left-16 sm:w-44 lg:-bottom-28 lg:-left-36">
             <span
               aria-hidden
               className="absolute -top-3 left-1/2 h-6 w-16 -translate-x-1/2 rotate-3 rounded-sm bg-sunny/60"
