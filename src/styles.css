@@ -13,6 +13,7 @@
 @theme inline {
   --font-display: "Baloo 2", system-ui, sans-serif;
   --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-hand: "Caveat", "Baloo 2", cursive;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -49,6 +50,10 @@
   --color-sunny-foreground: var(--sunny-foreground);
   --color-grape: var(--grape);
   --color-grape-foreground: var(--grape-foreground);
+
+  --color-cream: var(--cream);
+  --color-blush: var(--blush);
+  --color-peach: var(--peach);
 
   /* activity type colors */
   --color-type-workshop: var(--type-workshop);
@@ -124,8 +129,14 @@
   --type-event: oklch(0.80 0.16 80);      /* sunny */
   --type-other: oklch(0.62 0.03 50);      /* warm gray */
 
+  --cream: oklch(0.975 0.018 75);
+  --blush: oklch(0.945 0.032 20);
+  --peach: oklch(0.925 0.045 40);
+
   --gradient-hero: linear-gradient(135deg, oklch(0.74 0.16 35), oklch(0.66 0.18 350));
   --gradient-sun: linear-gradient(120deg, oklch(0.88 0.15 90), oklch(0.74 0.16 35));
+  --gradient-cream: linear-gradient(180deg, oklch(0.985 0.014 80), oklch(0.945 0.032 20));
+  --gradient-blush: linear-gradient(135deg, oklch(0.955 0.028 25), oklch(0.94 0.04 60));
 
   --shadow-soft-val: 0 4px 20px -6px oklch(0.5 0.1 40 / 0.18);
   --shadow-pop-val: 0 12px 34px -10px oklch(0.6 0.16 30 / 0.30);
@@ -204,6 +215,12 @@
   }
   .bg-gradient-sun {
     background-image: var(--gradient-sun);
+  }
+  .bg-gradient-cream {
+    background-image: var(--gradient-cream);
+  }
+  .bg-gradient-blush {
+    background-image: var(--gradient-blush);
   }
   .shadow-soft {
     box-shadow: var(--shadow-soft);
