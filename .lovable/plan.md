@@ -1,59 +1,52 @@
-# Fix auth: login, approval gate, and session drops
+# Landing page + đăng nhập chỉ bằng Google
 
-## What's wrong today (diagnosis)
+## 1. Trang landing mới tại `/`
 
-1. **Can't log in after signing up.** Email confirmation is turned ON in the backend. Email/password signups (e.g. several accounts in the DB) have no `email_confirmed_at` and have never signed in. After signup the app shows a success toast and pushes the user to `/lich`, but no session exists until they click an email link — so the auth gate silently bounces them back to the login page. Google sign-ins work because they're auto-confirmed.
+Hiện tại `/` chỉ chuyển hướng thẳng vào `/lich`. Sẽ thay bằng một trang giới thiệu công khai (ai cũng xem được), dựng theo đúng ảnh mẫu, dùng lại bảng màu coral/peach và font Baloo 2 + Be Vietnam Pro sẵn có của dự án.
 
-2. **No "Chờ duyệt" (pending) state exists.** The new-user trigger currently grants every signup full `member` access immediately. There is no approval gate or waiting screen anywhere — this needs to be built.
+Các phần theo thứ tự trong ảnh mẫu:
 
-3. **Random drops to the loading screen.** Three compounding causes:
-   - The protected-route gate runs a **network** `getUser()` on every auth event; a transient network blip throws → redirect to `/auth`.
-   - The root auth listener fires `invalidateQueries()` on `SIGNED_IN`, which also fires on tab-refocus/token-refresh, causing refetch churn.
-   - `AuthProvider.loading` can stay `true` forever if `getSession()` ever stalls (no timeout/fallback).
+1. **Hero** — tên lớn "The Colorful Journey" kiểu chữ viết tay + in đậm, mô tả ngắn, 2 nút (`Explore the Journey` → đăng nhập, `See Latest Moments` → cuộn xuống), dòng "150+ returning visitors", cùng ảnh mock giao diện timeline bên phải, polaroid dán băng keo và sticker trái tim.
+2. **"No more drop-offs. Stronger connections."** — lý do làm sản phẩm + 3 bước (Stay in the loop / Relive & reconnect / Feel like you're here) nối bằng đường nét đứt, kèm ảnh nhóm + giấy note.
+3. **"Browse by moments, not just dates."** — 3 thẻ: Photos & Memories, Journal Entries, Project Updates.
+4. **Dải số liệu** — 150+ / 60+ / 25+ / 100% trên nền peach (giữ đúng như ảnh mẫu).
+5. **"Real people. Real impact."** — 3 lời nhận xét (Linh N., Huy P., Mai T.) như ảnh mẫu, kèm ảnh polaroid "Together, even when apart."
+6. **CTA nền gradient coral** — "Every moment matters, Be part of the journey." + nút `Join the Journey` → đăng nhập.
+7. **Footer** — logo chữ, 3 cột liên kết (cuộn trong trang), dòng bản quyền, giấy note.
 
-## Decisions (confirmed)
-- New signups are **auto-confirmed** (instant login, no email link).
-- New signups require **admin approval** before they can use the app.
+Chi tiết phong cách: khối bo góc lớn, đổ bóng mềm, sticker ✨/trái tim, ảnh nghiêng nhẹ như dán vào sổ tay — đúng tinh thần ảnh mẫu.
 
----
+Người đã đăng nhập vào `/` sẽ được đưa thẳng vào `/lich` như trước, nên không ai bị mất luồng cũ.
 
-## 1. Backend: auto-confirm + repair stuck accounts
-- Enable auto-confirm for email signups (auth setting).
-- One-time data fix: mark the existing unconfirmed accounts as confirmed so those people can finally log in.
+## 2. Ảnh minh họa (tự tạo)
 
-## 2. Backend: approval gate (schema + RLS)
-- Add a `pending` value to the `project_role` enum (alongside `admin`/`member`/`viewer`).
-- Change the `handle_new_user` trigger: the very first user (when no admin exists) still becomes `admin`; **every other new signup becomes `pending`** instead of `member`.
-- Harden the security-definer access functions so `pending` users can see **nothing** in the project: update `is_project_member`, `is_org_member`, `shares_project_with`, and `storage_path_project_member` to exclude the `pending` role. (Interaction/write functions already require `admin`/`member`, so pending is excluded there automatically.)
-- Add a `memberships` SELECT policy `user_id = auth.uid()` so a pending user can read **their own** membership row (to detect the pending state) without seeing the team or any project data.
+Tạo khoảng 5 ảnh theo phong cách ấm, pastel giống ảnh mẫu, lưu trong `src/assets`:
+- ảnh nhóm workshop trong phòng sáng
+- bàn làm việc với ảnh, giấy note, hoa
+- polaroid phong cảnh (biển/hoàng hôn)
+- tranh minh họa "photos & memories" và "journal entries" cho phần 3 thẻ
 
-Net effect: a pending user is fully isolated — no activities, attachments, members, or media — and only knows that they are awaiting approval.
+Ảnh mock giao diện timeline trong hero sẽ được dựng bằng HTML/CSS (không phải ảnh) để nét và tự đổi theo màu chủ đề.
 
-## 3. Frontend: detect pending + waiting screen
-- `use-project.tsx`: expose a `pendingApproval` flag (raw membership row has role `pending` and no approved project). Keep the existing dedupe logic.
-- `AppShell.tsx`: if `pendingApproval`, render a clean **"Chờ duyệt"** screen ("Tài khoản của bạn đang chờ quản trị viên duyệt…") with a sign-out button — instead of the nav + app content. Keep the existing "Bạn chưa thuộc dự án nào" message for the no-membership case.
-- `activity-constants.ts`: add `pending: "Chờ duyệt"` to `ROLE_LABELS`.
+## 3. Đăng nhập / tạo tài khoản: chỉ còn Google
 
-## 4. Frontend: admin approval UI (Thành viên page)
-- Add a **"Chờ duyệt"** section at the top listing pending members with **Duyệt** (approve → set role to `member`) and **Từ chối** (reject → delete membership) buttons. Admins already can read pending rows and update/delete memberships under existing policies.
+- Trang `/auth` bỏ hoàn toàn tab **Đăng nhập / Đăng ký** bằng email + mật khẩu, chỉ còn một nút lớn **Tiếp tục với Google**, thiết kế lại đồng bộ với landing page.
+- Bỏ luôn phần ô nhập email, mật khẩu, họ tên và các thông báo lỗi liên quan.
+- Tắt phương thức email/mật khẩu ở phía backend để không ai đăng ký bằng email được nữa.
 
-## 5. Frontend: stop the random drops
-- `_authenticated/route.tsx`: replace the network `getUser()` with a local `getSession()` check (instant, can't fail on a network blip); only redirect to `/auth` when there is genuinely no session. RLS still validates every request server-side.
-- `__root.tsx` listener: only `invalidateQueries()` when the signed-in **user id actually changes** (track previous id), so token-refresh / tab-refocus `SIGNED_IN` events no longer trigger refetch storms.
-- `use-auth.tsx`: add a timeout fallback (~8s) so `loading` can never hang forever, guard against setting state after unmount.
+**Lưu ý quan trọng:** hiện có khoảng 7 tài khoản đã tạo bằng email + mật khẩu. Sau khi tắt email, những người đó phải đăng nhập bằng Google với **cùng địa chỉ Gmail** đã dùng (hầu hết là Gmail nên vẫn vào được đúng tài khoản cũ). Nếu bạn muốn giữ đường đăng nhập bằng mật khẩu cho họ thì cho mình biết, mình sẽ chỉ ẩn khỏi giao diện thay vì tắt hẳn.
 
-## 6. Frontend: signup flow copy
-- `auth.tsx`: after signup, since the user is auto-confirmed and logged in but pending, show an accurate message ("Tài khoản đã tạo — đang chờ quản trị viên duyệt") and navigate to `/lich` (which will resolve to the waiting screen).
+## 4. Thông tin chia sẻ (SEO)
 
-## 7. Cleanup
-- Investigate and resolve the React #418 hydration warning surfaced in the preview while touching these files.
+Trang landing có tiêu đề, mô tả, og:title / og:description / og:image riêng dùng ảnh hero — để khi gửi link cho người mới thì hiện preview đẹp.
 
 ---
 
-## Technical notes
-- Enum change + trigger + RLS + policy go in one migration. Auto-confirm is an auth-config change; confirming existing accounts is a one-time data update.
-- Existing 11 members keep their current roles (admin/member) — only future signups land in `pending`.
-- The waiting screen intentionally needs no project data, so RLS can fully isolate pending users without breaking detection.
+## Ghi chú kỹ thuật
 
-## Walkthrough (delivered after the fix)
-I'll explain each root cause and the exact change that addresses it: (1) email confirmation blocking login, (2) the new pending/approval flow and waiting screen, (3) the gate/listener/timeout fixes that stop the random drops.
+- `src/routes/index.tsx`: bỏ `redirect` vô điều kiện, thành route công khai (SSR bật) có `head()` riêng; chỉ chuyển hướng khi đã có session.
+- Landing tách thành các component nhỏ trong `src/components/landing/` (Hero, WhySection, MomentsSection, StatsBand, Testimonials, CTASection, LandingFooter) để file route gọn.
+- Toàn bộ màu dùng token trong `src/styles.css`; nếu cần thêm sắc peach/handwriting sẽ bổ sung token mới chứ không hardcode.
+- Nút Google vẫn dùng `lovable.auth.signInWithOAuth("google", …)` như hiện tại.
+- Tắt email provider bằng công cụ cấu hình đăng nhập của backend (giữ Google bật).
+- Xử lý luôn cảnh báo hydration React #418 đang xuất hiện ở preview.
