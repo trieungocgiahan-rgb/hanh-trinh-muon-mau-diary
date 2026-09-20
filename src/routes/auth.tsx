@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -52,9 +53,11 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-cream px-4 py-10">
       <div className="w-full max-w-md animate-pop-in rounded-3xl bg-card p-7 text-center shadow-pop sm:p-9">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-sun text-3xl shadow-soft">
-          🧭
-        </div>
+        <img
+          src={logoAsset.url}
+          alt="Nhật Ký Hành Trình"
+          className="mx-auto mb-4 h-14 w-14 rounded-2xl object-cover shadow-soft"
+        />
         <p className="font-hand text-2xl text-primary">Chào bạn trở lại</p>
         <h1 className="mt-1 font-display text-2xl font-extrabold text-foreground">
           Nhật Ký Hành Trình
