@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
