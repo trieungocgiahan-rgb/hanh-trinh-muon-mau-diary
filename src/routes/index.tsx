@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingWhy } from "@/components/landing/LandingWhy";
