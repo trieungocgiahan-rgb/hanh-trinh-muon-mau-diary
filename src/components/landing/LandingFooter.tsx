@@ -1,11 +1,17 @@
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 export function LandingFooter() {
   return (
     <footer className="border-t border-border bg-secondary/40 py-12">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 sm:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p className="font-display text-xl font-extrabold text-foreground">
+          <p className="flex items-center gap-2.5 font-display text-xl font-extrabold text-foreground">
+            <img
+              src={logoAsset.url}
+              alt="Nhật Ký Hành Trình"
+              className="h-9 w-9 rounded-xl object-cover shadow-soft"
+            />
             Nhật Ký Hành Trình
           </p>
           <p className="mt-2 max-w-xs text-sm text-muted-foreground">

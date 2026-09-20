@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -98,9 +99,11 @@ function ShellInner({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <Link to="/lich" className="flex shrink-0 items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-sun text-lg shadow-soft">
-              🧭
-            </span>
+            <img
+              src={logoAsset.url}
+              alt="Nhật Ký Hành Trình"
+              className="h-9 w-9 rounded-xl object-cover shadow-soft"
+            />
             <span className="hidden font-display text-lg font-bold sm:block">Nhật Ký Hành Trình</span>
           </Link>
 

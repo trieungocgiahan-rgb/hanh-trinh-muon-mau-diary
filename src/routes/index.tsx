@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingWhy } from "@/components/landing/LandingWhy";
@@ -58,9 +59,11 @@ function LandingPage() {
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-sun text-lg shadow-soft">
-              🧭
-            </span>
+            <img
+              src={logoAsset.url}
+              alt="Nhật Ký Hành Trình"
+              className="h-9 w-9 rounded-xl object-cover shadow-soft"
+            />
             <span className="font-display text-lg font-extrabold text-foreground">
               Nhật Ký Hành Trình
             </span>
