@@ -55,28 +55,28 @@ function LandingPage() {
   }, [session, loading, navigate]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
+    <div className="min-h-screen overflow-x-hidden bg-background">
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/88 shadow-soft backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
           <Link to="/" className="flex items-center gap-2">
             <img
               src={logoAsset.url}
               alt="Nhật Ký Hành Trình"
-              className="h-9 w-9 rounded-xl object-cover shadow-soft"
+              className="h-10 w-10 rounded-lg object-cover shadow-soft"
             />
             <span className="font-display text-lg font-extrabold text-foreground">
               Nhật Ký Hành Trình
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
-            <a href="#ve-chung-toi" className="hover:text-primary">
+          <nav className="hidden items-center gap-1 text-sm font-semibold text-muted-foreground sm:flex">
+            <a href="#ve-chung-toi" className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary">
               Vì sao
             </a>
-            <a href="#khoanh-khac" className="hover:text-primary">
+            <a href="#khoanh-khac" className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary">
               Khoảnh khắc
             </a>
-            <a href="#cam-nhan" className="hover:text-primary">
+            <a href="#cam-nhan" className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary">
               Cảm nhận
             </a>
           </nav>

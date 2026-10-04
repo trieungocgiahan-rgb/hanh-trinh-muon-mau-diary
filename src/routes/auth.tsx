@@ -52,11 +52,11 @@ function AuthPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-cream px-4 py-10">
-      <div className="w-full max-w-md animate-pop-in rounded-3xl bg-card p-7 text-center shadow-pop sm:p-9">
+      <div className="w-full max-w-md animate-pop-in rounded-lg border border-border/70 bg-card/95 p-7 text-center shadow-pop backdrop-blur sm:p-9">
         <img
           src={logoAsset.url}
           alt="Nhật Ký Hành Trình"
-          className="mx-auto mb-4 h-14 w-14 rounded-2xl object-cover shadow-soft"
+           className="mx-auto mb-5 h-16 w-16 rounded-lg object-cover shadow-pop"
         />
         <p className="font-hand text-2xl text-primary">Chào bạn trở lại</p>
         <h1 className="mt-1 font-display text-2xl font-extrabold text-foreground">

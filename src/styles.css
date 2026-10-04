@@ -11,8 +11,8 @@
  */
 
 @theme inline {
-  --font-display: "Quicksand", "Be Vietnam Pro", system-ui, sans-serif;
-  --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-display: "Sora", "Be Vietnam Pro", system-ui, sans-serif;
+  --font-sans: "Manrope", "Be Vietnam Pro", system-ui, sans-serif;
   --font-hand: "Dancing Script", "Be Vietnam Pro", cursive;
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -83,7 +83,7 @@
 }
 
 :root {
-  --radius: 1rem;
+  --radius: 0.75rem;
 
   --background: oklch(0.985 0.012 85);
   --foreground: oklch(0.28 0.04 30);
@@ -133,13 +133,14 @@
   --blush: oklch(0.945 0.032 20);
   --peach: oklch(0.925 0.045 40);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.74 0.16 35), oklch(0.66 0.18 350));
-  --gradient-sun: linear-gradient(120deg, oklch(0.88 0.15 90), oklch(0.74 0.16 35));
-  --gradient-cream: linear-gradient(180deg, oklch(0.985 0.014 80), oklch(0.945 0.032 20));
-  --gradient-blush: linear-gradient(135deg, oklch(0.955 0.028 25), oklch(0.94 0.04 60));
+  --gradient-hero: linear-gradient(112deg, oklch(0.75 0.16 35), oklch(0.68 0.17 355) 58%, oklch(0.64 0.16 320));
+  --gradient-sun: linear-gradient(120deg, oklch(0.91 0.14 96), oklch(0.78 0.16 47));
+  --gradient-cream: linear-gradient(180deg, oklch(0.99 0.012 82), oklch(0.965 0.03 45) 62%, oklch(0.95 0.035 18));
+  --gradient-blush: linear-gradient(128deg, oklch(0.97 0.026 24), oklch(0.945 0.045 55) 54%, oklch(0.95 0.035 340));
+  --gradient-paper: linear-gradient(145deg, oklch(1 0 0 / 90%), oklch(0.975 0.018 75 / 94%));
 
-  --shadow-soft-val: 0 4px 20px -6px oklch(0.5 0.1 40 / 0.18);
-  --shadow-pop-val: 0 12px 34px -10px oklch(0.6 0.16 30 / 0.30);
+  --shadow-soft-val: 0 10px 30px -16px oklch(0.46 0.09 34 / 0.26), 0 1px 2px oklch(0.46 0.05 34 / 0.08);
+  --shadow-pop-val: 0 24px 60px -26px oklch(0.48 0.14 22 / 0.38), 0 8px 18px -12px oklch(0.48 0.08 22 / 0.25);
 
   --chart-1: oklch(0.69 0.17 28);
   --chart-2: oklch(0.62 0.18 305);
@@ -202,6 +203,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    letter-spacing: 0;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4, .font-display {
@@ -222,11 +225,31 @@
   .bg-gradient-blush {
     background-image: var(--gradient-blush);
   }
+  .bg-gradient-paper {
+    background-image: var(--gradient-paper);
+  }
   .shadow-soft {
     box-shadow: var(--shadow-soft);
   }
   .shadow-pop {
     box-shadow: var(--shadow-pop);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--primary) 24%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

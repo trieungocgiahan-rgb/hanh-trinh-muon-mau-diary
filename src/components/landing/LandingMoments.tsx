@@ -23,7 +23,7 @@ const cards = [
 
 export function LandingMoments() {
   return (
-    <section id="khoanh-khac" className="bg-blush/50 py-20 sm:py-28">
+    <section id="khoanh-khac" className="scroll-mt-20 bg-gradient-blush py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-5">
         <div className="text-center">
           <p className="font-hand text-2xl text-primary">Sổ tay của cả đội</p>
@@ -36,11 +36,11 @@ export function LandingMoments() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-3">
+        <div className="mt-12 grid gap-5 sm:grid-cols-3">
           {cards.map((c) => (
             <div
               key={c.title}
-              className="rounded-3xl bg-card p-6 text-center shadow-soft transition-transform hover:-translate-y-1"
+               className="rounded-lg border border-border/60 bg-card/90 p-6 text-center shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-pop"
             >
               <img
                 src={c.icon}
@@ -56,7 +56,7 @@ export function LandingMoments() {
           ))}
         </div>
 
-        <div className="mt-14 overflow-hidden rounded-3xl bg-card shadow-pop sm:flex">
+        <div className="mt-14 overflow-hidden rounded-lg border border-border/60 bg-card shadow-pop sm:flex">
           <img
             src={desk}
             alt="Bàn làm việc với ảnh in, sổ tay và giấy ghi chú"
@@ -65,7 +65,7 @@ export function LandingMoments() {
             loading="lazy"
             className="h-56 w-full object-cover sm:h-80 sm:w-1/2"
           />
-          <div className="flex flex-col justify-center gap-3 p-8 sm:h-80 sm:w-1/2">
+           <div className="flex flex-col justify-center gap-3 bg-gradient-paper p-8 sm:h-80 sm:w-1/2">
 
             <p className="font-hand text-2xl text-primary">Mỗi trang là một ngày</p>
             <h3 className="font-display text-2xl font-extrabold text-foreground">

@@ -20,7 +20,7 @@ const quotes = [
 
 export function LandingTestimonials() {
   return (
-    <section id="cam-nhan" className="bg-background py-20 sm:py-28">
+    <section id="cam-nhan" className="scroll-mt-20 bg-background py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-5">
         <div className="text-center">
           <p className="font-hand text-2xl text-primary">Người thật, việc thật</p>
@@ -33,7 +33,7 @@ export function LandingTestimonials() {
           {quotes.map((q, i) => (
             <blockquote
               key={q.name}
-              className={`rounded-3xl bg-secondary/50 p-6 shadow-soft ${
+               className={`rounded-lg border border-border/60 bg-gradient-paper p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-pop ${
                 i === 1 ? "lg:mt-8" : ""
               }`}
             >
@@ -53,14 +53,14 @@ export function LandingTestimonials() {
             </blockquote>
           ))}
 
-          <div className="mx-auto w-44 rotate-3 rounded-2xl bg-card p-2 pb-5 shadow-pop lg:mt-4">
+          <div className="mx-auto w-44 rotate-2 rounded-md bg-card p-2 pb-5 shadow-pop lg:mt-4">
             <img
               src={sunset}
               alt="Hoàng hôn cuối một ngày hoạt động của dự án"
               width={912}
               height={1104}
               loading="lazy"
-              className="h-40 w-full rounded-xl object-cover"
+               className="h-40 w-full rounded-sm object-cover"
             />
             <p className="mt-2 text-center font-hand text-base text-muted-foreground">
               cùng nhau, dù ở xa
