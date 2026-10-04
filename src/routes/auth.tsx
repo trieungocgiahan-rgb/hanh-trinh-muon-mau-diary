@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { lovable } from "@/integrations/lovable/index";
@@ -52,11 +53,14 @@ function AuthPage() {
 
   return (
     <div className="grain relative flex min-h-screen items-center justify-center overflow-hidden bg-mesh-warm px-4 py-10">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <div className="surface relative w-full max-w-md animate-pop-in rounded-2xl p-7 text-center shadow-pop sm:p-9">
         <img
           src={logoAsset.url}
           alt="Nhật Ký Hành Trình"
-          className="mx-auto mb-5 h-16 w-16 rounded-xl object-cover shadow-pop ring-4 ring-white/80"
+          className="mx-auto mb-5 h-16 w-16 rounded-xl object-cover shadow-pop ring-4 ring-card"
         />
         <p className="font-display text-lg font-medium italic text-primary">Chào bạn trở lại</p>
         <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground">

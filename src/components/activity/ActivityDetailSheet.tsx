@@ -205,7 +205,7 @@ export function ActivityDetailSheet() {
                       <button
                         type="button"
                         onClick={() => removeAttachment(p)}
-                        className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
+                        className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>

@@ -25,8 +25,8 @@ export function ActivityCard({
       <div
         className="flex h-16 w-14 shrink-0 flex-col items-center justify-center rounded-xl"
         style={{
-          backgroundColor: `color-mix(in oklab, ${tm.colorVar} 14%, white)`,
-          color: `color-mix(in oklab, ${tm.colorVar} 70%, black)`,
+          backgroundColor: `color-mix(in oklab, ${tm.colorVar} 14%, var(--card))`,
+          color: `color-mix(in oklab, ${tm.colorVar} 70%, var(--foreground))`,
         }}
       >
         <span className="font-display text-2xl font-semibold leading-none tabular-nums">

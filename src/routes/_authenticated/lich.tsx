@@ -20,7 +20,7 @@ function ymd(d: Date) {
 }
 
 function CalendarPage() {
-  const { current, canEdit, loading: pLoading } = useProject();
+  const { current, canEdit, isAdmin, loading: pLoading } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
   const { openCreate, openDetail } = useActivityDialog();
   const [cursor, setCursor] = useState(() => new Date());
@@ -140,7 +140,7 @@ function CalendarPage() {
                 return (
                   <div
                     key={i}
-                    className="min-h-16 border-b border-r border-border/50 bg-[repeating-linear-gradient(135deg,transparent,transparent_6px,oklch(0.92_0.02_60/0.35)_6px,oklch(0.92_0.02_60/0.35)_7px)] sm:min-h-28"
+                    className="min-h-16 border-b border-r border-border/50 bg-[repeating-linear-gradient(135deg,transparent,transparent_6px,var(--stripe)_6px,var(--stripe)_7px)] sm:min-h-28"
                   />
                 );
               const key = ymd(d);
@@ -188,7 +188,7 @@ function CalendarPage() {
                           className="block w-full truncate rounded-[5px] py-0.5 pl-2 pr-1 text-left text-xs font-medium text-foreground transition-colors hover:brightness-95"
                           style={{
                             boxShadow: `inset 3px 0 0 ${tm.colorVar}`,
-                            backgroundColor: `color-mix(in oklab, ${tm.colorVar} 14%, white)`,
+                            backgroundColor: `color-mix(in oklab, ${tm.colorVar} 14%, var(--card))`,
                           }}
                         >
                           {a.title}
@@ -221,18 +221,47 @@ function CalendarPage() {
       </div>
 
       {(activities ?? []).length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-14 text-center">
-          <CalendarHeart className="mx-auto mb-3 h-10 w-10 text-primary/60" />
-          <p className="font-display text-xl font-semibold">Chưa có hoạt động nào</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Bắt đầu hành trình bằng cách ghi hoạt động đầu tiên!
-          </p>
-          {canEdit && (
-            <Button variant="hero" className="mt-5" onClick={() => openCreate()}>
-              <Plus className="h-4 w-4" /> Ghi hoạt động
-            </Button>
+        <section className="surface rounded-2xl p-6 sm:p-8">
+          <CalendarHeart className="h-8 w-8 text-primary" />
+          <h2 className="mt-3 font-display text-2xl font-semibold">
+            {canEdit ? "Bắt đầu nhật ký của đội" : "Chưa có hoạt động nào"}
+          </h2>
+          {canEdit ? (
+            <>
+              <ol className="mt-5 grid gap-4 sm:grid-cols-3">
+                {[
+                  ["1", "Bấm “Ghi hoạt động”", "Hoặc chạm vào một ngày trên lịch."],
+                  ["2", "Điền tên và ngày", "Thêm ảnh hoặc ghi âm ngay tại chỗ nếu có."],
+                  ["3", "Lưu lại", "Cả đội thấy ngay trên lịch và trong danh sách."],
+                ].map(([n, t, d]) => (
+                  <li key={n} className="flex gap-3">
+                    <span className="font-display text-3xl font-semibold leading-none text-primary/80">
+                      {n}
+                    </span>
+                    <div>
+                      <p className="font-semibold">{t}</p>
+                      <p className="mt-0.5 text-sm text-muted-foreground">{d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button variant="hero" onClick={() => openCreate()}>
+                  <Plus className="h-4 w-4" /> Ghi hoạt động đầu tiên
+                </Button>
+                {isAdmin && (
+                  <Button asChild variant="outline">
+                    <Link to="/thanh-vien">Mời thành viên</Link>
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Khi thành viên ghi hoạt động, bạn sẽ thấy chúng ở đây.
+            </p>
           )}
-        </div>
+        </section>
       ) : (
         <section>
           <div className="mb-4 flex items-end justify-between">

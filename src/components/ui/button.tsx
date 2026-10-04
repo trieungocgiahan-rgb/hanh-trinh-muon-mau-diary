@@ -13,9 +13,9 @@ const buttonVariants = cva(
           "bg-gradient-primary text-primary-foreground shadow-btn hover:-translate-y-0.5 hover:brightness-105",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-border bg-card text-foreground shadow-[inset_0_1px_0_oklch(1_0_0/0.9),0_1px_2px_oklch(0.42_0.06_30/0.08)] hover:border-primary/35 hover:bg-secondary/70 hover:text-secondary-foreground",
+          "border border-border bg-card text-foreground shadow-[inset_0_1px_0_var(--hi),0_1px_2px_oklch(0.42_0.06_30/0.08)] hover:border-primary/35 hover:bg-secondary/70 hover:text-secondary-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-[inset_0_1px_0_oklch(1_0_0/0.7),0_1px_2px_oklch(0.42_0.06_30/0.1)] hover:bg-secondary/70",
+          "bg-secondary text-secondary-foreground shadow-[inset_0_1px_0_var(--hi),0_1px_2px_oklch(0.42_0.06_30/0.1)] hover:bg-secondary/70",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         hero: "bg-gradient-hero text-primary-foreground shadow-btn hover:-translate-y-0.5 hover:brightness-105",

@@ -16,7 +16,7 @@ export function LandingCTA() {
           <Button
             asChild
             size="lg"
-            className="mt-8 bg-gradient-paper text-foreground shadow-pop hover:brightness-100"
+            className="mt-8 bg-none bg-[oklch(0.99_0.01_80)] text-[oklch(0.3_0.05_30)] shadow-pop hover:bg-[oklch(0.97_0.015_80)]"
           >
             <Link to="/auth">
               Vào nhật ký
