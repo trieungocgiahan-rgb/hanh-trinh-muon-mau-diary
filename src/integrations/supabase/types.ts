@@ -286,6 +286,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          invite_code: string
           name: string
           org_id: string
         }
@@ -293,6 +294,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          invite_code?: string
           name: string
           org_id: string
         }
@@ -300,6 +302,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          invite_code?: string
           name?: string
           org_id?: string
         }
@@ -330,6 +333,12 @@ export type Database = {
         Args: { _activity_id: string }
         Returns: boolean
       }
+      create_project_with_org: {
+        Args: { _description?: string; _name: string; _org_name: string }
+        Returns: string
+      }
+      join_project_by_code: { Args: { _code: string }; Returns: string }
+      regenerate_invite_code: { Args: { _project_id: string }; Returns: string }
       is_admin_of_activity: { Args: { _activity_id: string }; Returns: boolean }
       is_org_admin: { Args: { _org_id: string }; Returns: boolean }
       is_org_member: { Args: { _org_id: string }; Returns: boolean }

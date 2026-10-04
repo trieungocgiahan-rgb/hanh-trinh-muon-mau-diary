@@ -12,6 +12,8 @@ import { ActivityDialogProvider, useActivityDialog } from "@/hooks/use-activity-
 import { ActivityFormDialog } from "@/components/activity/ActivityFormDialog";
 import { ActivityDetailSheet } from "@/components/activity/ActivityDetailSheet";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { OnboardingPanel } from "@/components/Onboarding";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,12 +67,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 function ShellInner({ children }: { children: ReactNode }) {
-  const { current, projects, setCurrentId, canEdit, pendingApproval } = useProject();
+  const { current, projects, setCurrentId, canEdit, pendingApproval, needsOnboarding } =
+    useProject();
   const { openCreate } = useActivityDialog();
   const { user } = useAuth();
   const pendingCount = usePendingCount();
   const { theme, setTheme } = useTheme();
   const [checking, setChecking] = useState(false);
+  const [joinOpen, setJoinOpen] = useState(false);
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "Tài khoản";
   const navigate = useNavigate();
@@ -92,6 +96,40 @@ function ShellInner({ children }: { children: ReactNode }) {
     toast.info("Tài khoản vẫn đang chờ duyệt", {
       description: "Khi quản trị viên duyệt, bấm Kiểm tra lại để vào ngay.",
     });
+  }
+
+  if (needsOnboarding) {
+    return (
+      <div className="grain relative min-h-screen bg-mesh-warm px-4 py-10 sm:py-16">
+        <div className="mx-auto max-w-2xl animate-pop-in">
+          <img
+            src={logoAsset.url}
+            alt="Nhật Ký Hành Trình"
+            className="h-14 w-14 rounded-xl object-cover shadow-pop ring-4 ring-card"
+          />
+          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            Chào mừng bạn
+          </p>
+          <h1 className="mt-2 text-balance font-display text-3xl font-semibold leading-tight sm:text-4xl">
+            Bạn muốn bắt đầu thế nào?
+          </h1>
+          <p className="mt-2 text-muted-foreground">
+            {displayName !== "Tài khoản" ? `Xin chào ${displayName}. ` : ""}Chọn một cách để vào
+            nhật ký của đội.
+          </p>
+          <div className="mt-8">
+            <OnboardingPanel />
+          </div>
+          <button
+            type="button"
+            onClick={signOut}
+            className="mt-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary"
+          >
+            <LogOut className="h-4 w-4" /> Đăng xuất
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (pendingApproval) {
@@ -229,6 +267,9 @@ function ShellInner({ children }: { children: ReactNode }) {
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setJoinOpen(true)}>
+                  <Plus className="h-4 w-4" /> Tham gia / tạo dự án khác
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={signOut} className="text-destructive">
                   <LogOut className="h-4 w-4" /> Đăng xuất
                 </DropdownMenuItem>
@@ -279,6 +320,14 @@ function ShellInner({ children }: { children: ReactNode }) {
           <Plus className="h-6 w-6" />
         </Button>
       )}
+      <Dialog open={joinOpen} onOpenChange={setJoinOpen}>
+        <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="font-display text-2xl">Dự án khác</DialogTitle>
+          </DialogHeader>
+          <OnboardingPanel onDone={() => setJoinOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

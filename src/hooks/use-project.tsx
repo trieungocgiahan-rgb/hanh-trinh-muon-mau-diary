@@ -26,6 +26,7 @@ interface ProjectContextValue {
   canEdit: boolean; // admin or member
   isAdmin: boolean;
   pendingApproval: boolean;
+  needsOnboarding: boolean; // chưa thuộc dự án nào và cũng chưa xin vào dự án nào
 }
 
 const ProjectContext = createContext<ProjectContextValue>({
@@ -36,6 +37,7 @@ const ProjectContext = createContext<ProjectContextValue>({
   canEdit: false,
   isAdmin: false,
   pendingApproval: false,
+  needsOnboarding: false,
 });
 
 export function ProjectProvider({ children }: { children: ReactNode }) {
@@ -105,6 +107,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     canEdit: current?.role === "admin" || current?.role === "member",
     isAdmin: current?.role === "admin",
     pendingApproval,
+    needsOnboarding: !isLoading && !!user && projects.length === 0 && !pendingApproval,
   };
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
