@@ -116,7 +116,7 @@ function ListPage() {
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
+        <div className="rounded-2xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
           <ListChecks className="mx-auto mb-3 h-10 w-10 text-primary/60" />
           <p className="font-display text-lg font-semibold">Không có kết quả</p>
           <p className="mt-1 text-sm text-muted-foreground">

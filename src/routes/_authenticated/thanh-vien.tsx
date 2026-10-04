@@ -128,7 +128,7 @@ function MembersPage() {
                   {pendingMembers.length}
                 </span>
               </h2>
-              <div className="overflow-hidden surface rounded-3xl">
+              <div className="overflow-hidden surface rounded-2xl">
                 {pendingMembers.map((m, idx) => (
                   <div
                     key={m.id}
@@ -186,7 +186,7 @@ function MembersPage() {
             </div>
           )}
 
-          <div className="overflow-hidden surface rounded-3xl">
+          <div className="overflow-hidden surface rounded-2xl">
             {activeMembers.map((m, idx) => (
               <div
                 key={m.id}

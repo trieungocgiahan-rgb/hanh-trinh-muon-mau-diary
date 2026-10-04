@@ -79,7 +79,7 @@ function ReportPage() {
             </Button>
           </div>
 
-          <div className="surface rounded-3xl p-5">
+          <div className="surface rounded-2xl p-5">
             <h2 className="mb-3 font-display text-sm font-semibold text-muted-foreground">
               Xem trước
             </h2>

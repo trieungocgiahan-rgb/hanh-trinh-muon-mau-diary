@@ -25,7 +25,7 @@ function StatCard({
 }) {
   return (
     <div
-      className={`grain relative overflow-hidden rounded-3xl p-5 shadow-pop ${tone} ${gradient}`}
+      className={`grain relative overflow-hidden rounded-2xl p-5 shadow-pop ${tone} ${gradient}`}
     >
       <div
         aria-hidden
@@ -105,7 +105,7 @@ function StatsPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="surface rounded-3xl p-5">
+        <div className="surface rounded-2xl p-5">
           <h2 className="mb-4 font-display text-lg font-semibold">Theo loại hoạt động</h2>
           <div className="space-y-3">
             {stats.byType.map((t) => (
@@ -127,7 +127,7 @@ function StatsPage() {
           </div>
         </div>
 
-        <div className="surface rounded-3xl p-5">
+        <div className="surface rounded-2xl p-5">
           <h2 className="mb-4 font-display text-lg font-semibold">Theo trạng thái</h2>
           <div className="grid grid-cols-2 gap-3">
             {stats.byStatus.map((s) => (
@@ -140,7 +140,7 @@ function StatsPage() {
         </div>
       </div>
 
-      <div className="surface rounded-3xl p-5">
+      <div className="surface rounded-2xl p-5">
         <h2 className="mb-3 font-display text-lg font-semibold">Phân bố nhanh</h2>
         <div className="flex h-6 overflow-hidden rounded-full">
           {stats.byType

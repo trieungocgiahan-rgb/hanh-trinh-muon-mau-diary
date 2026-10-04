@@ -113,7 +113,7 @@ function CalendarPage() {
       </div>
 
       {/* calendar grid */}
-      <div className="surface overflow-hidden rounded-3xl">
+      <div className="surface overflow-hidden rounded-2xl">
         <div className="grid grid-cols-7 border-b bg-gradient-to-b from-secondary/60 to-secondary/20 text-center">
           {WEEKDAY_SHORT.map((w) => (
             <div key={w} className="py-2 text-xs font-semibold text-muted-foreground">
@@ -184,7 +184,7 @@ function CalendarPage() {
 
       {/* upcoming / recent quick list */}
       {(activities ?? []).length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
+        <div className="rounded-2xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
           <CalendarHeart className="mx-auto mb-3 h-10 w-10 text-primary/60" />
           <p className="font-display text-lg font-semibold">Chưa có hoạt động nào</p>
           <p className="mt-1 text-sm text-muted-foreground">

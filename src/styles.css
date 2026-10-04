@@ -11,9 +11,8 @@
  */
 
 @theme inline {
-  --font-display: "Sora", "Be Vietnam Pro", system-ui, sans-serif;
-  --font-sans: "Manrope", "Be Vietnam Pro", system-ui, sans-serif;
-  --font-hand: "Dancing Script", "Be Vietnam Pro", cursive;
+  --font-display: "Fraunces", "Be Vietnam Pro", Georgia, serif;
+  --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -232,6 +231,8 @@
 
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
   }
 }
 

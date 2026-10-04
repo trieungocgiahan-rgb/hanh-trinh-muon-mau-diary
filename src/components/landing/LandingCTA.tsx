@@ -1,34 +1,27 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function LandingCTA() {
   return (
-    <section className="px-5 py-20">
-      <div className="grain relative mx-auto max-w-5xl overflow-hidden rounded-2xl bg-gradient-hero px-6 py-16 text-center shadow-pop">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-[oklch(0.92_0.12_80/0.45)] blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-[oklch(0.50_0.20_300/0.5)] blur-3xl"
-        />
+    <section className="px-5 pb-20 sm:pb-28">
+      <div className="grain relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-hero px-6 py-16 text-center shadow-pop sm:py-20">
         <div className="relative">
-          <p className="font-hand text-2xl text-primary-foreground/90">
-            Mỗi khoảnh khắc đều đáng giá
-          </p>
-          <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-primary-foreground sm:text-4xl">
-            Cùng viết tiếp hành trình
+          <h2 className="font-display text-3xl font-semibold leading-tight text-primary-foreground sm:text-5xl">
+            Đừng để khoảnh khắc <em className="font-medium">trôi mất.</em>
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm text-primary-foreground/85">
-            Đăng nhập bằng Google để xem nhật ký của dự án và thêm khoảnh khắc của riêng bạn.
+          <p className="mx-auto mt-4 max-w-md text-primary-foreground/85">
+            Ghi lại ngay hôm nay, để cả đội cùng nhìn lại vào ngày mai.
           </p>
           <Button
             asChild
             size="lg"
-            className="mt-7 bg-gradient-paper text-foreground shadow-pop hover:brightness-100 hover:shadow-pop"
+            className="mt-8 bg-gradient-paper text-foreground shadow-pop hover:brightness-100"
           >
-            <Link to="/auth">Tham gia hành trình</Link>
+            <Link to="/auth">
+              Vào nhật ký
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </Button>
         </div>
       </div>

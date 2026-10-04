@@ -4,10 +4,8 @@ import { useAuth } from "@/hooks/use-auth";
 import logoAsset from "@/assets/logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
-import { LandingWhy } from "@/components/landing/LandingWhy";
-import { LandingMoments } from "@/components/landing/LandingMoments";
-import { LandingStats } from "@/components/landing/LandingStats";
-import { LandingTestimonials } from "@/components/landing/LandingTestimonials";
+import { LandingFeatures } from "@/components/landing/LandingFeatures";
+import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
@@ -64,29 +62,23 @@ function LandingPage() {
               alt="Nhật Ký Hành Trình"
               className="h-10 w-10 rounded-lg object-cover shadow-soft"
             />
-            <span className="font-display text-lg font-extrabold text-foreground">
+            <span className="font-display text-lg font-semibold text-foreground">
               Nhật Ký Hành Trình
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 text-sm font-semibold text-muted-foreground sm:flex">
+          <nav className="hidden items-center gap-1 text-sm font-medium text-muted-foreground sm:flex">
             <a
-              href="#ve-chung-toi"
+              href="#tinh-nang"
               className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
             >
-              Vì sao
+              Tính năng
             </a>
             <a
-              href="#khoanh-khac"
+              href="#bat-dau"
               className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
             >
-              Khoảnh khắc
-            </a>
-            <a
-              href="#cam-nhan"
-              className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
-            >
-              Cảm nhận
+              Bắt đầu
             </a>
           </nav>
 
@@ -98,10 +90,8 @@ function LandingPage() {
 
       <main>
         <LandingHero />
-        <LandingWhy />
-        <LandingMoments />
-        <LandingStats />
-        <LandingTestimonials />
+        <LandingFeatures />
+        <LandingSteps />
         <LandingCTA />
       </main>
 
