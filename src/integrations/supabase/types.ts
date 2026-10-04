@@ -283,28 +283,34 @@ export type Database = {
       }
       projects: {
         Row: {
+          cover_path: string | null
           created_at: string
           description: string | null
           id: string
           invite_code: string
           name: string
           org_id: string
+          theme: string
         }
         Insert: {
+          cover_path?: string | null
           created_at?: string
           description?: string | null
           id?: string
           invite_code?: string
           name: string
           org_id: string
+          theme?: string
         }
         Update: {
+          cover_path?: string | null
           created_at?: string
           description?: string | null
           id?: string
           invite_code?: string
           name?: string
           org_id?: string
+          theme?: string
         }
         Relationships: [
           {
