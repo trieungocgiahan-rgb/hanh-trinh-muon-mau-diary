@@ -1,10 +1,22 @@
 import { Badge } from "@/components/ui/badge";
 import { typeMeta, statusMeta } from "@/lib/activity-constants";
 import type { ActivityWithExtras } from "@/hooks/use-activities";
-import { CalendarDays, MapPin, Users, Paperclip, ImageIcon } from "lucide-react";
+import {
+  CalendarDays,
+  MapPin,
+  Users,
+  Paperclip,
+  ImageIcon,
+  Heart,
+  MessageCircle,
+  UserCheck,
+} from "lucide-react";
 
 function shortDate(d: string) {
-  return new Date(d + "T00:00:00").toLocaleDateString("vi-VN", { day: "numeric", month: "numeric" });
+  return new Date(d + "T00:00:00").toLocaleDateString("vi-VN", {
+    day: "numeric",
+    month: "numeric",
+  });
 }
 
 export function ActivityCard({
@@ -23,12 +35,18 @@ export function ActivityCard({
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full overflow-hidden rounded-2xl border border-border bg-card text-left shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-pop"
+      className="surface surface-lift group flex w-full overflow-hidden rounded-2xl text-left"
     >
-      <div className="w-1.5 shrink-0" style={{ backgroundColor: tm.colorVar }} />
+      <div
+        className="bg-ombre w-1.5 shrink-0"
+        style={{ "--c": tm.colorVar } as React.CSSProperties}
+      />
       <div className="flex-1 p-4">
         <div className="mb-1.5 flex flex-wrap items-center gap-2">
-          <Badge className="border-0 text-white" style={{ backgroundColor: tm.colorVar }}>
+          <Badge
+            className="bg-ombre border-0 text-white"
+            style={{ "--c": tm.colorVar } as React.CSSProperties}
+          >
             {tm.emoji} {tm.label}
           </Badge>
           <Badge variant="secondary" className={sm.className}>
@@ -39,7 +57,9 @@ export function ActivityCard({
           {activity.title}
         </h3>
         {activity.highlight && (
-          <p className="mt-1 line-clamp-2 text-sm italic text-muted-foreground">“{activity.highlight}”</p>
+          <p className="mt-1 line-clamp-2 text-sm italic text-muted-foreground">
+            “{activity.highlight}”
+          </p>
         )}
         <div className="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
@@ -70,10 +90,21 @@ export function ActivityCard({
           activity.comment_count > 0 ||
           activity.attendance_count > 0) && (
           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
-            {activity.like_count > 0 && <span>❤️ {activity.like_count}</span>}
-            {activity.comment_count > 0 && <span>💬 {activity.comment_count}</span>}
+            {activity.like_count > 0 && (
+              <span className="flex items-center gap-1">
+                <Heart className="h-3.5 w-3.5 fill-primary/70 text-primary" /> {activity.like_count}
+              </span>
+            )}
+            {activity.comment_count > 0 && (
+              <span className="flex items-center gap-1">
+                <MessageCircle className="h-3.5 w-3.5 text-grape" /> {activity.comment_count}
+              </span>
+            )}
             {activity.attendance_count > 0 && (
-              <span>👥 {activity.attendance_count} đã tham gia</span>
+              <span className="flex items-center gap-1">
+                <UserCheck className="h-3.5 w-3.5 text-mint-foreground" />{" "}
+                {activity.attendance_count} đã tham gia
+              </span>
             )}
           </div>
         )}

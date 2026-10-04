@@ -20,7 +20,10 @@ const steps = [
 
 export function LandingWhy() {
   return (
-    <section id="ve-chung-toi" className="scroll-mt-20 bg-background py-20 sm:py-28">
+    <section
+      id="ve-chung-toi"
+      className="scroll-mt-20 bg-gradient-to-b from-background via-background to-[oklch(0.975_0.02_60)] py-20 sm:py-28"
+    >
       <div className="mx-auto max-w-6xl px-5">
         <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="relative mx-auto w-full max-w-sm">
@@ -30,9 +33,9 @@ export function LandingWhy() {
               width={1200}
               height={912}
               loading="lazy"
-               className="-rotate-1 rounded-lg border border-border/70 object-cover shadow-pop"
+              className="-rotate-1 rounded-xl border border-white/80 object-cover shadow-pop ring-1 ring-border/40"
             />
-             <div className="absolute -bottom-8 -right-2 w-44 rotate-2 rounded-md border border-sunny/60 bg-sunny/80 p-4 shadow-pop">
+            <div className="absolute -bottom-8 -right-2 w-44 rotate-2 rounded-md border border-white/50 bg-gradient-sun p-4 shadow-pop">
               <p className="font-hand text-lg leading-snug text-sunny-foreground">
                 “ghi lại đi, mai này đọc lại thấy thương lắm”
               </p>
@@ -47,15 +50,14 @@ export function LandingWhy() {
               Chỉ còn sự gắn bó.
             </h2>
             <p className="mt-5 max-w-lg leading-7 text-muted-foreground">
-              Dự án cộng đồng đi qua rất nhiều người và rất nhiều ngày. Nhật ký này giữ
-              lại mạch câu chuyện, để người mới hiểu được quá khứ và người cũ không quên
-              điều đã làm.
+              Dự án cộng đồng đi qua rất nhiều người và rất nhiều ngày. Nhật ký này giữ lại mạch câu
+              chuyện, để người mới hiểu được quá khứ và người cũ không quên điều đã làm.
             </p>
 
             <div className="mt-9 space-y-5">
               {steps.map((s, i) => (
                 <div key={s.n} className="relative pl-14">
-                  <span className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-sun font-display text-sm font-bold text-sunny-foreground shadow-soft">
+                  <span className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-sun font-display text-sm font-bold text-sunny-foreground shadow-btn ring-4 ring-background">
                     {s.n}
                   </span>
                   {i < steps.length - 1 && (

@@ -99,7 +99,6 @@ function MembersPage() {
   const pendingMembers = (members ?? []).filter((m) => m.role === "pending");
   const activeMembers = (members ?? []).filter((m) => m.role !== "pending");
 
-
   return (
     <div className="space-y-5">
       <div>
@@ -115,7 +114,6 @@ function MembersPage() {
         </p>
       </div>
 
-
       {isLoading ? (
         <div className="flex h-40 items-center justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -130,7 +128,7 @@ function MembersPage() {
                   {pendingMembers.length}
                 </span>
               </h2>
-              <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
+              <div className="overflow-hidden surface rounded-3xl">
                 {pendingMembers.map((m, idx) => (
                   <div
                     key={m.id}
@@ -174,7 +172,7 @@ function MembersPage() {
                             <AlertDialogCancel>Hủy</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => removeMember(m)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              className="bg-none bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
                             >
                               Từ chối
                             </AlertDialogAction>
@@ -188,7 +186,7 @@ function MembersPage() {
             </div>
           )}
 
-          <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
+          <div className="overflow-hidden surface rounded-3xl">
             {activeMembers.map((m, idx) => (
               <div
                 key={m.id}
@@ -221,7 +219,11 @@ function MembersPage() {
                     </Select>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:bg-destructive/10"
+                        >
                           <UserMinus className="h-4 w-4" />
                         </Button>
                       </AlertDialogTrigger>
@@ -236,7 +238,7 @@ function MembersPage() {
                           <AlertDialogCancel>Hủy</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => removeMember(m)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            className="bg-none bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
                           >
                             Xóa
                           </AlertDialogAction>

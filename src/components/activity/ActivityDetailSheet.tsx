@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -20,12 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  SignedImage,
-  SignedAudio,
-  SignedVideo,
-  SignedDocLink,
-} from "./SignedMedia";
+import { SignedImage, SignedAudio, SignedVideo, SignedDocLink } from "./SignedMedia";
 import { useActivityDialog } from "@/hooks/use-activity-dialog";
 import { useProject } from "@/hooks/use-project";
 import { useAuth } from "@/hooks/use-auth";
@@ -49,13 +39,20 @@ import {
 
 function formatDate(d: string) {
   const date = new Date(d + "T00:00:00");
-  return date.toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return date.toLocaleDateString("vi-VN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</h4>
+      <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {title}
+      </h4>
       <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{children}</div>
     </div>
   );
@@ -133,8 +130,6 @@ export function ActivityDetailSheet() {
     );
   }
 
-
-
   return (
     <>
       <Sheet open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
@@ -142,10 +137,7 @@ export function ActivityDetailSheet() {
           <div className="h-2 w-full" style={{ backgroundColor: tm.colorVar }} />
           <SheetHeader className="px-6 pt-5">
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <Badge
-                className="border-0 text-white"
-                style={{ backgroundColor: tm.colorVar }}
-              >
+              <Badge className="border-0 text-white" style={{ backgroundColor: tm.colorVar }}>
                 {tm.emoji} {tm.label}
               </Badge>
               <Badge variant="secondary" className={sm.className}>
@@ -187,7 +179,10 @@ export function ActivityDetailSheet() {
             {photos.length > 0 && (
               <div className="grid grid-cols-3 gap-2">
                 {photos.map((p) => (
-                  <div key={p.id} className="group relative aspect-square overflow-hidden rounded-xl">
+                  <div
+                    key={p.id}
+                    className="group relative aspect-square overflow-hidden rounded-xl"
+                  >
                     <button
                       type="button"
                       onClick={() => setLightbox(p.storage_path!)}
@@ -224,7 +219,9 @@ export function ActivityDetailSheet() {
 
             {audios.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ghi âm</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Ghi âm
+                </h4>
                 {audios.map((x) => (
                   <div key={x.id} className="space-y-0.5">
                     <SignedAudio path={x.storage_path!} />
@@ -236,7 +233,9 @@ export function ActivityDetailSheet() {
 
             {videos.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Video</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Video
+                </h4>
                 {videos.map((x) => (
                   <div key={x.id} className="space-y-0.5">
                     <SignedVideo path={x.storage_path!} />
@@ -289,14 +288,15 @@ export function ActivityDetailSheet() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Xóa hoạt động này?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Hành động này không thể hoàn tác. Toàn bộ ảnh, ghi âm và tài liệu đính kèm cũng sẽ bị xóa.
+                        Hành động này không thể hoàn tác. Toàn bộ ảnh, ghi âm và tài liệu đính kèm
+                        cũng sẽ bị xóa.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Hủy</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        className="bg-none bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
                       >
                         Xóa
                       </AlertDialogAction>
@@ -312,7 +312,11 @@ export function ActivityDetailSheet() {
       <Dialog open={!!lightbox} onOpenChange={(o) => !o && setLightbox(null)}>
         <DialogContent className="max-w-3xl border-0 bg-transparent p-0 shadow-none">
           {lightbox && (
-            <SignedImage path={lightbox} alt="ảnh" className="max-h-[85vh] w-full rounded-xl object-contain" />
+            <SignedImage
+              path={lightbox}
+              alt="ảnh"
+              className="max-h-[85vh] w-full rounded-xl object-contain"
+            />
           )}
         </DialogContent>
       </Dialog>

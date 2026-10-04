@@ -3,14 +3,14 @@ import logoAsset from "@/assets/logo.png.asset.json";
 
 export function LandingFooter() {
   return (
-    <footer className="border-t border-border bg-secondary/45 py-12">
+    <footer className="bg-gradient-to-b from-background to-[oklch(0.95_0.035_45)] py-12 shadow-[inset_0_1px_0_oklch(0.88_0.03_55/0.6)]">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 sm:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <p className="flex items-center gap-2.5 font-display text-xl font-extrabold text-foreground">
             <img
               src={logoAsset.url}
               alt="Nhật Ký Hành Trình"
-               className="h-10 w-10 rounded-lg object-cover shadow-soft"
+              className="h-10 w-10 rounded-lg object-cover shadow-soft"
             />
             Nhật Ký Hành Trình
           </p>
@@ -45,12 +45,9 @@ export function LandingFooter() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>
               <Link to="/auth" className="hover:text-primary">
-                Đăng nhập với Google
+                Đăng nhập bằng Google
               </Link>
             </li>
-            <li>
-               <Link to="/auth" className="hover:text-primary">Tham gia hành trình</Link>
-             </li>
           </ul>
         </div>
       </div>

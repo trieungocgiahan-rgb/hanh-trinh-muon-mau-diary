@@ -56,7 +56,7 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/88 shadow-soft backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 shadow-[0_1px_0_oklch(1_0_0/0.8)_inset,0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
           <Link to="/" className="flex items-center gap-2">
             <img
@@ -70,13 +70,22 @@ function LandingPage() {
           </Link>
 
           <nav className="hidden items-center gap-1 text-sm font-semibold text-muted-foreground sm:flex">
-            <a href="#ve-chung-toi" className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary">
+            <a
+              href="#ve-chung-toi"
+              className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
+            >
               Vì sao
             </a>
-            <a href="#khoanh-khac" className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary">
+            <a
+              href="#khoanh-khac"
+              className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
+            >
               Khoảnh khắc
             </a>
-            <a href="#cam-nhan" className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary">
+            <a
+              href="#cam-nhan"
+              className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
+            >
               Cảm nhận
             </a>
           </nav>

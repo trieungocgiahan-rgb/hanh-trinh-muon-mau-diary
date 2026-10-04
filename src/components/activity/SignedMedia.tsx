@@ -39,15 +39,7 @@ export function SignedImage({
       </div>
     );
   }
-  return (
-    <img
-      src={url}
-      alt={alt}
-      loading="lazy"
-      onClick={onClick}
-      className={className}
-    />
-  );
+  return <img src={url} alt={alt} loading="lazy" onClick={onClick} className={className} />;
 }
 
 export function SignedAudio({ path }: { path: string }) {
@@ -76,16 +68,26 @@ export function SignedVideo({ path }: { path: string }) {
 
 export function SignedDocLink({ path, fileName }: { path: string; fileName: string | null }) {
   const url = useSignedUrl(path);
+  const className =
+    "flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-foreground";
+  if (!url) {
+    return (
+      <span className={`${className} opacity-70`} aria-busy>
+        <FileText className="h-4 w-4 text-primary" />
+        <span className="truncate">{fileName ?? "Tài liệu"}</span>
+        <Loader2 className="ml-auto h-3 w-3 animate-spin" />
+      </span>
+    );
+  }
   return (
     <a
-      href={url ?? "#"}
+      href={url}
       target="_blank"
       rel="noreferrer"
-      className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+      className={`${className} transition-colors hover:bg-accent`}
     >
       <FileText className="h-4 w-4 text-primary" />
       <span className="truncate">{fileName ?? "Tài liệu"}</span>
-      {!url && <Loader2 className="ml-auto h-3 w-3 animate-spin" />}
     </a>
   );
 }
