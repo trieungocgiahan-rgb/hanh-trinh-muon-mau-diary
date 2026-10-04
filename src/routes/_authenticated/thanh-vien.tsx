@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/PageHeader";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatCode } from "@/components/Onboarding";
 import { supabase } from "@/integrations/supabase/client";
 import { useProject } from "@/hooks/use-project";
 import { useAuth } from "@/hooks/use-auth";
@@ -25,7 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Loader2, UserMinus, Info, Check, X, Link2, Share2 } from "lucide-react";
+import { Loader2, UserMinus, Info, Check, X, Link2, Share2, Copy, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/thanh-vien")({
   head: () => ({ meta: [{ title: "Thành viên — Nhật Ký Hành Trình" }] }),
@@ -64,9 +65,42 @@ function MembersPage() {
     },
   });
 
+  // Mã mời: đọc riêng và chịu lỗi, để trang vẫn chạy nếu máy chủ chưa có cột này
+  const { data: inviteCode } = useQuery({
+    queryKey: ["invite-code", current?.id],
+    enabled: !!current,
+    retry: false,
+    queryFn: async (): Promise<string | null> => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("invite_code")
+        .eq("id", current!.id)
+        .maybeSingle();
+      if (error) return null;
+      return data?.invite_code ?? null;
+    },
+  });
+
+  async function copyCode() {
+    if (!inviteCode) return;
+    await navigator.clipboard.writeText(formatCode(inviteCode));
+    toast.success("Đã sao chép mã dự án");
+  }
+
+  async function regenerateCode() {
+    const { error } = await supabase.rpc("regenerate_invite_code", { _project_id: current!.id });
+    if (error) {
+      toast.error("Không đổi được mã");
+      return;
+    }
+    toast.success("Đã đổi mã mới", { description: "Mã cũ không còn dùng được." });
+    qc.invalidateQueries({ queryKey: ["invite-code", current?.id] });
+  }
+
   async function shareInvite() {
     const url = window.location.origin;
-    const text = `Mời bạn vào Nhật Ký Hành Trình của ${current?.name ?? "dự án"}. Đăng nhập bằng Google, sau đó chờ quản trị viên duyệt:`;
+    const codeLine = inviteCode ? ` Mã dự án: ${formatCode(inviteCode)}.` : "";
+    const text = `Mời bạn vào Nhật Ký Hành Trình của ${current?.name ?? "dự án"}. Đăng nhập bằng Google, chọn "Tham gia dự án có sẵn" rồi nhập mã.${codeLine}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: "Nhật Ký Hành Trình", text, url });
@@ -126,22 +160,60 @@ function MembersPage() {
         description={`Những người cùng viết nên hành trình của ${current?.name ?? "dự án"}`}
       />
 
-      <div className="flex flex-col gap-4 rounded-2xl border border-accent-foreground/10 bg-gradient-to-r from-accent/70 to-accent/30 p-4 text-sm text-accent-foreground sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <Info className="mt-0.5 h-4 w-4 shrink-0" />
-          <p>
-            Mời người mới bằng cách gửi link ứng dụng. Họ đăng nhập bằng Google rồi ở trạng thái{" "}
-            <strong>Chờ duyệt</strong> cho đến khi quản trị viên duyệt.
-          </p>
+      <div className="surface rounded-2xl p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              Mã dự án
+            </p>
+            {inviteCode ? (
+              <div className="mt-1 flex items-center gap-2">
+                <span className="font-mono text-3xl font-semibold tracking-[0.2em]">
+                  {formatCode(inviteCode)}
+                </span>
+                <Button variant="ghost" size="icon" aria-label="Sao chép mã" onClick={copyCode}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+                {isAdmin && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon" aria-label="Đổi mã mới">
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="rounded-2xl">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Đổi mã dự án?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Mã cũ sẽ không còn dùng được. Người đã tham gia không bị ảnh hưởng.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Hủy</AlertDialogCancel>
+                        <AlertDialogAction onClick={regenerateCode}>Đổi mã</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </div>
+            ) : (
+              <p className="mt-1 text-sm text-muted-foreground">Đang tải mã…</p>
+            )}
+            <p className="mt-2 flex max-w-md items-start gap-2 text-sm text-muted-foreground">
+              <Info className="mt-0.5 h-4 w-4 shrink-0" />
+              Người mới đăng nhập, chọn “Tham gia dự án có sẵn” và nhập mã này. Sau đó quản trị viên
+              duyệt.
+            </p>
+          </div>
+          <Button variant="hero" size="sm" className="shrink-0" onClick={shareInvite}>
+            {typeof navigator !== "undefined" && "share" in navigator ? (
+              <Share2 className="h-4 w-4" />
+            ) : (
+              <Link2 className="h-4 w-4" />
+            )}
+            Gửi lời mời
+          </Button>
         </div>
-        <Button variant="hero" size="sm" className="shrink-0" onClick={shareInvite}>
-          {typeof navigator !== "undefined" && "share" in navigator ? (
-            <Share2 className="h-4 w-4" />
-          ) : (
-            <Link2 className="h-4 w-4" />
-          )}
-          Gửi lời mời
-        </Button>
       </div>
 
       {isLoading ? (

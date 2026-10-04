@@ -207,11 +207,19 @@ export function ActivityEngagement({
             onClick={toggleLike}
             className={myLike ? "bg-none bg-rose-500 text-white hover:bg-rose-500/90" : ""}
           >
-            <Heart
-              className={`h-4 w-4 transition-transform ${myLike ? "fill-current" : ""} ${
-                pop ? "scale-150" : "scale-100"
-              }`}
-            />
+            <span className="relative flex">
+              {pop && (
+                <Heart
+                  aria-hidden
+                  className="animate-heart-burst absolute inset-0 h-4 w-4 fill-current text-rose-300"
+                />
+              )}
+              <Heart
+                className={`relative h-4 w-4 transition-transform ${myLike ? "fill-current" : ""} ${
+                  pop ? "scale-150" : "scale-100"
+                }`}
+              />
+            </span>
             Thả tim
           </Button>
         )}

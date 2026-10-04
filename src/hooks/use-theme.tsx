@@ -5,7 +5,7 @@ export type Theme = "light" | "dark" | "system";
 export const THEME_KEY = "nkht-theme";
 
 // Chạy sớm trong <head> để trang không nháy sáng/tối khi tải.
-export const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("${THEME_KEY}");var d=t==="dark"||(t==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var e=document.documentElement;if(d)e.classList.add("dark");e.style.colorScheme=d?"dark":"light"}catch(_){}})()`;
+export const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("${THEME_KEY}");var d=t==="dark"||(t==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var e=document.documentElement;if(d)e.classList.add("dark");var h=localStorage.getItem("nkht-hue");var p=location.pathname;if(h&&p!=="/"&&p!=="/auth"){var a=h.split(",");e.style.setProperty("--h",a[0]);if(a[1])e.style.setProperty("--hm",a[1]);if(a[2])e.style.setProperty("--h2",a[2])}e.style.colorScheme=d?"dark":"light"}catch(_){}})()`;
 
 function readTheme(): Theme {
   try {

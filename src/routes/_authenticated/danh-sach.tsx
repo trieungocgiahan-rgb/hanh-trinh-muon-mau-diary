@@ -133,8 +133,8 @@ function ListPage() {
             <div key={label}>
               <h2 className="mb-3 font-display text-xl font-semibold">{label}</h2>
               <div className="grid gap-3 sm:grid-cols-2">
-                {items.map((a) => (
-                  <ActivityCard key={a.id} activity={a} onClick={() => openDetail(a)} />
+                {items.map((a, i) => (
+                  <ActivityCard key={a.id} activity={a} index={i} onClick={() => openDetail(a)} />
                 ))}
               </div>
             </div>

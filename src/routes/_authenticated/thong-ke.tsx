@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/PageHeader";
 import { TypeDot } from "@/components/activity/TypeDot";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useCountUp } from "@/hooks/use-count-up";
 import { useProject } from "@/hooks/use-project";
 import { useActivities } from "@/hooks/use-activities";
 import { ACTIVITY_TYPES, ACTIVITY_STATUSES, typeMeta } from "@/lib/activity-constants";
@@ -25,6 +26,7 @@ function StatCard({
   gradient: string;
   tone?: string;
 }) {
+  const shown = useCountUp(typeof value === "number" ? value : 0);
   return (
     <div
       className={`grain relative overflow-hidden rounded-2xl p-5 shadow-pop dark:saturate-75 ${tone} ${gradient}`}
@@ -34,7 +36,9 @@ function StatCard({
         className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-white/25 blur-2xl"
       />
       <Icon className="relative mb-3 h-7 w-7 opacity-90" />
-      <div className="relative font-display text-4xl font-semibold tabular-nums">{value}</div>
+      <div className="relative font-display text-4xl font-semibold tabular-nums">
+        {typeof value === "number" ? shown : value}
+      </div>
       <div className="relative text-sm opacity-90">{label}</div>
     </div>
   );
@@ -43,6 +47,12 @@ function StatCard({
 function StatsPage() {
   const { current } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
+  const [grown, setGrown] = useState(false);
+  useEffect(() => {
+    if (isLoading) return;
+    const id = requestAnimationFrame(() => setGrown(true));
+    return () => cancelAnimationFrame(id);
+  }, [isLoading]);
 
   const stats = useMemo(() => {
     const list = activities ?? [];
@@ -122,8 +132,11 @@ function StatsPage() {
                 </div>
                 <div className="h-2.5 overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${(t.count / maxType) * 100}%`, backgroundColor: t.colorVar }}
+                    className="h-full rounded-full transition-[width] duration-700 ease-out"
+                    style={{
+                      width: grown ? `${(t.count / maxType) * 100}%` : "0%",
+                      backgroundColor: t.colorVar,
+                    }}
                   />
                 </div>
               </div>
