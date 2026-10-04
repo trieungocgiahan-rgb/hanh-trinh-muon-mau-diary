@@ -16,13 +16,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow, type Key } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/cai-dat")({
-  head: () => ({ meta: [{ title: `Cài đặt dự án — ${BRAND}` }] }),
+  head: () => ({ meta: [{ title: `${tNow("shell.projectSettings")} — ${BRAND}` }] }),
   component: SettingsPage,
 });
 
 function SettingsPage() {
+  const { t } = useI18n();
   const { current, isAdmin } = useProject();
   const branding = useProjectBranding(current?.id);
   const qc = useQueryClient();
@@ -56,9 +58,9 @@ function SettingsPage() {
   if (!isAdmin) {
     return (
       <div className="mx-auto max-w-md py-20 text-center">
-        <p className="text-muted-foreground">Chỉ quản trị viên mới chỉnh được cài đặt dự án.</p>
+        <p className="text-muted-foreground">{t("settings.adminOnly")}</p>
         <Button asChild variant="outline" className="mt-4">
-          <Link to="/lich">Về lịch</Link>
+          <Link to="/lich">{t("settings.backToCalendar")}</Link>
         </Button>
       </div>
     );
@@ -71,7 +73,7 @@ function SettingsPage() {
       const blob = await downscaleImage(file);
       setPendingCover({ blob, preview: URL.createObjectURL(blob) });
     } catch {
-      toast.error("Không đọc được ảnh này");
+      toast.error(t("settings.imageReadFail"));
     }
   }
 
@@ -107,11 +109,11 @@ function SettingsPage() {
         qc.invalidateQueries({ queryKey: ["branding", current.id] }),
       ]);
       setPendingCover(null);
-      toast.success("Đã lưu cài đặt dự án");
+      toast.success(t("settings.saved"));
     } catch (err) {
       console.error(err);
-      toast.error("Chưa lưu được", {
-        description: "Nếu lỗi lặp lại, có thể máy chủ chưa cập nhật phần cài đặt mới.",
+      toast.error(t("settings.saveFail"), {
+        description: t("settings.saveFailDesc"),
       });
     } finally {
       setSaving(false);
@@ -123,14 +125,14 @@ function SettingsPage() {
   return (
     <form onSubmit={save} className="mx-auto max-w-3xl space-y-8">
       <PageHeader
-        eyebrow="Quản trị"
-        title="Cài đặt dự án"
-        description="Làm cho nhật ký mang dấu ấn riêng của dự án này."
+        eyebrow={t("settings.eyebrow")}
+        title={t("shell.projectSettings")}
+        description={t("settings.desc")}
       />
 
       <section className="surface space-y-4 rounded-2xl p-5 sm:p-6">
         <div className="space-y-1.5">
-          <Label htmlFor="n">Tên dự án *</Label>
+          <Label htmlFor="n">{t("settings.name")}</Label>
           <Input
             id="n"
             value={name}
@@ -140,30 +142,28 @@ function SettingsPage() {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="d">Mô tả ngắn</Label>
+          <Label htmlFor="d">{t("settings.description")}</Label>
           <Textarea
             id="d"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={2}
-            placeholder="Hiện dưới tên dự án trên banner."
+            placeholder={t("settings.descriptionPh")}
           />
         </div>
       </section>
 
       <section className="surface rounded-2xl p-5 sm:p-6">
-        <h2 className="font-display text-xl font-semibold">Màu chủ đạo</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Đổi màu nút, tiêu đề nổi bật và nền toàn bộ giao diện của dự án. Bạn thấy kết quả ngay.
-        </p>
+        <h2 className="font-display text-xl font-semibold">{t("settings.color")}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t("settings.colorHelp")}</p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {PROJECT_THEMES.map((t) => {
-            const selected = theme === t.key;
+          {PROJECT_THEMES.map((th) => {
+            const selected = theme === th.key;
             return (
               <button
-                key={t.key}
+                key={th.key}
                 type="button"
-                onClick={() => setTheme(t.key)}
+                onClick={() => setTheme(th.key)}
                 aria-pressed={selected}
                 className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-all ${
                   selected
@@ -174,12 +174,12 @@ function SettingsPage() {
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white shadow-btn"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, oklch(0.78 0.15 ${t.hue + 34}), oklch(0.62 0.19 ${"h2" in t ? t.h2 : t.hue - 76}))`,
+                    backgroundImage: `linear-gradient(135deg, oklch(0.78 0.15 ${th.hue + 34}), oklch(0.62 0.19 ${"h2" in th ? th.h2 : th.hue - 76}))`,
                   }}
                 >
                   {selected && <Check className="h-4 w-4" />}
                 </span>
-                <span className="text-sm font-semibold">{t.label}</span>
+                <span className="text-sm font-semibold">{t(`theme.${th.key}` as Key)}</span>
               </button>
             );
           })}
@@ -187,10 +187,8 @@ function SettingsPage() {
       </section>
 
       <section className="surface rounded-2xl p-5 sm:p-6">
-        <h2 className="font-display text-xl font-semibold">Ảnh bìa</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Hiện ở đầu trang Lịch và trên báo cáo PDF. Nên dùng ảnh ngang, sáng và rõ.
-        </p>
+        <h2 className="font-display text-xl font-semibold">{t("settings.cover")}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t("settings.coverHelp")}</p>
         <input
           ref={fileRef}
           type="file"
@@ -205,11 +203,15 @@ function SettingsPage() {
           {coverShown || coverPath ? (
             <div className="relative aspect-[16/6]">
               {coverShown ? (
-                <img src={coverShown} alt="Ảnh bìa mới" className="h-full w-full object-cover" />
+                <img
+                  src={coverShown}
+                  alt={t("settings.newCoverAlt")}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <SignedImage
                   path={coverPath!}
-                  alt="Ảnh bìa"
+                  alt={t("settings.cover")}
                   className="h-full w-full object-cover"
                 />
               )}
@@ -221,7 +223,7 @@ function SettingsPage() {
               className="flex aspect-[16/6] w-full flex-col items-center justify-center gap-2 text-muted-foreground transition-colors hover:text-primary"
             >
               <ImagePlus className="h-7 w-7" />
-              <span className="text-sm font-medium">Chọn ảnh bìa</span>
+              <span className="text-sm font-medium">{t("settings.pickCover")}</span>
             </button>
           )}
         </div>
@@ -233,7 +235,7 @@ function SettingsPage() {
               size="sm"
               onClick={() => fileRef.current?.click()}
             >
-              <ImagePlus className="h-4 w-4" /> Đổi ảnh
+              <ImagePlus className="h-4 w-4" /> {t("settings.changeCover")}
             </Button>
             <Button
               type="button"
@@ -245,7 +247,7 @@ function SettingsPage() {
                 setCoverPath(null);
               }}
             >
-              <Trash2 className="h-4 w-4" /> Bỏ ảnh bìa
+              <Trash2 className="h-4 w-4" /> {t("settings.removeCover")}
             </Button>
           </div>
         )}
@@ -254,7 +256,7 @@ function SettingsPage() {
       <div className="flex justify-end">
         <Button type="submit" variant="hero" size="lg" disabled={saving || !name.trim()}>
           {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-          Lưu cài đặt
+          {t("settings.saveBtn")}
         </Button>
       </div>
     </form>

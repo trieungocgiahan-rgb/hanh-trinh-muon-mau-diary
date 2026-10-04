@@ -9,15 +9,17 @@ import { LandingDemo } from "@/components/landing/LandingDemo";
 import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
-import { BRAND, TAGLINE_LONG } from "@/lib/brand";
+import { BRAND } from "@/lib/brand";
+import { useI18n, tNow } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 const SITE = "https://hanh-trinh-muon-mau-diary.lovable.app";
-const TITLE = `${BRAND} — ${TAGLINE_LONG}`;
-const DESC =
-  "Nơi cả đội ghi lại từng hoạt động, ảnh và giọng nói của dự án — xem theo lịch, thả tim, bình luận và cùng nhau nhìn lại hành trình.";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  head: () => {
+    const TITLE = `${BRAND} — ${tNow("brand.taglineLong")}`;
+    const DESC = tNow("landing.seoDesc");
+    return {
     meta: [
       { title: TITLE },
       { name: "description", content: DESC },
@@ -42,11 +44,13 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
-  }),
+    };
+  },
   component: LandingPage,
 });
 
 function LandingPage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { session, loading } = useAuth();
 
@@ -72,20 +76,21 @@ function LandingPage() {
               href="#dung-thu"
               className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
             >
-              Dùng thử
+              {t("landing.nav.demo")}
             </a>
             <a
               href="#bat-dau"
               className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
             >
-              Bắt đầu
+              {t("landing.nav.start")}
             </a>
           </nav>
 
           <div className="flex items-center gap-1.5">
+            <LanguageToggle />
             <ThemeToggle />
             <Button asChild variant="hero" size="sm">
-              <Link to="/auth">Đăng nhập</Link>
+              <Link to="/auth">{t("common.signIn")}</Link>
             </Button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSignedUrl } from "@/lib/media";
 import { Loader2, FileText, Play, Pause } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function useSignedUrl(path: string | null | undefined) {
   const [url, setUrl] = useState<string | null>(null);
@@ -43,11 +44,12 @@ export function SignedImage({
 }
 
 export function SignedAudio({ path }: { path: string }) {
+  const { t } = useI18n();
   const url = useSignedUrl(path);
   if (!url) {
     return (
       <div className="flex h-10 items-center gap-2 rounded-full bg-muted px-4 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" /> Đang tải ghi âm…
+        <Loader2 className="h-4 w-4 animate-spin" /> {t("media.loadingAudio")}
       </div>
     );
   }
@@ -67,6 +69,7 @@ export function SignedVideo({ path }: { path: string }) {
 }
 
 export function SignedDocLink({ path, fileName }: { path: string; fileName: string | null }) {
+  const { t } = useI18n();
   const url = useSignedUrl(path);
   const className =
     "flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-foreground";
@@ -74,7 +77,7 @@ export function SignedDocLink({ path, fileName }: { path: string; fileName: stri
     return (
       <span className={`${className} opacity-70`} aria-busy>
         <FileText className="h-4 w-4 text-primary" />
-        <span className="truncate">{fileName ?? "Tài liệu"}</span>
+        <span className="truncate">{fileName ?? t("attach.docs")}</span>
         <Loader2 className="ml-auto h-3 w-3 animate-spin" />
       </span>
     );
@@ -87,7 +90,7 @@ export function SignedDocLink({ path, fileName }: { path: string; fileName: stri
       className={`${className} transition-colors hover:bg-accent`}
     >
       <FileText className="h-4 w-4 text-primary" />
-      <span className="truncate">{fileName ?? "Tài liệu"}</span>
+      <span className="truncate">{fileName ?? t("attach.docs")}</span>
     </a>
   );
 }

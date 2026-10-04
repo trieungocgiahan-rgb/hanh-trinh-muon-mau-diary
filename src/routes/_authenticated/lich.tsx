@@ -9,12 +9,13 @@ import { PageHeader } from "@/components/PageHeader";
 import { SignedImage } from "@/components/activity/SignedMedia";
 import { useProjectBranding } from "@/hooks/use-project-branding";
 import { TypeDot } from "@/components/activity/TypeDot";
-import { ACTIVITY_TYPES, MONTH_NAMES, WEEKDAY_SHORT, typeMeta } from "@/lib/activity-constants";
+import { ACTIVITY_TYPES, MONTH_KEYS, WEEKDAY_KEYS, typeMeta } from "@/lib/activity-constants";
 import { ChevronLeft, ChevronRight, Plus, Loader2, CalendarHeart, ImageIcon } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/lich")({
-  head: () => ({ meta: [{ title: `Lịch hoạt động — ${BRAND}` }] }),
+  head: () => ({ meta: [{ title: `${tNow("lich.pageTitle")} — ${BRAND}` }] }),
   component: CalendarPage,
 });
 
@@ -27,6 +28,7 @@ function photoCountOf(a: ActivityWithExtras) {
 }
 
 function CalendarPage() {
+  const { t, lang } = useI18n();
   const { current, canEdit, isAdmin, loading: pLoading } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
   const { openCreate, openDetail } = useActivityDialog();
@@ -69,9 +71,7 @@ function CalendarPage() {
   if (!current) {
     return (
       <div className="mx-auto max-w-md py-20 text-center">
-        <p className="text-muted-foreground">
-          Bạn chưa thuộc dự án nào. Hãy liên hệ quản trị viên để được mời.
-        </p>
+        <p className="text-muted-foreground">{t("lich.noProject")}</p>
       </div>
     );
   }
@@ -80,34 +80,37 @@ function CalendarPage() {
   const monthItems = (activities ?? []).filter((a) => a.date.startsWith(monthPrefix));
   const monthPeople = monthItems.reduce((n, a) => n + (a.participant_count ?? 0), 0);
 
-  const monthSummary = `${monthItems.length} hoạt động trong ${MONTH_NAMES[cursor.getMonth()].toLowerCase()}${
-    monthPeople ? ` · ${monthPeople} lượt tham gia` : ""
-  }`;
+  const monthName = t(MONTH_KEYS[cursor.getMonth()]);
+  const monthSummary =
+    t(monthItems.length === 1 ? "lich.summary.one" : "lich.summary.other", {
+      n: monthItems.length,
+      month: lang === "vi" ? monthName.toLowerCase() : monthName,
+    }) + (monthPeople ? t("lich.people", { n: monthPeople }) : "");
   const monthSwitcher = (
     <div className="surface flex items-center gap-1 rounded-full p-1">
       <Button
         variant="ghost"
         size="icon"
         className="h-8 w-8"
-        aria-label="Tháng trước"
+        aria-label={t("lich.prevMonth")}
         onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
       <span className="min-w-28 text-center font-display text-base font-semibold">
-        {MONTH_NAMES[cursor.getMonth()]} {cursor.getFullYear()}
+        {monthName} {cursor.getFullYear()}
       </span>
       <Button
         variant="ghost"
         size="icon"
         className="h-8 w-8"
-        aria-label="Tháng sau"
+        aria-label={t("lich.nextMonth")}
         onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>
       <Button variant="secondary" size="sm" onClick={() => setCursor(new Date())}>
-        Hôm nay
+        {t("lich.today")}
       </Button>
     </div>
   );
@@ -121,7 +124,7 @@ function CalendarPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/80">
-                {current.org_name || "Lịch hành trình"}
+                {current.org_name || t("lich.eyebrowFallback")}
               </p>
               <h1 className="mt-1 text-balance font-display text-3xl font-semibold leading-tight sm:text-4xl">
                 {current.name}
@@ -140,7 +143,7 @@ function CalendarPage() {
         </div>
       ) : (
         <PageHeader
-          eyebrow={current.org_name || "Lịch hành trình"}
+          eyebrow={current.org_name || t("lich.eyebrowFallback")}
           title={current.name}
           description={current.description || monthSummary}
           actions={monthSwitcher}
@@ -149,24 +152,24 @@ function CalendarPage() {
 
       <div className="space-y-3">
         <ul className="flex flex-wrap gap-x-4 gap-y-1.5 px-1">
-          {ACTIVITY_TYPES.map((t) => (
-            <li key={t.value} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <TypeDot color={t.colorVar} />
-              {t.label}
+          {ACTIVITY_TYPES.map((ty) => (
+            <li key={ty.value} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <TypeDot color={ty.colorVar} />
+              {t(ty.labelKey)}
             </li>
           ))}
         </ul>
 
         <div key={monthPrefix} className="surface animate-pop-in overflow-hidden rounded-2xl">
           <div className="grid grid-cols-7 border-b border-border/70 bg-secondary/40 text-center">
-            {WEEKDAY_SHORT.map((w, i) => (
+            {WEEKDAY_KEYS.map((w, i) => (
               <div
                 key={w}
                 className={`py-2.5 text-[11px] font-semibold uppercase tracking-wider ${
                   i >= 5 ? "text-primary/80" : "text-muted-foreground"
                 }`}
               >
-                {w}
+                {t(w)}
               </div>
             ))}
           </div>
@@ -205,7 +208,7 @@ function CalendarPage() {
                         type="button"
                         onClick={() => openCreate(key)}
                         className="hidden h-5 w-5 items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-primary/10 hover:text-primary focus-visible:opacity-100 group-hover:opacity-100 sm:flex"
-                        aria-label={`Thêm hoạt động ngày ${d.getDate()}`}
+                        aria-label={t("lich.addOnDay", { d: d.getDate() })}
                       >
                         <Plus className="h-3.5 w-3.5" />
                       </button>
@@ -240,7 +243,7 @@ function CalendarPage() {
                     })}
                     {items.length > 3 && (
                       <span className="px-1 text-[10px] text-muted-foreground">
-                        +{items.length - 3} nữa
+                        {t("lich.more", { n: items.length - 3 })}
                       </span>
                     )}
                   </div>
@@ -267,53 +270,53 @@ function CalendarPage() {
         <section className="surface rounded-2xl p-6 sm:p-8">
           <CalendarHeart className="h-8 w-8 text-primary" />
           <h2 className="mt-3 font-display text-2xl font-semibold">
-            {canEdit ? "Bắt đầu nhật ký của đội" : "Chưa có hoạt động nào"}
+            {canEdit ? t("lich.empty.title") : t("lich.empty.titleViewer")}
           </h2>
           {canEdit ? (
             <>
               <ol className="mt-5 grid gap-4 sm:grid-cols-3">
-                {[
-                  ["1", "Bấm “Ghi hoạt động”", "Hoặc chạm vào một ngày trên lịch."],
-                  ["2", "Điền tên và ngày", "Thêm ảnh hoặc ghi âm ngay tại chỗ nếu có."],
-                  ["3", "Lưu lại", "Cả đội thấy ngay trên lịch và trong danh sách."],
-                ].map(([n, t, d]) => (
+                {(
+                  [
+                    ["1", "lich.step1.t", "lich.step1.d"],
+                    ["2", "lich.step2.t", "lich.step2.d"],
+                    ["3", "lich.step3.t", "lich.step3.d"],
+                  ] as const
+                ).map(([n, tk, dk]) => (
                   <li key={n} className="flex gap-3">
                     <span className="font-display text-3xl font-semibold leading-none text-primary/80">
                       {n}
                     </span>
                     <div>
-                      <p className="font-semibold">{t}</p>
-                      <p className="mt-0.5 text-sm text-muted-foreground">{d}</p>
+                      <p className="font-semibold">{t(tk)}</p>
+                      <p className="mt-0.5 text-sm text-muted-foreground">{t(dk)}</p>
                     </div>
                   </li>
                 ))}
               </ol>
               <div className="mt-6 flex flex-wrap gap-2">
                 <Button variant="hero" onClick={() => openCreate()}>
-                  <Plus className="h-4 w-4" /> Ghi hoạt động đầu tiên
+                  <Plus className="h-4 w-4" /> {t("lich.firstActivity")}
                 </Button>
                 {isAdmin && (
                   <Button asChild variant="outline">
-                    <Link to="/thanh-vien">Mời thành viên</Link>
+                    <Link to="/thanh-vien">{t("lich.inviteMembers")}</Link>
                   </Button>
                 )}
               </div>
             </>
           ) : (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Khi thành viên ghi hoạt động, bạn sẽ thấy chúng ở đây.
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">{t("lich.viewerEmpty")}</p>
           )}
         </section>
       ) : (
         <section>
           <div className="mb-4 flex items-end justify-between">
-            <h2 className="font-display text-2xl font-semibold">Gần đây</h2>
+            <h2 className="font-display text-2xl font-semibold">{t("lich.recent")}</h2>
             <Link
               to="/danh-sach"
               className="text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
-              Xem tất cả
+              {t("lich.viewAll")}
             </Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">

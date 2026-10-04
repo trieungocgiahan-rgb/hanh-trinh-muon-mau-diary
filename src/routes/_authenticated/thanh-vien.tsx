@@ -5,7 +5,7 @@ import { formatCode } from "@/components/Onboarding";
 import { supabase } from "@/integrations/supabase/client";
 import { useProject } from "@/hooks/use-project";
 import { useAuth } from "@/hooks/use-auth";
-import { ROLE_LABELS, type ProjectRole } from "@/lib/activity-constants";
+import { ROLE_LABEL_KEYS, type ProjectRole } from "@/lib/activity-constants";
 import {
   Select,
   SelectContent,
@@ -28,9 +28,10 @@ import {
 import { toast } from "sonner";
 import { Loader2, UserMinus, Info, Check, X, Link2, Share2, Copy, RefreshCw } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/thanh-vien")({
-  head: () => ({ meta: [{ title: `Thành viên — ${BRAND}` }] }),
+  head: () => ({ meta: [{ title: `${tNow("nav.members")} — ${BRAND}` }] }),
   component: MembersPage,
 });
 
@@ -42,6 +43,7 @@ interface Member {
 }
 
 function MembersPage() {
+  const { t } = useI18n();
   const { current, isAdmin } = useProject();
   const { user } = useAuth();
   const qc = useQueryClient();
@@ -85,42 +87,48 @@ function MembersPage() {
   async function copyCode() {
     if (!inviteCode) return;
     await navigator.clipboard.writeText(formatCode(inviteCode));
-    toast.success("Đã sao chép mã dự án");
+    toast.success(t("members.codeCopied"));
   }
 
   async function regenerateCode() {
     const { error } = await supabase.rpc("regenerate_invite_code", { _project_id: current!.id });
     if (error) {
-      toast.error("Không đổi được mã");
+      toast.error(t("members.codeChangeFail"));
       return;
     }
-    toast.success("Đã đổi mã mới", { description: "Mã cũ không còn dùng được." });
+    toast.success(t("members.codeChanged"), { description: t("members.codeChangedDesc") });
     qc.invalidateQueries({ queryKey: ["invite-code", current?.id] });
   }
 
   async function shareInvite() {
     const url = window.location.origin;
-    const codeLine = inviteCode ? ` Mã dự án: ${formatCode(inviteCode)}.` : "";
-    const text = `Mời bạn vào ${BRAND} của ${current?.name ?? "dự án"}. Đăng nhập bằng Google, chọn "Tham gia dự án có sẵn" rồi nhập mã.${codeLine}`;
+    const codeLine = inviteCode
+      ? t("members.invite.codeLine", { code: formatCode(inviteCode) })
+      : "";
+    const text = t("members.invite.text", {
+      brand: BRAND,
+      project: current?.name ?? t("members.projectFallback"),
+      code: codeLine,
+    });
     try {
       if (navigator.share) {
         await navigator.share({ title: BRAND, text, url });
         return;
       }
       await navigator.clipboard.writeText(`${text} ${url}`);
-      toast.success("Đã sao chép lời mời", { description: "Dán vào Zalo, Messenger hoặc email." });
+      toast.success(t("members.inviteCopied"), { description: t("members.inviteCopiedDesc") });
     } catch (e) {
-      if ((e as Error)?.name !== "AbortError") toast.error("Không sao chép được link mời");
+      if ((e as Error)?.name !== "AbortError") toast.error(t("members.inviteCopyFail"));
     }
   }
 
   async function changeRole(member: Member, role: ProjectRole) {
     const { error } = await supabase.from("memberships").update({ role }).eq("id", member.id);
     if (error) {
-      toast.error("Không đổi được vai trò");
+      toast.error(t("members.roleChangeFail"));
       return;
     }
-    toast.success(`Đã đổi vai trò thành ${ROLE_LABELS[role]}`);
+    toast.success(t("members.roleChanged", { role: t(ROLE_LABEL_KEYS[role]) }));
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
     qc.invalidateQueries({ queryKey: ["members-pending", current?.id] });
   }
@@ -131,10 +139,10 @@ function MembersPage() {
       .update({ role: "member" })
       .eq("id", member.id);
     if (error) {
-      toast.error("Không duyệt được thành viên");
+      toast.error(t("members.approveFail"));
       return;
     }
-    toast.success(`Đã duyệt ${member.full_name ?? "thành viên"} 🎉`);
+    toast.success(t("members.approved", { name: member.full_name ?? t("members.memberLower") }));
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
     qc.invalidateQueries({ queryKey: ["members-pending", current?.id] });
   }
@@ -142,10 +150,10 @@ function MembersPage() {
   async function removeMember(member: Member) {
     const { error } = await supabase.from("memberships").delete().eq("id", member.id);
     if (error) {
-      toast.error("Không xóa được thành viên");
+      toast.error(t("members.removeFail"));
       return;
     }
-    toast.success("Đã xóa thành viên khỏi dự án");
+    toast.success(t("members.removed"));
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
     qc.invalidateQueries({ queryKey: ["members-pending", current?.id] });
   }
@@ -156,54 +164,58 @@ function MembersPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Cả đội"
-        title="Thành viên"
-        description={`Những người cùng viết nên hành trình của ${current?.name ?? "dự án"}`}
+        eyebrow={t("members.eyebrow")}
+        title={t("nav.members")}
+        description={t("members.desc", { name: current?.name ?? t("members.projectFallback") })}
       />
 
       <div className="surface rounded-2xl p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-              Mã dự án
+              {t("members.code")}
             </p>
             {inviteCode ? (
               <div className="mt-1 flex items-center gap-2">
                 <span className="font-mono text-3xl font-semibold tracking-[0.2em]">
                   {formatCode(inviteCode)}
                 </span>
-                <Button variant="ghost" size="icon" aria-label="Sao chép mã" onClick={copyCode}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t("members.copyCode")}
+                  onClick={copyCode}
+                >
                   <Copy className="h-4 w-4" />
                 </Button>
                 {isAdmin && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" aria-label="Đổi mã mới">
+                      <Button variant="ghost" size="icon" aria-label={t("members.changeCode")}>
                         <RefreshCw className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="rounded-2xl">
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Đổi mã dự án?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Mã cũ sẽ không còn dùng được. Người đã tham gia không bị ảnh hưởng.
-                        </AlertDialogDescription>
+                        <AlertDialogTitle>{t("members.changeTitle")}</AlertDialogTitle>
+                        <AlertDialogDescription>{t("members.changeBody")}</AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Hủy</AlertDialogCancel>
-                        <AlertDialogAction onClick={regenerateCode}>Đổi mã</AlertDialogAction>
+                        <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                        <AlertDialogAction onClick={regenerateCode}>
+                          {t("members.changeConfirm")}
+                        </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
                 )}
               </div>
             ) : (
-              <p className="mt-1 text-sm text-muted-foreground">Đang tải mã…</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t("members.codeLoading")}</p>
             )}
             <p className="mt-2 flex max-w-md items-start gap-2 text-sm text-muted-foreground">
               <Info className="mt-0.5 h-4 w-4 shrink-0" />
-              Người mới đăng nhập, chọn “Tham gia dự án có sẵn” và nhập mã này. Sau đó quản trị viên
-              duyệt.
+              {t("members.codeHelp")}
             </p>
           </div>
           <Button variant="hero" size="sm" className="shrink-0" onClick={shareInvite}>
@@ -212,7 +224,7 @@ function MembersPage() {
             ) : (
               <Link2 className="h-4 w-4" />
             )}
-            Gửi lời mời
+            {t("members.sendInvite")}
           </Button>
         </div>
       </div>
@@ -226,7 +238,7 @@ function MembersPage() {
           {isAdmin && pendingMembers.length > 0 && (
             <div>
               <h2 className="mb-2 flex items-center gap-2 font-display text-xl font-semibold">
-                Chờ duyệt
+                {t("members.pending")}
                 <span className="rounded-full bg-sunny px-2 py-0.5 text-xs font-semibold text-sunny-foreground">
                   {pendingMembers.length}
                 </span>
@@ -241,8 +253,10 @@ function MembersPage() {
                       {(m.full_name ?? "?").charAt(0).toUpperCase()}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate font-medium">{m.full_name ?? "Người dùng"}</div>
-                      <div className="text-xs text-muted-foreground">Đang chờ được duyệt</div>
+                      <div className="truncate font-medium">
+                        {m.full_name ?? t("common.unknownUser")}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{t("members.waiting")}</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -251,7 +265,7 @@ function MembersPage() {
                         className="rounded-full"
                         onClick={() => approveMember(m)}
                       >
-                        <Check className="h-4 w-4" /> Duyệt
+                        <Check className="h-4 w-4" /> {t("members.approve")}
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -265,19 +279,20 @@ function MembersPage() {
                         </AlertDialogTrigger>
                         <AlertDialogContent className="rounded-2xl">
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Từ chối yêu cầu này?</AlertDialogTitle>
+                            <AlertDialogTitle>{t("members.rejectTitle")}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              {m.full_name ?? "Người dùng"} sẽ không được tham gia dự án. Họ có thể
-                              đăng ký lại sau.
+                              {t("members.rejectBody", {
+                                name: m.full_name ?? t("common.unknownUser"),
+                              })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => removeMember(m)}
                               className="bg-none bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
                             >
-                              Từ chối
+                              {t("members.reject")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -300,12 +315,14 @@ function MembersPage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-medium">
-                    {m.full_name ?? "Người dùng"}
+                    {m.full_name ?? t("common.unknownUser")}
                     {m.user_id === user?.id && (
-                      <span className="ml-1.5 text-xs text-muted-foreground">(bạn)</span>
+                      <span className="ml-1.5 text-xs text-muted-foreground">
+                        {t("members.you")}
+                      </span>
                     )}
                   </div>
-                  <div className="text-xs text-muted-foreground">{ROLE_LABELS[m.role]}</div>
+                  <div className="text-xs text-muted-foreground">{t(ROLE_LABEL_KEYS[m.role])}</div>
                 </div>
 
                 {isAdmin && m.user_id !== user?.id ? (
@@ -315,9 +332,9 @@ function MembersPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="admin">Quản trị</SelectItem>
-                        <SelectItem value="member">Thành viên</SelectItem>
-                        <SelectItem value="viewer">Người xem</SelectItem>
+                        <SelectItem value="admin">{t("role.admin")}</SelectItem>
+                        <SelectItem value="member">{t("role.member")}</SelectItem>
+                        <SelectItem value="viewer">{t("role.viewer")}</SelectItem>
                       </SelectContent>
                     </Select>
                     <AlertDialog>
@@ -332,18 +349,20 @@ function MembersPage() {
                       </AlertDialogTrigger>
                       <AlertDialogContent className="rounded-2xl">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Xóa thành viên này?</AlertDialogTitle>
+                          <AlertDialogTitle>{t("members.removeTitle")}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            {m.full_name ?? "Người dùng"} sẽ không còn truy cập được dự án này.
+                            {t("members.removeBody", {
+                              name: m.full_name ?? t("common.unknownUser"),
+                            })}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Hủy</AlertDialogCancel>
+                          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => removeMember(m)}
                             className="bg-none bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
                           >
-                            Xóa
+                            {t("common.delete")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -351,7 +370,7 @@ function MembersPage() {
                   </div>
                 ) : (
                   <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                    {ROLE_LABELS[m.role]}
+                    {t(ROLE_LABEL_KEYS[m.role])}
                   </span>
                 )}
               </div>

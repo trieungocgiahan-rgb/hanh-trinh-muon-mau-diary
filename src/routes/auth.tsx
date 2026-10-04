@@ -8,20 +8,16 @@ import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import logoAsset from "@/assets/logo.png.asset.json";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: `Đăng nhập — ${BRAND}` },
-      {
-        name: "description",
-        content: "Đăng nhập bằng Google để ghi nhật ký chung cùng cả đội.",
-      },
-      { property: "og:title", content: `Đăng nhập — ${BRAND}` },
-      {
-        property: "og:description",
-        content: "Đăng nhập bằng Google để ghi nhật ký chung cùng cả đội.",
-      },
+      { title: `${tNow("common.signIn")} — ${BRAND}` },
+      { name: "description", content: tNow("auth.desc") },
+      { property: "og:title", content: `${tNow("common.signIn")} — ${BRAND}` },
+      { property: "og:description", content: tNow("auth.desc") },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -30,6 +26,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { session, loading } = useAuth();
   const [busy, setBusy] = useState(false);
@@ -45,7 +42,7 @@ function AuthPage() {
     });
     if (result.error) {
       setBusy(false);
-      toast.error("Không thể đăng nhập với Google");
+      toast.error(t("auth.error"));
       return;
     }
     if (result.redirected) return;
@@ -54,7 +51,8 @@ function AuthPage() {
 
   return (
     <div className="grain relative flex min-h-screen items-center justify-center overflow-hidden bg-mesh-warm px-4 py-10">
-      <div className="absolute right-4 top-4">
+      <div className="absolute right-4 top-4 flex items-center gap-1.5">
+        <LanguageToggle />
         <ThemeToggle />
       </div>
       <div className="surface relative w-full max-w-md animate-pop-in rounded-2xl p-7 text-center shadow-pop sm:p-9">
@@ -63,12 +61,12 @@ function AuthPage() {
           alt={BRAND}
           className="mx-auto mb-5 h-16 w-16 rounded-xl object-cover shadow-pop ring-4 ring-card"
         />
-        <p className="font-display text-lg font-medium italic text-primary">Chào bạn trở lại</p>
+        <p className="font-display text-lg font-medium italic text-primary">{t("auth.welcomeBack")}</p>
         <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground">
           {BRAND}
         </h1>
         <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
-          Đăng nhập hoặc tạo tài khoản chỉ bằng một bước với Google.
+          {t("auth.intro")}
         </p>
 
         <Button
@@ -101,11 +99,11 @@ function AuthPage() {
               />
             </svg>
           )}
-          Tiếp tục với Google
+          {t("auth.google")}
         </Button>
 
         <p className="mt-4 text-xs text-muted-foreground">
-          Tài khoản mới sẽ ở trạng thái chờ quản trị viên hoặc thành viên duyệt.
+          {t("auth.pendingNote")}
         </p>
 
         <Link
@@ -113,7 +111,7 @@ function AuthPage() {
           className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary"
         >
           <ArrowLeft className="h-4 w-4" />
-          Về trang giới thiệu
+          {t("auth.backToLanding")}
         </Link>
       </div>
     </div>

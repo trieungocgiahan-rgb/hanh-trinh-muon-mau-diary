@@ -34,12 +34,14 @@ import {
 } from "@/lib/activity-constants";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
 }
 
 export function ActivityFormDialog() {
+  const { t } = useI18n();
   const { createOpen, setCreateOpen, editing, presetDate, closeAll } = useActivityDialog();
   const { current } = useProject();
   const { user } = useAuth();
@@ -121,7 +123,7 @@ export function ActivityFormDialog() {
     e.preventDefault();
     if (!current || !user) return;
     if (!title.trim()) {
-      toast.error("Hãy nhập tên hoạt động");
+      toast.error(t("form.nameRequired"));
       return;
     }
     setSaving(true);
@@ -143,7 +145,7 @@ export function ActivityFormDialog() {
         const { error } = await supabase.from("activities").update(payload).eq("id", editing.id);
         if (error) throw error;
         await uploadPending(editing.id);
-        toast.success("Đã cập nhật hoạt động ✨");
+        toast.success(t("form.updated"));
       } else {
         const { data, error } = await supabase
           .from("activities")
@@ -152,14 +154,14 @@ export function ActivityFormDialog() {
           .single();
         if (error) throw error;
         await uploadPending(data.id);
-        toast.success("Đã ghi vào nhật ký! 🎉", { description: title.trim() });
+        toast.success(t("form.logged"), { description: title.trim() });
       }
       qc.invalidateQueries({ queryKey: ["activities", current.id] });
       closeAll();
     } catch (err) {
       console.error(err);
-      toast.error("Lưu không thành công", {
-        description: "Bạn kiểm tra lại quyền hoặc thử lại nhé.",
+      toast.error(t("form.saveFail"), {
+        description: t("form.saveFailDesc"),
       });
     } finally {
       setSaving(false);
@@ -171,7 +173,7 @@ export function ActivityFormDialog() {
       <DialogContent className="max-h-[92vh] gap-0 overflow-hidden rounded-2xl p-0 max-sm:left-0 max-sm:top-0 max-sm:h-[100dvh] max-sm:max-h-none max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none sm:max-w-2xl">
         <DialogHeader className="border-b bg-gradient-sun px-5 py-4 dark:bg-none dark:bg-secondary sm:px-6">
           <DialogTitle className="text-xl text-sunny-foreground dark:text-foreground">
-            {editing ? "Sửa hoạt động" : "Ghi hoạt động mới"}
+            {editing ? t("form.titleEdit") : t("form.titleNew")}
           </DialogTitle>
         </DialogHeader>
 
@@ -181,12 +183,12 @@ export function ActivityFormDialog() {
         >
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5 sm:px-6">
             <div className="space-y-1.5">
-              <Label htmlFor="t">Tên hoạt động *</Label>
+              <Label htmlFor="t">{t("form.name")}</Label>
               <Input
                 id="t"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="VD: Workshop vẽ tranh cùng các bé"
+                placeholder={t("form.namePh")}
                 maxLength={200}
                 required
               />
@@ -194,7 +196,7 @@ export function ActivityFormDialog() {
 
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="d">Ngày *</Label>
+                <Label htmlFor="d">{t("form.date")}</Label>
                 <Input
                   id="d"
                   type="date"
@@ -204,7 +206,7 @@ export function ActivityFormDialog() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="p">Số người tham gia</Label>
+                <Label htmlFor="p">{t("form.participants")}</Label>
                 <Input
                   id="p"
                   type="number"
@@ -218,17 +220,17 @@ export function ActivityFormDialog() {
 
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-1.5">
-                <Label>Loại hoạt động</Label>
+                <Label>{t("form.type")}</Label>
                 <Select value={type} onValueChange={(v) => setType(v as ActivityType)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {ACTIVITY_TYPES.map((t) => (
-                      <SelectItem key={t.value} value={t.value}>
+                    {ACTIVITY_TYPES.map((ty) => (
+                      <SelectItem key={ty.value} value={ty.value}>
                         <span className="flex items-center gap-2">
-                          <TypeDot color={t.colorVar} />
-                          {t.label}
+                          <TypeDot color={ty.colorVar} />
+                          {t(ty.labelKey)}
                         </span>
                       </SelectItem>
                     ))}
@@ -236,7 +238,7 @@ export function ActivityFormDialog() {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label>Trạng thái</Label>
+                <Label>{t("form.status")}</Label>
                 <Select value={status} onValueChange={(v) => setStatus(v as ActivityStatus)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -244,7 +246,7 @@ export function ActivityFormDialog() {
                   <SelectContent>
                     {ACTIVITY_STATUSES.map((s) => (
                       <SelectItem key={s.value} value={s.value}>
-                        {s.label}
+                        {t(s.labelKey)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -253,7 +255,7 @@ export function ActivityFormDialog() {
             </div>
 
             <div className="space-y-2 rounded-2xl bg-muted/40 p-4">
-              <Label className="text-sm font-semibold">Ảnh, ghi âm &amp; tệp đính kèm</Label>
+              <Label className="text-sm font-semibold">{t("form.attachments")}</Label>
               <AttachmentManager
                 pending={pending}
                 setPending={setPending}
@@ -263,41 +265,41 @@ export function ActivityFormDialog() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="loc">Địa điểm</Label>
+              <Label htmlFor="loc">{t("form.location")}</Label>
               <Input
                 id="loc"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="VD: Mái ấm Hoa Hồng, Q.3"
+                placeholder={t("form.locationPh")}
                 maxLength={200}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="sum">Diễn biến chính</Label>
+              <Label htmlFor="sum">{t("detail.summary")}</Label>
               <Textarea
                 id="sum"
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
-                placeholder="Kể lại điều đã diễn ra…"
+                placeholder={t("form.summaryPh")}
                 rows={4}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="hl">Quote / Điểm nổi bật</Label>
+              <Label htmlFor="hl">{t("form.highlight")}</Label>
               <Textarea
                 id="hl"
                 value={highlight}
                 onChange={(e) => setHighlight(e.target.value)}
-                placeholder='VD: "Con thích được vẽ ước mơ của mình!"'
+                placeholder={t("form.highlightPh")}
                 rows={2}
               />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="is">Vấn đề phát sinh</Label>
+                <Label htmlFor="is">{t("detail.issues")}</Label>
                 <Textarea
                   id="is"
                   value={issues}
@@ -306,7 +308,7 @@ export function ActivityFormDialog() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="ns">Bước tiếp theo</Label>
+                <Label htmlFor="ns">{t("detail.next")}</Label>
                 <Textarea
                   id="ns"
                   value={nextSteps}
@@ -319,15 +321,15 @@ export function ActivityFormDialog() {
 
           <DialogFooter className="gap-2 border-t bg-card px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] max-sm:flex-row max-sm:[&>button:last-child]:flex-1 sm:px-6 sm:py-4">
             <Button type="button" variant="ghost" onClick={closeAll}>
-              Hủy
+              {t("common.cancel")}
             </Button>
             <Button type="submit" variant="hero" disabled={saving}>
               {saving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : editing ? (
-                "Lưu thay đổi"
+                t("form.saveChanges")
               ) : (
-                "Ghi vào nhật ký"
+                t("form.logIt")
               )}
             </Button>
           </DialogFooter>

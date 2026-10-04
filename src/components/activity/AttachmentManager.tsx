@@ -15,6 +15,7 @@ import {
   Plus,
   ExternalLink,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export interface PendingItem {
   id: string;
@@ -32,6 +33,7 @@ interface Props {
 }
 
 export function AttachmentManager({ pending, setPending, existing = [], onDeleteExisting }: Props) {
+  const { t } = useI18n();
   const photoRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
@@ -129,8 +131,8 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
         }`}
       >
         <ImagePlus className="mb-2 h-7 w-7 text-primary" />
-        <p className="text-sm font-medium">Kéo thả hoặc bấm để thêm ảnh</p>
-        <p className="text-xs text-muted-foreground">Có thể chọn nhiều ảnh cùng lúc</p>
+        <p className="text-sm font-medium">{t("attach.drop")}</p>
+        <p className="text-xs text-muted-foreground">{t("attach.multi")}</p>
       </div>
 
       {/* photo previews */}
@@ -140,7 +142,7 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
             <div key={a.id} className="group relative aspect-square overflow-hidden rounded-xl">
               <SignedImage
                 path={a.storage_path!}
-                alt={a.file_name ?? "ảnh"}
+                alt={a.file_name ?? t("detail.photoAlt")}
                 className="h-full w-full object-cover"
               />
               {onDeleteExisting && (
@@ -182,16 +184,16 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
           className="sm:hidden"
           onClick={() => cameraRef.current?.click()}
         >
-          <Camera className="h-4 w-4" /> Chụp ảnh
+          <Camera className="h-4 w-4" /> {t("attach.camera")}
         </Button>
         <Button type="button" variant="outline" size="sm" onClick={() => videoRef.current?.click()}>
           <Video className="h-4 w-4" /> Video
         </Button>
         <Button type="button" variant="outline" size="sm" onClick={() => docRef.current?.click()}>
-          <FileUp className="h-4 w-4" /> Tài liệu
+          <FileUp className="h-4 w-4" /> {t("attach.docs")}
         </Button>
         <Button type="button" variant="outline" size="sm" onClick={() => audioRef.current?.click()}>
-          <Plus className="h-4 w-4" /> Tải ghi âm
+          <Plus className="h-4 w-4" /> {t("attach.uploadAudio")}
         </Button>
         <VoiceRecorder
           onRecorded={(blob) =>
@@ -211,7 +213,7 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
       {/* link adder */}
       <div className="space-y-1.5">
         <Label className="flex items-center gap-1.5 text-xs">
-          <LinkIcon className="h-3.5 w-3.5" /> Liên kết ngoài (Google Drive, v.v.)
+          <LinkIcon className="h-3.5 w-3.5" /> {t("attach.link")}
         </Label>
         <div className="flex gap-2">
           <Input
@@ -226,7 +228,7 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
             placeholder="https://..."
           />
           <Button type="button" variant="secondary" size="sm" onClick={addLink}>
-            Thêm
+            {t("attach.add")}
           </Button>
         </div>
       </div>

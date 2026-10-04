@@ -8,6 +8,7 @@ import { useApplyTheme, useProjectBranding } from "@/hooks/use-project-branding"
 import { ACTIVITY_TYPES, statusMeta, typeMeta } from "@/lib/activity-constants";
 import { Button } from "@/components/ui/button";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow, type Key } from "@/lib/i18n";
 
 type Search = { from?: string; to?: string; auto?: boolean };
 
@@ -22,14 +23,14 @@ export const Route = createFileRoute("/in-bao-cao")({
     const { data } = await supabase.auth.getSession();
     if (!data.session) throw redirect({ to: "/auth" });
   },
-  head: () => ({ meta: [{ title: `Báo cáo hành trình — ${BRAND}` }] }),
+  head: () => ({ meta: [{ title: `${tNow("print.pageTitle")} — ${BRAND}` }] }),
   component: PrintReport,
 });
 
 const MAX_PHOTOS = 4;
 
-function fmt(d: string) {
-  return new Date(d + "T00:00:00").toLocaleDateString("vi-VN", {
+function fmtWith(d: string, locale: string) {
+  return new Date(d + "T00:00:00").toLocaleDateString(locale, {
     day: "numeric",
     month: "numeric",
     year: "numeric",
@@ -49,6 +50,8 @@ function preload(urls: string[]): Promise<void> {
 }
 
 function PrintReport() {
+  const { t, locale } = useI18n();
+  const fmt = (d: string) => fmtWith(d, locale);
   const { from, to, auto } = Route.useSearch();
   const { current, loading } = useProject();
   const { data: all, isLoading } = useActivities(current?.id);
@@ -154,7 +157,7 @@ function PrintReport() {
       ? `${from ? fmt(from) : "…"} – ${to ? fmt(to) : "…"}`
       : activities.length
         ? `${fmt(activities[0].date)} – ${fmt(activities[activities.length - 1].date)}`
-        : "Toàn bộ hành trình";
+        : t("print.fullPeriod");
   const coverUrl = branding.coverPath ? urls[branding.coverPath] : undefined;
 
   return (
@@ -174,20 +177,18 @@ function PrintReport() {
         <div className="mx-auto flex max-w-[210mm] items-center justify-between gap-3 px-4 py-3">
           <Button asChild variant="ghost" size="sm">
             <Link to="/bao-cao">
-              <ArrowLeft className="h-4 w-4" /> Quay lại
+              <ArrowLeft className="h-4 w-4" /> {t("common.back")}
             </Link>
           </Button>
           <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-muted-foreground sm:block">
-              Trong hộp thoại in, chọn “Lưu dưới dạng PDF”.
-            </span>
+            <span className="hidden text-xs text-muted-foreground sm:block">{t("print.hint")}</span>
             <Button variant="hero" size="sm" disabled={!ready} onClick={() => window.print()}>
               {ready ? (
                 <Printer className="h-4 w-4" />
               ) : (
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
-              {ready ? "In / Lưu PDF" : "Đang tải ảnh…"}
+              {ready ? t("print.button") : t("print.loadingImages")}
             </Button>
           </div>
         </div>
@@ -199,7 +200,8 @@ function PrintReport() {
           {coverUrl && <img src={coverUrl} alt="" className="h-[62mm] w-full object-cover" />}
           <div className="bg-gradient-hero px-8 py-9 text-white">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/85">
-              Báo cáo hành trình{current.org_name ? ` · ${current.org_name}` : ""}
+              {t("print.pageTitle")}
+              {current.org_name ? ` · ${current.org_name}` : ""}
             </p>
             <h1 className="mt-2 text-balance font-display text-4xl font-semibold leading-tight">
               {current.name}
@@ -208,7 +210,7 @@ function PrintReport() {
               <p className="mt-2 max-w-xl text-sm text-white/90">{current.description}</p>
             )}
             <p className="mt-5 text-sm text-white/90">
-              {period} · Xuất ngày {new Date().toLocaleDateString("vi-VN")}
+              {period} · {t("print.exportedOn", { date: new Date().toLocaleDateString(locale) })}
             </p>
           </div>
         </header>
@@ -217,10 +219,10 @@ function PrintReport() {
         <section className="avoid-break">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              [activities.length, "hoạt động"],
-              [participants, "lượt tham gia"],
-              [completed, "đã hoàn thành"],
-              [photos, "ảnh lưu lại"],
+              [activities.length, t("print.s.activities")],
+              [participants, t("print.s.participants")],
+              [completed, t("print.s.completed")],
+              [photos, t("print.s.photos")],
             ].map(([v, l]) => (
               <div key={l as string} className="rounded-xl border border-black/10 p-4 text-center">
                 <p className="text-gradient font-display text-4xl font-semibold tabular-nums">
@@ -232,23 +234,25 @@ function PrintReport() {
           </div>
           {byType.length > 0 && (
             <div className="mt-5 space-y-2">
-              {byType.map((t) => (
-                <div key={t.value} className="flex items-center gap-3 text-sm">
-                  <span className="w-28 shrink-0 text-black/70">{t.label}</span>
+              {byType.map((ty) => (
+                <div key={ty.value} className="flex items-center gap-3 text-sm">
+                  <span className="w-28 shrink-0 text-black/70">{t(ty.labelKey)}</span>
                   <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-black/5">
                     <div
                       className="h-full rounded-full"
                       style={{
-                        width: `${(t.count / maxType) * 100}%`,
-                        backgroundColor: t.colorVar,
+                        width: `${(ty.count / maxType) * 100}%`,
+                        backgroundColor: ty.colorVar,
                       }}
                     />
                   </div>
-                  <span className="w-6 text-right font-semibold tabular-nums">{t.count}</span>
+                  <span className="w-6 text-right font-semibold tabular-nums">{ty.count}</span>
                 </div>
               ))}
               {workshops > 0 && (
-                <p className="pt-1 text-xs text-black/50">Trong đó {workshops} workshop.</p>
+                <p className="pt-1 text-xs text-black/50">
+                  {t("print.workshopsIncl", { n: workshops })}
+                </p>
               )}
             </div>
           )}
@@ -257,7 +261,7 @@ function PrintReport() {
         {/* Khoảnh khắc nổi bật */}
         {quotes.length > 0 && (
           <section className="avoid-break">
-            <h2 className="font-display text-2xl font-semibold">Khoảnh khắc nổi bật</h2>
+            <h2 className="font-display text-2xl font-semibold">{t("print.highlights")}</h2>
             <div className="mt-3 space-y-3">
               {quotes.map((a) => (
                 <blockquote
@@ -277,11 +281,9 @@ function PrintReport() {
 
         {/* Chi tiết */}
         <section>
-          <h2 className="font-display text-2xl font-semibold">Chi tiết hoạt động</h2>
+          <h2 className="font-display text-2xl font-semibold">{t("print.details")}</h2>
           {activities.length === 0 && (
-            <p className="mt-3 text-sm text-black/60">
-              Không có hoạt động nào trong khoảng thời gian này.
-            </p>
+            <p className="mt-3 text-sm text-black/60">{t("print.none")}</p>
           )}
           <div className="mt-4 space-y-6">
             {activities.map((a) => {
@@ -297,10 +299,10 @@ function PrintReport() {
                         className="inline-block h-2 w-2 rounded-full"
                         style={{ backgroundColor: tm.colorVar }}
                       />
-                      {tm.label}
+                      {t(tm.labelKey)}
                     </span>
                     <span className="rounded-full border border-black/15 px-2 py-0.5 text-[10px] font-semibold text-black/60">
-                      {sm.label}
+                      {t(sm.labelKey)}
                     </span>
                   </div>
                   <h3 className="mt-2 font-display text-xl font-semibold leading-snug">
@@ -309,8 +311,10 @@ function PrintReport() {
                   <p className="mt-1 text-xs text-black/55">
                     {[
                       a.location,
-                      a.participant_count != null ? `${a.participant_count} người tham gia` : null,
-                      a.author_name ? `Ghi bởi ${a.author_name}` : null,
+                      a.participant_count != null
+                        ? t("print.participantsMeta", { n: a.participant_count })
+                        : null,
+                      a.author_name ? t("print.loggedBy", { name: a.author_name }) : null,
                     ]
                       .filter(Boolean)
                       .join(" · ")}
@@ -321,9 +325,9 @@ function PrintReport() {
                     </p>
                   )}
                   {[
-                    ["Diễn biến chính", a.summary],
-                    ["Vấn đề phát sinh", a.issues],
-                    ["Bước tiếp theo", a.next_steps],
+                    [t("detail.summary"), a.summary],
+                    [t("detail.issues"), a.issues],
+                    [t("detail.next"), a.next_steps],
                   ].map(
                     ([label, text]) =>
                       text && (
@@ -356,7 +360,7 @@ function PrintReport() {
         </section>
 
         <footer className="border-t border-black/10 pt-4 text-center text-xs text-black/45">
-          Xuất từ {BRAND} · {new Date().toLocaleDateString("vi-VN")}
+          {t("print.footer", { brand: BRAND, date: new Date().toLocaleDateString(locale) })}
         </footer>
       </div>
     </div>

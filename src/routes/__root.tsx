@@ -17,22 +17,22 @@ import { ProjectProvider } from "@/hooks/use-project";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BRAND } from "@/lib/brand";
+import { useI18n, useLang } from "@/lib/i18n";
 
 function NotFoundComponent() {
+  const { t } = useI18n();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-primary">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Không tìm thấy trang</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Trang bạn tìm không tồn tại hoặc đã được chuyển đi.
-        </p>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">{t("err.notFoundTitle")}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">{t("err.notFoundBody")}</p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Về trang chính
+            {t("err.home")}
           </Link>
         </div>
       </div>
@@ -43,6 +43,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const { t } = useI18n();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -51,11 +52,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Trang không tải được
+          {t("err.loadFailTitle")}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Có gì đó chưa ổn. Bạn thử tải lại hoặc quay về trang chính nhé.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{t("err.loadFailBody")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -64,13 +63,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             }}
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Thử lại
+            {t("err.retry")}
           </button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-full border border-input bg-background px-5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Về trang chính
+            {t("err.home")}
           </a>
         </div>
       </div>
@@ -98,9 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: BRAND },
-      { name: "description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
-      { property: "og:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
-      { name: "twitter:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
+
       {
         property: "og:image",
         content:
@@ -147,6 +144,17 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const lang = useLang();
+  const langMounted = useRef(false);
+
+  // Đổi ngôn ngữ thì làm mới tiêu đề tab (các trang tính tiêu đề lúc điều hướng)
+  useEffect(() => {
+    if (!langMounted.current) {
+      langMounted.current = true;
+      return;
+    }
+    router.invalidate();
+  }, [lang, router]);
   const lastUserId = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
