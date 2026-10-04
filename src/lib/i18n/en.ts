@@ -317,6 +317,10 @@ export const en: Record<Key, string> = {
   "settings.saved": "Project settings saved",
   "settings.saveFail": "Couldn't save",
   "settings.saveFailDesc": "If this keeps happening, the server may not have the new settings yet.",
+  "settings.uploadFail": "Couldn't upload the cover photo",
+  "settings.partialSaved": "Name and description saved",
+  "settings.partialSavedDesc":
+    "The color and cover photo couldn't be saved because the server hasn't been updated yet. Ask for the latest database update to be applied, then save again.",
   "settings.eyebrow": "Admin",
   "settings.desc": "Give this project's journal its own look.",
   "settings.name": "Project name *",

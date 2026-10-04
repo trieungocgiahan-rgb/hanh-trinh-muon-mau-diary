@@ -81,6 +81,7 @@ function SettingsPage() {
     e.preventDefault();
     if (!current || !name.trim()) return;
     setSaving(true);
+    let uploaded: string | null = null;
     try {
       let nextCover = coverPath;
       if (pendingCover) {
@@ -88,19 +89,44 @@ function SettingsPage() {
         const { error: upErr } = await supabase.storage
           .from("media")
           .upload(path, pendingCover.blob, { contentType: "image/jpeg" });
-        if (upErr) throw upErr;
+        if (upErr) {
+          console.error("cover upload", upErr);
+          toast.error(t("settings.uploadFail"), { description: upErr.message });
+          return;
+        }
+        uploaded = path;
         nextCover = path;
       }
-      const { error } = await supabase
+
+      const base = { name: name.trim(), description: description.trim() || null };
+      const full = await supabase
         .from("projects")
-        .update({
-          name: name.trim(),
-          description: description.trim() || null,
-          theme,
-          cover_path: nextCover,
-        })
+        .update({ ...base, theme, cover_path: nextCover })
         .eq("id", current.id);
-      if (error) throw error;
+
+      if (full.error) {
+        console.error("project update", full.error);
+        // Máy chủ chưa có cột theme/cover_path: vẫn lưu được tên và mô tả
+        const columnMissing =
+          full.error.code === "PGRST204" || /schema cache|column/i.test(full.error.message);
+        if (!columnMissing) {
+          toast.error(t("settings.saveFail"), { description: full.error.message });
+          return;
+        }
+        const basic = await supabase.from("projects").update(base).eq("id", current.id);
+        if (basic.error) {
+          console.error("project update (basic)", basic.error);
+          toast.error(t("settings.saveFail"), { description: basic.error.message });
+          return;
+        }
+        if (uploaded) await removeMedia(uploaded);
+        uploaded = null;
+        await qc.invalidateQueries({ queryKey: ["my-projects"] });
+        toast.warning(t("settings.partialSaved"), { description: t("settings.partialSavedDesc") });
+        return;
+      }
+
+      uploaded = null;
       if (branding.coverPath && branding.coverPath !== nextCover) {
         await removeMedia(branding.coverPath);
       }
@@ -113,9 +139,11 @@ function SettingsPage() {
     } catch (err) {
       console.error(err);
       toast.error(t("settings.saveFail"), {
-        description: t("settings.saveFailDesc"),
+        description: err instanceof Error ? err.message : t("settings.saveFailDesc"),
       });
     } finally {
+      // ảnh đã tải lên nhưng không lưu được thì dọn đi, tránh tệp mồ côi
+      if (uploaded) await removeMedia(uploaded);
       setSaving(false);
     }
   }
