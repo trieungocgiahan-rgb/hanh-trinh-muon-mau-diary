@@ -168,15 +168,18 @@ export function ActivityFormDialog() {
 
   return (
     <Dialog open={createOpen} onOpenChange={(o) => (o ? setCreateOpen(true) : closeAll())}>
-      <DialogContent className="max-h-[92vh] gap-0 overflow-hidden rounded-3xl p-0 sm:max-w-2xl">
-        <DialogHeader className="border-b bg-gradient-sun px-6 py-4">
-          <DialogTitle className="text-xl text-sunny-foreground">
+      <DialogContent className="max-h-[92vh] gap-0 overflow-hidden rounded-2xl p-0 max-sm:left-0 max-sm:top-0 max-sm:h-[100dvh] max-sm:max-h-none max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none sm:max-w-2xl">
+        <DialogHeader className="border-b bg-gradient-sun px-5 py-4 dark:bg-none dark:bg-secondary sm:px-6">
+          <DialogTitle className="text-xl text-sunny-foreground dark:text-foreground">
             {editing ? "Sửa hoạt động" : "Ghi hoạt động mới"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex max-h-[calc(92vh-8rem)] flex-col">
-          <div className="space-y-4 overflow-y-auto px-6 py-5">
+        <form
+          onSubmit={handleSubmit}
+          className="flex max-h-[calc(92vh-8rem)] flex-col max-sm:h-[calc(100dvh-4.25rem)] max-sm:max-h-none"
+        >
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5 sm:px-6">
             <div className="space-y-1.5">
               <Label htmlFor="t">Tên hoạt động *</Label>
               <Input
@@ -189,7 +192,7 @@ export function ActivityFormDialog() {
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="d">Ngày *</Label>
                 <Input
@@ -213,7 +216,7 @@ export function ActivityFormDialog() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-1.5">
                 <Label>Loại hoạt động</Label>
                 <Select value={type} onValueChange={(v) => setType(v as ActivityType)}>
@@ -247,6 +250,16 @@ export function ActivityFormDialog() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="space-y-2 rounded-2xl bg-muted/40 p-4">
+              <Label className="text-sm font-semibold">Ảnh, ghi âm &amp; tệp đính kèm</Label>
+              <AttachmentManager
+                pending={pending}
+                setPending={setPending}
+                existing={existing}
+                onDeleteExisting={deleteExisting}
+              />
             </div>
 
             <div className="space-y-1.5">
@@ -302,19 +315,9 @@ export function ActivityFormDialog() {
                 />
               </div>
             </div>
-
-            <div className="space-y-2 rounded-2xl bg-muted/40 p-4">
-              <Label className="text-sm font-semibold">Tệp đính kèm</Label>
-              <AttachmentManager
-                pending={pending}
-                setPending={setPending}
-                existing={existing}
-                onDeleteExisting={deleteExisting}
-              />
-            </div>
           </div>
 
-          <DialogFooter className="gap-2 border-t bg-card px-6 py-4">
+          <DialogFooter className="gap-2 border-t bg-card px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] max-sm:flex-row max-sm:[&>button:last-child]:flex-1 sm:px-6 sm:py-4">
             <Button type="button" variant="ghost" onClick={closeAll}>
               Hủy
             </Button>

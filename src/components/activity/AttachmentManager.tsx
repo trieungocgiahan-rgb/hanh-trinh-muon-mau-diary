@@ -5,7 +5,16 @@ import { Label } from "@/components/ui/label";
 import { VoiceRecorder, PendingAudioPreview } from "./VoiceRecorder";
 import { SignedImage, SignedAudio, SignedVideo, SignedDocLink } from "./SignedMedia";
 import type { AttachmentKind, AttachmentRow } from "@/lib/activity-constants";
-import { ImagePlus, Video, FileUp, LinkIcon, Trash2, Plus, ExternalLink } from "lucide-react";
+import {
+  Camera,
+  ImagePlus,
+  Video,
+  FileUp,
+  LinkIcon,
+  Trash2,
+  Plus,
+  ExternalLink,
+} from "lucide-react";
 
 export interface PendingItem {
   id: string;
@@ -24,6 +33,7 @@ interface Props {
 
 export function AttachmentManager({ pending, setPending, existing = [], onDeleteExisting }: Props) {
   const photoRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLInputElement>(null);
@@ -69,6 +79,14 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
         type="file"
         accept="image/*"
         multiple
+        hidden
+        onChange={(e) => e.target.files && addFiles(e.target.files, "photo")}
+      />
+      <input
+        ref={cameraRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
         hidden
         onChange={(e) => e.target.files && addFiles(e.target.files, "photo")}
       />
@@ -129,7 +147,7 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
                 <button
                   type="button"
                   onClick={() => onDeleteExisting(a)}
-                  className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
+                  className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -146,7 +164,7 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
               <button
                 type="button"
                 onClick={() => setPending((prev) => prev.filter((x) => x.id !== p.id))}
-                className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute right-1 top-1 rounded-full bg-background/90 p-1 text-destructive opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -157,6 +175,15 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
 
       {/* quick action buttons */}
       <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="sm:hidden"
+          onClick={() => cameraRef.current?.click()}
+        >
+          <Camera className="h-4 w-4" /> Chụp ảnh
+        </Button>
         <Button type="button" variant="outline" size="sm" onClick={() => videoRef.current?.click()}>
           <Video className="h-4 w-4" /> Video
         </Button>

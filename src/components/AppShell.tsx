@@ -1,10 +1,12 @@
-import { type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import logoAsset from "@/assets/logo.png.asset.json";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useProject } from "@/hooks/use-project";
 import { useAuth } from "@/hooks/use-auth";
+import { usePendingCount } from "@/hooks/use-pending-count";
+import { useTheme, type Theme } from "@/hooks/use-theme";
 import { ROLE_LABELS } from "@/lib/activity-constants";
 import { ActivityDialogProvider, useActivityDialog } from "@/hooks/use-activity-dialog";
 import { ActivityFormDialog } from "@/components/activity/ActivityFormDialog";
@@ -15,6 +17,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -35,6 +39,10 @@ import {
   LogOut,
   ChevronDown,
   Hourglass,
+  RefreshCw,
+  Sun,
+  Moon,
+  Laptop,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -60,6 +68,9 @@ function ShellInner({ children }: { children: ReactNode }) {
   const { current, projects, setCurrentId, canEdit, pendingApproval } = useProject();
   const { openCreate } = useActivityDialog();
   const { user } = useAuth();
+  const pendingCount = usePendingCount();
+  const { theme, setTheme } = useTheme();
+  const [checking, setChecking] = useState(false);
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "Tài khoản";
   const navigate = useNavigate();
@@ -72,6 +83,15 @@ function ShellInner({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     toast.success("Đã đăng xuất. Hẹn gặp lại!");
     navigate({ to: "/auth", replace: true });
+  }
+
+  async function recheck() {
+    setChecking(true);
+    await qc.invalidateQueries({ queryKey: ["my-projects"] });
+    setChecking(false);
+    toast.info("Tài khoản vẫn đang chờ duyệt", {
+      description: "Khi quản trị viên duyệt, bấm Kiểm tra lại để vào ngay.",
+    });
   }
 
   if (pendingApproval) {
@@ -89,23 +109,28 @@ function ShellInner({ children }: { children: ReactNode }) {
           <p className="mt-2 text-xs text-muted-foreground">
             Hãy liên hệ quản trị viên nếu bạn cần được duyệt sớm.
           </p>
-          <Button variant="outline" className="mt-6 rounded-full" onClick={signOut}>
-            <LogOut className="h-4 w-4" /> Đăng xuất
-          </Button>
+          <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+            <Button variant="hero" onClick={recheck} disabled={checking}>
+              <RefreshCw className={`h-4 w-4 ${checking ? "animate-spin" : ""}`} /> Kiểm tra lại
+            </Button>
+            <Button variant="outline" onClick={signOut}>
+              <LogOut className="h-4 w-4" /> Đăng xuất
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[oklch(0.965_0.03_55)] via-background to-background bg-[length:100%_520px] bg-no-repeat pb-20 md:pb-0">
-      <header className="sticky top-0 z-30 border-b border-border/50 bg-background/80 shadow-[inset_0_1px_0_oklch(1_0_0/0.8),0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--page-tint)] via-background to-background bg-[length:100%_520px] bg-no-repeat pb-20 md:pb-0">
+      <header className="sticky top-0 z-30 border-b border-border/50 bg-background/80 shadow-[inset_0_1px_0_var(--hi),0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <Link to="/lich" className="flex shrink-0 items-center gap-2">
             <img
               src={logoAsset.url}
               alt="Nhật Ký Hành Trình"
-              className="h-10 w-10 rounded-xl object-cover shadow-soft ring-2 ring-white/80"
+              className="h-10 w-10 rounded-xl object-cover shadow-soft ring-2 ring-card"
             />
             <span className="hidden font-display text-lg font-semibold sm:block">
               Nhật Ký Hành Trình
@@ -142,12 +167,17 @@ function ShellInner({ children }: { children: ReactNode }) {
                   to={item.to}
                   className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_oklch(0.69_0.17_28/0.18),inset_0_1px_0_oklch(1_0_0/0.6)]"
+                      ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_oklch(0.69_0.17_28/0.18),inset_0_1px_0_var(--hi)]"
                       : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
                   {item.label}
+                  {item.to === "/thanh-vien" && pendingCount > 0 && (
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-primary px-1.5 text-[10px] font-bold text-primary-foreground shadow-btn">
+                      {pendingCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -167,7 +197,7 @@ function ShellInner({ children }: { children: ReactNode }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-1 px-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-grape text-sm font-semibold text-grape-foreground shadow-btn ring-2 ring-white/80">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-grape text-sm font-semibold text-grape-foreground shadow-btn ring-2 ring-card">
                     {displayName.charAt(0).toUpperCase()}
                   </span>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
@@ -183,6 +213,21 @@ function ShellInner({ children }: { children: ReactNode }) {
                     Vai trò: {current?.role ? ROLE_LABELS[current.role] : "—"}
                   </div>
                 </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                  Giao diện
+                </DropdownMenuLabel>
+                <DropdownMenuRadioGroup value={theme} onValueChange={(v) => setTheme(v as Theme)}>
+                  <DropdownMenuRadioItem value="light">
+                    <Sun className="mr-2 h-4 w-4" /> Sáng
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="dark">
+                    <Moon className="mr-2 h-4 w-4" /> Tối dịu
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="system">
+                    <Laptop className="mr-2 h-4 w-4" /> Theo thiết bị
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut} className="text-destructive">
                   <LogOut className="h-4 w-4" /> Đăng xuất
@@ -207,7 +252,14 @@ function ShellInner({ children }: { children: ReactNode }) {
                 active ? "bg-primary/10 text-primary" : "text-muted-foreground"
               }`}
             >
-              <item.icon className="h-5 w-5" />
+              <span className="relative">
+                <item.icon className="h-5 w-5" />
+                {item.to === "/thanh-vien" && pendingCount > 0 && (
+                  <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                    {pendingCount}
+                  </span>
+                )}
+              </span>
               {item.label}
             </Link>
           );

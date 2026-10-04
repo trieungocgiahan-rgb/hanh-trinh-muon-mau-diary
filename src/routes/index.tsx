@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -54,7 +55,7 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
-      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 shadow-[0_1px_0_oklch(1_0_0/0.8)_inset,0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 shadow-[0_1px_0_var(--hi)_inset,0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
           <Link to="/" className="flex items-center gap-2">
             <img
@@ -82,9 +83,12 @@ function LandingPage() {
             </a>
           </nav>
 
-          <Button asChild variant="hero" size="sm">
-            <Link to="/auth">Đăng nhập</Link>
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <ThemeToggle />
+            <Button asChild variant="hero" size="sm">
+              <Link to="/auth">Đăng nhập</Link>
+            </Button>
+          </div>
         </div>
       </header>
 

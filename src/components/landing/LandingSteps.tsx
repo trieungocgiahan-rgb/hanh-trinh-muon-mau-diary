@@ -25,7 +25,7 @@ export function LandingSteps() {
   return (
     <section
       id="bat-dau"
-      className="scroll-mt-20 bg-gradient-to-b from-background to-[oklch(0.965_0.03_50)] py-20 sm:py-28"
+      className="scroll-mt-20 bg-gradient-to-b from-background to-[var(--page-tint)] py-20 sm:py-28"
     >
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[0.9fr_1.1fr]">
         <img

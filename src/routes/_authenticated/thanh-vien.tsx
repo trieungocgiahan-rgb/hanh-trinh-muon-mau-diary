@@ -25,7 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Loader2, UserMinus, Info, Check, X } from "lucide-react";
+import { Loader2, UserMinus, Info, Check, X, Link2, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/thanh-vien")({
   head: () => ({ meta: [{ title: "Thành viên — Nhật Ký Hành Trình" }] }),
@@ -64,6 +64,21 @@ function MembersPage() {
     },
   });
 
+  async function shareInvite() {
+    const url = window.location.origin;
+    const text = `Mời bạn vào Nhật Ký Hành Trình của ${current?.name ?? "dự án"}. Đăng nhập bằng Google, sau đó chờ quản trị viên duyệt:`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Nhật Ký Hành Trình", text, url });
+        return;
+      }
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      toast.success("Đã sao chép lời mời", { description: "Dán vào Zalo, Messenger hoặc email." });
+    } catch (e) {
+      if ((e as Error)?.name !== "AbortError") toast.error("Không sao chép được link mời");
+    }
+  }
+
   async function changeRole(member: Member, role: ProjectRole) {
     const { error } = await supabase.from("memberships").update({ role }).eq("id", member.id);
     if (error) {
@@ -72,6 +87,7 @@ function MembersPage() {
     }
     toast.success(`Đã đổi vai trò thành ${ROLE_LABELS[role]}`);
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
+    qc.invalidateQueries({ queryKey: ["members-pending", current?.id] });
   }
 
   async function approveMember(member: Member) {
@@ -85,6 +101,7 @@ function MembersPage() {
     }
     toast.success(`Đã duyệt ${member.full_name ?? "thành viên"} 🎉`);
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
+    qc.invalidateQueries({ queryKey: ["members-pending", current?.id] });
   }
 
   async function removeMember(member: Member) {
@@ -95,6 +112,7 @@ function MembersPage() {
     }
     toast.success("Đã xóa thành viên khỏi dự án");
     qc.invalidateQueries({ queryKey: ["members", current?.id] });
+    qc.invalidateQueries({ queryKey: ["members-pending", current?.id] });
   }
 
   const pendingMembers = (members ?? []).filter((m) => m.role === "pending");
@@ -108,12 +126,22 @@ function MembersPage() {
         description={`Những người cùng viết nên hành trình của ${current?.name ?? "dự án"}`}
       />
 
-      <div className="flex items-start gap-3 rounded-2xl border border-accent-foreground/10 bg-gradient-to-r from-accent/70 to-accent/30 p-4 text-sm text-accent-foreground">
-        <Info className="mt-0.5 h-4 w-4 shrink-0" />
-        <p>
-          Mời người mới bằng cách chia sẻ đường dẫn ứng dụng. Khi họ đăng ký, họ sẽ ở trạng thái{" "}
-          <strong>Chờ duyệt</strong> cho đến khi quản trị viên của dự án duyệt.
-        </p>
+      <div className="flex flex-col gap-4 rounded-2xl border border-accent-foreground/10 bg-gradient-to-r from-accent/70 to-accent/30 p-4 text-sm text-accent-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <p>
+            Mời người mới bằng cách gửi link ứng dụng. Họ đăng nhập bằng Google rồi ở trạng thái{" "}
+            <strong>Chờ duyệt</strong> cho đến khi quản trị viên duyệt.
+          </p>
+        </div>
+        <Button variant="hero" size="sm" className="shrink-0" onClick={shareInvite}>
+          {typeof navigator !== "undefined" && "share" in navigator ? (
+            <Share2 className="h-4 w-4" />
+          ) : (
+            <Link2 className="h-4 w-4" />
+          )}
+          Gửi lời mời
+        </Button>
       </div>
 
       {isLoading ? (

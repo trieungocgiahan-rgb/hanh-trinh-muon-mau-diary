@@ -27,7 +27,7 @@ function StatCard({
 }) {
   return (
     <div
-      className={`grain relative overflow-hidden rounded-2xl p-5 shadow-pop ${tone} ${gradient}`}
+      className={`grain relative overflow-hidden rounded-2xl p-5 shadow-pop dark:saturate-75 ${tone} ${gradient}`}
     >
       <div
         aria-hidden
