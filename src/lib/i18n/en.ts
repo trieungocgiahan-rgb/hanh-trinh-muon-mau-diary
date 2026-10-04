@@ -100,7 +100,7 @@ export const en: Record<Key, string> = {
   "shell.projectSettings": "Project settings",
   "shell.joinOrCreate": "Join or create another project",
   "shell.otherProjects": "Other projects",
-  "hero.l1": "Your team’s story,",
+  "hero.l1": "Our story,",
   "hero.l2": "written together.",
   "hero.l3": "",
   "hero.sub":
