@@ -11,19 +11,21 @@ import { Button } from "@/components/ui/button";
 import {
   ACTIVITY_TYPES,
   ACTIVITY_STATUSES,
-  MONTH_NAMES,
+  MONTH_KEYS,
   type ActivityType,
   type ActivityStatus,
 } from "@/lib/activity-constants";
 import { Search, Loader2, ListChecks } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/danh-sach")({
-  head: () => ({ meta: [{ title: `Danh sách hoạt động — ${BRAND}` }] }),
+  head: () => ({ meta: [{ title: `${tNow("list.pageTitle")} — ${BRAND}` }] }),
   component: ListPage,
 });
 
 function ListPage() {
+  const { t } = useI18n();
   const { current } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
   const { openDetail } = useActivityDialog();
@@ -49,20 +51,20 @@ function ListPage() {
     const map = new Map<string, typeof filtered>();
     filtered.forEach((a) => {
       const d = new Date(a.date + "T00:00:00");
-      const label = `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+      const label = `${t(MONTH_KEYS[d.getMonth()])} ${d.getFullYear()}`;
       const arr = map.get(label) ?? [];
       arr.push(a);
       map.set(label, arr);
     });
     return Array.from(map.entries());
-  }, [filtered]);
+  }, [filtered, t]);
 
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Dòng thời gian"
-        title="Tất cả hoạt động"
-        description="Tìm kiếm và lọc toàn bộ hoạt động của dự án"
+        eyebrow={t("list.eyebrow")}
+        title={t("list.title")}
+        description={t("list.desc")}
       />
 
       <div className="space-y-3 surface rounded-2xl p-4">
@@ -71,7 +73,7 @@ function ListPage() {
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Tìm theo tên, địa điểm, hoặc quote…"
+            placeholder={t("list.search")}
             className="pl-9"
           />
         </div>
@@ -81,17 +83,17 @@ function ListPage() {
             size="sm"
             onClick={() => setTypeFilter("all")}
           >
-            Tất cả loại
+            {t("list.allTypes")}
           </Button>
-          {ACTIVITY_TYPES.map((t) => (
+          {ACTIVITY_TYPES.map((ty) => (
             <Button
-              key={t.value}
-              variant={typeFilter === t.value ? "default" : "outline"}
+              key={ty.value}
+              variant={typeFilter === ty.value ? "default" : "outline"}
               size="sm"
-              onClick={() => setTypeFilter(t.value)}
+              onClick={() => setTypeFilter(ty.value)}
             >
-              <TypeDot color={t.colorVar} />
-              {t.label}
+              <TypeDot color={ty.colorVar} />
+              {t(ty.labelKey)}
             </Button>
           ))}
         </div>
@@ -101,7 +103,7 @@ function ListPage() {
             size="sm"
             onClick={() => setStatusFilter("all")}
           >
-            Mọi trạng thái
+            {t("list.allStatuses")}
           </Button>
           {ACTIVITY_STATUSES.map((s) => (
             <Button
@@ -110,7 +112,7 @@ function ListPage() {
               size="sm"
               onClick={() => setStatusFilter(s.value)}
             >
-              {s.label}
+              {t(s.labelKey)}
             </Button>
           ))}
         </div>
@@ -123,10 +125,8 @@ function ListPage() {
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
           <ListChecks className="mx-auto mb-3 h-10 w-10 text-primary/60" />
-          <p className="font-display text-lg font-semibold">Không có kết quả</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Thử đổi từ khóa hoặc bộ lọc khác nhé.
-          </p>
+          <p className="font-display text-lg font-semibold">{t("list.noResults")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("list.noResultsHint")}</p>
         </div>
       ) : (
         <div className="space-y-6">

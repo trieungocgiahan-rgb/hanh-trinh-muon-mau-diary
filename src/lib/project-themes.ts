@@ -1,12 +1,12 @@
 // Màu chủ đạo của từng dự án. `hue` là góc màu chính; `hm` và `h2` là hai điểm màu
 // còn lại của dải gradient (bỏ trống thì tự suy ra từ `hue`, đúng dải san hô ban đầu).
 export const PROJECT_THEMES = [
-  { key: "coral", label: "San hô", hue: 28 },
-  { key: "sunset", label: "Hoàng hôn", hue: 58 },
-  { key: "forest", label: "Rừng xanh", hue: 155, hm: 175, h2: 215 },
-  { key: "ocean", label: "Biển", hue: 235, hm: 255, h2: 295 },
-  { key: "grape", label: "Tím mộng mơ", hue: 305, hm: 330, h2: 360 },
-  { key: "rose", label: "Hồng đào", hue: 355 },
+  { key: "coral", hue: 28 },
+  { key: "sunset", hue: 58 },
+  { key: "forest", hue: 155, hm: 175, h2: 215 },
+  { key: "ocean", hue: 235, hm: 255, h2: 295 },
+  { key: "grape", hue: 305, hm: 330, h2: 360 },
+  { key: "rose", hue: 355 },
 ] as const;
 
 export type ProjectThemeKey = (typeof PROJECT_THEMES)[number]["key"];

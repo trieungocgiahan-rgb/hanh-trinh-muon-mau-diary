@@ -37,10 +37,11 @@ import {
   ExternalLink,
   User as UserIcon,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
-function formatDate(d: string) {
+function formatDate(d: string, locale: string) {
   const date = new Date(d + "T00:00:00");
-  return date.toLocaleDateString("vi-VN", {
+  return date.toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -60,6 +61,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export function ActivityDetailSheet() {
+  const { t, locale } = useI18n();
   const { detail, setDetail, openEdit } = useActivityDialog();
   const { isAdmin } = useProject();
   const { user } = useAuth();
@@ -82,7 +84,7 @@ export function ActivityDetailSheet() {
 
   const isContributed = (x: AttachmentRow) => !!x.created_by && x.created_by !== a.author_id;
   const contributorName = (x: AttachmentRow) =>
-    (x.created_by && eng?.contributorNames[x.created_by]) || "thành viên";
+    (x.created_by && eng?.contributorNames[x.created_by]) || t("detail.memberFallback");
   const canRemoveMedia = (x: AttachmentRow) =>
     isAdmin || a.author_id === user?.id || x.created_by === user?.id;
 
@@ -91,11 +93,11 @@ export function ActivityDetailSheet() {
     const paths = a.attachments.filter((x) => x.storage_path).map((x) => x.storage_path!);
     const { error } = await supabase.from("activities").delete().eq("id", a.id);
     if (error) {
-      toast.error("Xóa không thành công");
+      toast.error(t("detail.deleteFail"));
       return;
     }
     if (paths.length) await Promise.all(paths.map((p) => removeMedia(p)));
-    toast.success("Đã xóa hoạt động");
+    toast.success(t("detail.deleted"));
     qc.invalidateQueries({ queryKey: ["activities"] });
     setDetail(null);
   }
@@ -104,11 +106,11 @@ export function ActivityDetailSheet() {
     if (!a) return;
     const { error } = await supabase.from("attachments").delete().eq("id", x.id);
     if (error) {
-      toast.error("Không xóa được");
+      toast.error(t("detail.removeFail"));
       return;
     }
     if (x.storage_path) await removeMedia(x.storage_path);
-    toast.success("Đã xóa");
+    toast.success(t("detail.removed"));
     qc.invalidateQueries({ queryKey: ["activities"] });
     qc.invalidateQueries({ queryKey: ["engagement", a.id] });
   }
@@ -117,14 +119,14 @@ export function ActivityDetailSheet() {
     if (!isContributed(x) && !canRemoveMedia(x)) return null;
     return (
       <div className="flex items-center gap-2 px-1 text-[11px] text-muted-foreground">
-        {isContributed(x) && <span>Thêm bởi {contributorName(x)}</span>}
+        {isContributed(x) && <span>{t("detail.addedBy", { name: contributorName(x) })}</span>}
         {canRemoveMedia(x) && (
           <button
             type="button"
             onClick={() => removeAttachment(x)}
             className="ml-auto text-destructive hover:underline"
           >
-            Xóa
+            {t("common.delete")}
           </button>
         )}
       </div>
@@ -140,10 +142,10 @@ export function ActivityDetailSheet() {
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 <TypeDot color={tm.colorVar} />
-                {tm.label}
+                {t(tm.labelKey)}
               </span>
               <Badge variant="secondary" className={sm.className}>
-                {sm.label}
+                {t(sm.labelKey)}
               </Badge>
             </div>
             <SheetTitle className="text-left text-2xl leading-tight">{a.title}</SheetTitle>
@@ -152,7 +154,7 @@ export function ActivityDetailSheet() {
           <div className="space-y-5 px-6 py-5">
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <CalendarDays className="h-4 w-4" /> {formatDate(a.date)}
+                <CalendarDays className="h-4 w-4" /> {formatDate(a.date, locale)}
               </span>
               {a.location && (
                 <span className="flex items-center gap-1.5">
@@ -161,11 +163,11 @@ export function ActivityDetailSheet() {
               )}
               {a.participant_count != null && (
                 <span className="flex items-center gap-1.5">
-                  <Users className="h-4 w-4" /> {a.participant_count} người
+                  <Users className="h-4 w-4" /> {t("detail.people", { n: a.participant_count })}
                 </span>
               )}
               <span className="flex items-center gap-1.5">
-                <UserIcon className="h-4 w-4" /> {a.author_name ?? "Ẩn danh"}
+                <UserIcon className="h-4 w-4" /> {a.author_name ?? t("common.anonymous")}
               </span>
             </div>
 
@@ -192,7 +194,7 @@ export function ActivityDetailSheet() {
                     >
                       <SignedImage
                         path={p.storage_path!}
-                        alt={p.file_name ?? "ảnh"}
+                        alt={p.file_name ?? t("detail.photoAlt")}
                         className="h-full w-full cursor-pointer object-cover transition-transform group-hover:scale-105"
                       />
                     </button>
@@ -215,14 +217,14 @@ export function ActivityDetailSheet() {
               </div>
             )}
 
-            {a.summary && <Section title="Diễn biến chính">{a.summary}</Section>}
-            {a.issues && <Section title="Vấn đề phát sinh">{a.issues}</Section>}
-            {a.next_steps && <Section title="Bước tiếp theo">{a.next_steps}</Section>}
+            {a.summary && <Section title={t("detail.summary")}>{a.summary}</Section>}
+            {a.issues && <Section title={t("detail.issues")}>{a.issues}</Section>}
+            {a.next_steps && <Section title={t("detail.next")}>{a.next_steps}</Section>}
 
             {audios.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Ghi âm
+                  {t("detail.voice")}
                 </h4>
                 {audios.map((x) => (
                   <div key={x.id} className="space-y-0.5">
@@ -250,7 +252,7 @@ export function ActivityDetailSheet() {
             {(docs.length > 0 || links.length > 0) && (
               <div className="space-y-2">
                 <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Tài liệu &amp; liên kết
+                  {t("detail.docs")}
                 </h4>
                 {docs.map((x) => (
                   <div key={x.id} className="space-y-0.5">
@@ -278,29 +280,26 @@ export function ActivityDetailSheet() {
             {canEdit && (
               <div className="flex gap-2 border-t pt-4">
                 <Button variant="outline" className="flex-1" onClick={() => openEdit(a)}>
-                  <Pencil className="h-4 w-4" /> Sửa
+                  <Pencil className="h-4 w-4" /> {t("common.edit")}
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="ghost" className="text-destructive hover:bg-destructive/10">
-                      <Trash2 className="h-4 w-4" /> Xóa
+                      <Trash2 className="h-4 w-4" /> {t("common.delete")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="rounded-2xl">
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Xóa hoạt động này?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Hành động này không thể hoàn tác. Toàn bộ ảnh, ghi âm và tài liệu đính kèm
-                        cũng sẽ bị xóa.
-                      </AlertDialogDescription>
+                      <AlertDialogTitle>{t("detail.deleteTitle")}</AlertDialogTitle>
+                      <AlertDialogDescription>{t("detail.deleteBody")}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Hủy</AlertDialogCancel>
+                      <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
                         className="bg-none bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
                       >
-                        Xóa
+                        {t("common.delete")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -316,7 +315,7 @@ export function ActivityDetailSheet() {
           {lightbox && (
             <SignedImage
               path={lightbox}
-              alt="ảnh"
+              alt={t("detail.photoAlt")}
               className="max-h-[85vh] w-full rounded-xl object-contain"
             />
           )}

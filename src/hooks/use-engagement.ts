@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { tNow } from "@/lib/i18n";
 
 export interface PersonRef {
   user_id: string;
@@ -53,9 +54,9 @@ export function useEngagement(activityId: string | undefined) {
           .from("profiles")
           .select("id, full_name")
           .in("id", userIds);
-        nameMap = new Map((profs ?? []).map((p) => [p.id, p.full_name ?? "Ẩn danh"]));
+        nameMap = new Map((profs ?? []).map((p) => [p.id, p.full_name ?? tNow("common.anonymous")]));
       }
-      const name = (id: string) => nameMap.get(id) ?? "Ẩn danh";
+      const name = (id: string) => nameMap.get(id) ?? tNow("common.anonymous");
 
       return {
         likes: (likes ?? []).map((l) => ({ user_id: l.user_id, name: name(l.user_id) })),

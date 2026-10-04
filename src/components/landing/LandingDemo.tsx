@@ -19,7 +19,8 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ACTIVITY_TYPES, MONTH_NAMES, WEEKDAY_SHORT, typeMeta } from "@/lib/activity-constants";
+import { ACTIVITY_TYPES, MONTH_KEYS, WEEKDAY_KEYS, typeMeta } from "@/lib/activity-constants";
+import { useI18n, type Key } from "@/lib/i18n";
 import type { ActivityType } from "@/lib/activity-constants";
 import { PROJECT_THEMES, applyThemeVars, clearThemeVars } from "@/lib/project-themes";
 import { TypeDot } from "@/components/activity/TypeDot";
@@ -37,15 +38,19 @@ import {
 import group from "@/assets/landing-group.jpg";
 
 type Update = (id: string, fn: (a: DemoActivity) => DemoActivity) => void;
+type Translate = (key: Key, params?: Record<string, string | number>) => string;
+
+const actTitle = (a: DemoActivity, t: Translate) => (a.titleKey ? t(a.titleKey) : a.title);
 
 /* ---------- phần dùng chung ---------- */
 
 function ViewerNote({ canWrite }: { canWrite: boolean }) {
+  const { t } = useI18n();
   if (canWrite) return null;
   return (
     <p className="flex items-center gap-2 rounded-xl border border-border bg-secondary/50 px-3 py-2 text-xs text-muted-foreground">
       <Lock className="h-3.5 w-3.5 shrink-0" />
-      Bạn đang là “Người xem” nên chỉ xem được. Qua tab Phân quyền để đổi vai trò.
+      {t("demo.viewerNote")}
     </p>
   );
 }
@@ -59,6 +64,7 @@ function ActivityPicker({
   selectedId: string;
   onSelect: (id: string) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
       {acts.map((a) => {
@@ -76,7 +82,7 @@ function ActivityPicker({
             }`}
           >
             <TypeDot color={typeMeta(a.type).colorVar} />
-            <span className="max-w-[10rem] truncate">{a.title}</span>
+            <span className="max-w-[10rem] truncate">{actTitle(a, t)}</span>
           </button>
         );
       })}
@@ -85,6 +91,7 @@ function ActivityPicker({
 }
 
 function SelectedSummary({ a, month }: { a: DemoActivity; month: string }) {
+  const { t } = useI18n();
   const tm = typeMeta(a.type);
   return (
     <div className="surface flex items-start gap-3 rounded-xl p-3.5">
@@ -101,11 +108,11 @@ function SelectedSummary({ a, month }: { a: DemoActivity; month: string }) {
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           <TypeDot color={tm.colorVar} />
-          {tm.label}
+          {t(tm.labelKey)}
         </p>
-        <p className="mt-0.5 font-display text-base font-semibold leading-snug">{a.title}</p>
+        <p className="mt-0.5 font-display text-base font-semibold leading-snug">{actTitle(a, t)}</p>
         <p className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
-          <span>{a.participants} người</span>
+          <span>{t("detail.people", { n: a.participants })}</span>
           <span className="flex items-center gap-1">
             <Heart className="h-3 w-3" />
             {a.likes.length}
@@ -141,6 +148,7 @@ function CalendarPanel({
   add: (day: number, title: string, type: ActivityType) => void;
   canWrite: boolean;
 }) {
+  const { t } = useI18n();
   const y = now.getFullYear();
   const m = now.getMonth();
   const offset = (new Date(y, m, 1).getDay() + 6) % 7;
@@ -169,27 +177,27 @@ function CalendarPanel({
       <div className="overflow-hidden rounded-xl border border-border">
         <div className="flex items-center justify-between bg-secondary/40 px-3 py-2">
           <p className="font-display text-base font-semibold">
-            {MONTH_NAMES[m]} {y}
+            {t(MONTH_KEYS[m])} {y}
           </p>
           <ul className="hidden gap-3 sm:flex">
-            {ACTIVITY_TYPES.slice(0, 4).map((t) => (
+            {ACTIVITY_TYPES.slice(0, 4).map((ty) => (
               <li
-                key={t.value}
+                key={ty.value}
                 className="flex items-center gap-1 text-[10px] text-muted-foreground"
               >
-                <TypeDot color={t.colorVar} />
-                {t.label}
+                <TypeDot color={ty.colorVar} />
+                {t(ty.labelKey)}
               </li>
             ))}
           </ul>
         </div>
         <div className="grid grid-cols-7 gap-px bg-border">
-          {WEEKDAY_SHORT.map((w) => (
+          {WEEKDAY_KEYS.map((w) => (
             <div
               key={w}
               className="bg-card py-1.5 text-center text-[10px] font-semibold uppercase text-muted-foreground"
             >
-              {w}
+              {t(w)}
             </div>
           ))}
           {cells.map((d, i) => {
@@ -211,7 +219,7 @@ function CalendarPanel({
                   setBlocked(false);
                   setDraftDay(d);
                 }}
-                aria-label={`Ngày ${d}`}
+                aria-label={t("demo.day", { d })}
                 className={`group relative min-h-12 bg-card p-1 text-left transition-colors hover:bg-primary/5 sm:min-h-16 sm:p-1.5 ${
                   isDraft ? "bg-primary/10 ring-2 ring-inset ring-primary" : ""
                 }`}
@@ -248,7 +256,7 @@ function CalendarPanel({
                           boxShadow: `inset 3px 0 0 ${tm.colorVar}`,
                         }}
                       >
-                        <span className="hidden sm:inline">{a.title}</span>
+                        <span className="hidden sm:inline">{actTitle(a, t)}</span>
                       </span>
                     );
                   })}
@@ -264,47 +272,47 @@ function CalendarPanel({
       {draftDay != null && (
         <div className="animate-pop-in rounded-xl border border-primary/40 bg-primary/5 p-3.5">
           <p className="text-xs font-semibold text-primary">
-            Hoạt động mới · ngày {draftDay}/{m + 1}
+            {t("demo.newActivity", { d: draftDay, m: m + 1 })}
           </p>
           <input
             autoFocus
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="Tên hoạt động, ví dụ: Workshop vẽ tranh"
+            placeholder={t("demo.titlePh")}
             maxLength={60}
             className="mt-2 h-10 w-full rounded-lg border border-input bg-card px-3 text-base outline-none focus:ring-2 focus:ring-ring/40 sm:text-sm"
           />
           <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {ACTIVITY_TYPES.map((t) => (
+            {ACTIVITY_TYPES.map((ty) => (
               <button
-                key={t.value}
+                key={ty.value}
                 type="button"
-                onClick={() => setType(t.value)}
-                aria-pressed={type === t.value}
+                onClick={() => setType(ty.value)}
+                aria-pressed={type === ty.value}
                 className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
-                  type === t.value
+                  type === ty.value
                     ? "border-primary bg-card text-foreground"
                     : "border-border bg-card/60 text-muted-foreground"
                 }`}
               >
-                <TypeDot color={t.colorVar} />
-                {t.label}
+                <TypeDot color={ty.colorVar} />
+                {t(ty.labelKey)}
               </button>
             ))}
           </div>
           <div className="mt-3 flex gap-2">
             <Button size="sm" variant="hero" disabled={!title.trim()} onClick={submit}>
-              Ghi vào nhật ký
+              {t("form.logIt")}
             </Button>
             <Button size="sm" variant="ghost" onClick={() => setDraftDay(null)}>
-              Hủy
+              {t("common.cancel")}
             </Button>
           </div>
         </div>
       )}
 
-      <SelectedSummary a={selected} month={`Th ${m + 1}`} />
+      <SelectedSummary a={selected} month={t("card.monthShort", { n: m + 1 })} />
     </div>
   );
 }
@@ -314,6 +322,7 @@ function CalendarPanel({
 const WAVE = [6, 12, 8, 16, 10, 18, 7, 13, 9, 15, 6, 11, 17, 8, 14, 10, 7, 12, 9, 15];
 
 function VoiceClip({ seconds, index }: { seconds: number; index: number }) {
+  const { t } = useI18n();
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
     if (!playing) return;
@@ -325,7 +334,7 @@ function VoiceClip({ seconds, index }: { seconds: number; index: number }) {
       <button
         type="button"
         onClick={() => setPlaying((p) => !p)}
-        aria-label={playing ? "Dừng" : "Nghe lại"}
+        aria-label={playing ? t("voice.stop") : t("demo.listenAgain")}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-grape text-grape-foreground shadow-btn"
       >
         {playing ? (
@@ -346,7 +355,7 @@ function VoiceClip({ seconds, index }: { seconds: number; index: number }) {
         ))}
       </div>
       <span className="text-xs tabular-nums text-muted-foreground">
-        Ghi âm {index + 1} · 0:{String(seconds).padStart(2, "0")}
+        {t("demo.voiceN", { n: index + 1, time: `0:${String(seconds).padStart(2, "0")}` })}
       </span>
     </div>
   );
@@ -367,6 +376,7 @@ function MediaPanel({
   canWrite: boolean;
   onUse: () => void;
 }) {
+  const { t } = useI18n();
   const a = acts.find((x) => x.id === selectedId) ?? acts[0];
   const [recording, setRecording] = useState(false);
   const [sec, setSec] = useState(0);
@@ -428,7 +438,7 @@ function MediaPanel({
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr]">
         <div className="surface rounded-xl p-3.5">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Ảnh · {a.photos.length}/6
+            {t("demo.photosCount", { n: a.photos.length })}
           </p>
           <div className="mt-2.5 grid grid-cols-3 gap-2">
             {a.photos.map((src, i) => (
@@ -437,7 +447,7 @@ function MediaPanel({
                 type="button"
                 onClick={() => setLightbox(src)}
                 className="animate-pop-in aspect-square overflow-hidden rounded-lg"
-                aria-label={`Xem ảnh ${i + 1}`}
+                aria-label={t("demo.viewPhotoN", { n: i + 1 })}
               >
                 <img
                   src={src}
@@ -454,16 +464,16 @@ function MediaPanel({
                 className="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border text-muted-foreground transition-colors enabled:hover:border-primary enabled:hover:text-primary disabled:opacity-50"
               >
                 <ImagePlus className="h-5 w-5" />
-                <span className="text-[10px] font-medium">Thêm ảnh</span>
+                <span className="text-[10px] font-medium">{t("demo.addPhoto")}</span>
               </button>
             )}
           </div>
-          <p className="mt-2 text-[11px] text-muted-foreground">Bấm vào ảnh để xem phóng to.</p>
+          <p className="mt-2 text-[11px] text-muted-foreground">{t("demo.photoHint")}</p>
         </div>
 
         <div className="surface rounded-xl p-3.5">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Ghi âm · {a.voices.length}
+            {t("demo.voiceCount", { n: a.voices.length })}
           </p>
           <div className="mt-2.5 space-y-2">
             {a.voices.map((s, i) => (
@@ -474,7 +484,7 @@ function MediaPanel({
                 <button
                   type="button"
                   onClick={stop}
-                  aria-label="Dừng ghi âm"
+                  aria-label={t("demo.stopRecording")}
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-destructive text-destructive-foreground"
                 >
                   <Square className="h-3.5 w-3.5 fill-current" />
@@ -503,13 +513,11 @@ function MediaPanel({
                 disabled={!canWrite}
                 onClick={start}
               >
-                <Mic className="h-4 w-4" /> Bấm để ghi âm
+                <Mic className="h-4 w-4" /> {t("demo.tapRecord")}
               </Button>
             )}
           </div>
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            Bản dùng thử chỉ mô phỏng ghi âm. Trong app thật, giọng của bạn được lưu lại.
-          </p>
+          <p className="mt-2 text-[11px] text-muted-foreground">{t("demo.simNote")}</p>
         </div>
       </div>
 
@@ -518,12 +526,12 @@ function MediaPanel({
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
           onClick={() => setLightbox(null)}
           role="dialog"
-          aria-label="Xem ảnh"
+          aria-label={t("demo.viewPhoto")}
         >
           <img src={lightbox} alt="" className="max-h-[85vh] max-w-full rounded-xl shadow-pop" />
           <button
             type="button"
-            aria-label="Đóng"
+            aria-label={t("demo.close")}
             className="absolute right-4 top-4 rounded-full bg-white/15 p-2 text-white hover:bg-white/25"
           >
             <X className="h-5 w-5" />
@@ -551,6 +559,7 @@ function EngagePanel({
   canWrite: boolean;
   onUse: () => void;
 }) {
+  const { t } = useI18n();
   const a = acts.find((x) => x.id === selectedId) ?? acts[0];
   const [text, setText] = useState("");
   const [burst, setBurst] = useState(0);
@@ -569,9 +578,9 @@ function EngagePanel({
   }
 
   function post() {
-    const t = text.trim();
-    if (!t || !canWrite) return;
-    update(a.id, (x) => ({ ...x, comments: [...x.comments, { who: ME, text: t }] }));
+    const body = text.trim();
+    if (!body || !canWrite) return;
+    update(a.id, (x) => ({ ...x, comments: [...x.comments, { who: ME, text: body }] }));
     setText("");
     onUse();
   }
@@ -582,7 +591,7 @@ function EngagePanel({
       <ViewerNote canWrite={canWrite} />
 
       <div className="surface space-y-4 rounded-xl p-4">
-        <p className="font-display text-base font-semibold leading-snug">{a.title}</p>
+        <p className="font-display text-base font-semibold leading-snug">{actTitle(a, t)}</p>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -606,7 +615,7 @@ function EngagePanel({
               )}
               <Heart className={`relative h-4 w-4 ${liked ? "fill-current" : ""}`} />
             </span>
-            Thả tim · {a.likes.length}
+            {t("demo.likeBtn", { n: a.likes.length })}
           </button>
 
           <button
@@ -621,19 +630,17 @@ function EngagePanel({
             }`}
           >
             <UserCheck className="h-4 w-4" />
-            {attending ? "Đã tham gia" : "Đánh dấu tham gia"} · {a.attendees.length}
+            {attending ? t("engage.attending") : t("engage.attend")} · {a.attendees.length}
           </button>
         </div>
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Bình luận · {a.comments.length}
+            {t("demo.commentsCount", { n: a.comments.length })}
           </p>
           <ul className="mt-2 space-y-2">
             {a.comments.length === 0 && (
-              <li className="text-sm text-muted-foreground">
-                Chưa có bình luận nào. Hãy viết thử một câu!
-              </li>
+              <li className="text-sm text-muted-foreground">{t("demo.noComments")}</li>
             )}
             {a.comments.map((c, i) => (
               <li key={i} className="animate-pop-in flex gap-2.5">
@@ -644,12 +651,12 @@ function EngagePanel({
                       : "bg-gradient-grape text-grape-foreground"
                   }`}
                 >
-                  {c.who.charAt(0)}
+                  {(c.who === ME ? t("demo.me") : c.who).charAt(0)}
                 </span>
                 <div className="rounded-xl bg-muted/60 px-3 py-1.5 text-sm">
-                  <span className="font-semibold">{c.who}</span>
+                  <span className="font-semibold">{c.who === ME ? t("demo.me") : c.who}</span>
                   <span className="text-muted-foreground"> · </span>
-                  {c.text}
+                  {c.textKey ? t(c.textKey) : c.text}
                 </div>
               </li>
             ))}
@@ -660,7 +667,7 @@ function EngagePanel({
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && post()}
               disabled={!canWrite}
-              placeholder={canWrite ? "Viết bình luận…" : "Người xem không bình luận được"}
+              placeholder={canWrite ? t("demo.commentPh") : t("demo.commentPhViewer")}
               maxLength={140}
               className="h-10 flex-1 rounded-full border border-input bg-card px-4 text-base outline-none focus:ring-2 focus:ring-ring/40 disabled:opacity-60 sm:text-sm"
             />
@@ -668,7 +675,7 @@ function EngagePanel({
               type="button"
               size="icon"
               className="h-10 w-10"
-              aria-label="Gửi bình luận"
+              aria-label={t("demo.sendComment")}
               disabled={!text.trim() || !canWrite}
               onClick={post}
             >
@@ -684,9 +691,10 @@ function EngagePanel({
 /* ---------- 4. Phân quyền ---------- */
 
 function RolesPanel({ role, setRole }: { role: Role; setRole: (r: Role) => void }) {
+  const { t } = useI18n();
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Vai trò">
+      <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={t("demo.roleGroup")}>
         {(Object.keys(ROLE_META) as Role[]).map((r) => {
           const on = role === r;
           return (
@@ -702,15 +710,15 @@ function RolesPanel({ role, setRole }: { role: Role; setRole: (r: Role) => void 
                   : "border-border bg-card hover:border-primary/40"
               }`}
             >
-              <p className="text-sm font-semibold">{ROLE_META[r].label}</p>
+              <p className="text-sm font-semibold">{t(ROLE_META[r].label)}</p>
               <p className="mt-0.5 hidden text-[11px] leading-snug text-muted-foreground sm:block">
-                {ROLE_META[r].blurb}
+                {t(ROLE_META[r].blurb)}
               </p>
             </button>
           );
         })}
       </div>
-      <p className="text-xs text-muted-foreground sm:hidden">{ROLE_META[role].blurb}</p>
+      <p className="text-xs text-muted-foreground sm:hidden">{t(ROLE_META[role].blurb)}</p>
 
       <ul className="surface divide-y divide-border rounded-xl">
         {PERMISSIONS.map((p) => {
@@ -729,16 +737,13 @@ function RolesPanel({ role, setRole }: { role: Role; setRole: (r: Role) => void 
                   ok ? "" : "text-muted-foreground line-through decoration-muted-foreground/40"
                 }
               >
-                {p.label}
+                {t(p.label)}
               </span>
             </li>
           );
         })}
       </ul>
-      <p className="text-xs text-muted-foreground">
-        Thử đổi sang “Người xem” rồi quay lại tab Lịch, Ảnh hoặc Tương tác: các nút sẽ bị khóa. Ảnh
-        và ghi âm luôn nằm trong kho riêng, chỉ thành viên đã được duyệt mới mở được.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("demo.rolesHelp")}</p>
     </div>
   );
 }
@@ -746,15 +751,16 @@ function RolesPanel({ role, setRole }: { role: Role; setRole: (r: Role) => void 
 /* ---------- 5. Báo cáo ---------- */
 
 function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void }) {
+  const { t } = useI18n();
   const [state, setState] = useState<"idle" | "busy" | "done">("idle");
   const photos = acts.reduce((s, a) => s + a.photos.length, 0);
   const people = acts.reduce((s, a) => s + a.participants, 0);
   const hearts = acts.reduce((s, a) => s + a.likes.length, 0);
-  const byType = ACTIVITY_TYPES.map((t) => ({
-    ...t,
-    n: acts.filter((a) => a.type === t.value).length,
-  })).filter((t) => t.n > 0);
-  const max = Math.max(1, ...byType.map((t) => t.n));
+  const byType = ACTIVITY_TYPES.map((ty) => ({
+    ...ty,
+    n: acts.filter((a) => a.type === ty.value).length,
+  })).filter((ty) => ty.n > 0);
+  const max = Math.max(1, ...byType.map((ty) => ty.n));
 
   function exportDemo() {
     setState("busy");
@@ -769,18 +775,20 @@ function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void 
           <img src={group} alt="" className="h-20 w-full object-cover" />
           <div className="bg-gradient-hero px-4 py-3 text-white">
             <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/85">
-              Báo cáo hành trình · Tổ chức của bạn
+              {t("demo.reportHeader")}
             </p>
-            <p className="mt-0.5 font-display text-lg font-semibold leading-tight">Dự án mẫu</p>
+            <p className="mt-0.5 font-display text-lg font-semibold leading-tight">
+              {t("demo.sampleProject")}
+            </p>
           </div>
         </div>
         <div className="space-y-3 p-4">
           <div className="grid grid-cols-4 gap-2 text-center">
             {[
-              [acts.length, "hoạt động"],
-              [people, "lượt tham gia"],
-              [photos, "ảnh"],
-              [hearts, "lượt tim"],
+              [acts.length, t("demo.r.activities")],
+              [people, t("demo.r.people")],
+              [photos, t("demo.r.photos")],
+              [hearts, t("demo.r.hearts")],
             ].map(([v, l]) => (
               <div key={l as string} className="rounded-lg border border-black/10 py-2">
                 <p className="text-gradient font-display text-xl font-semibold tabular-nums">{v}</p>
@@ -789,16 +797,16 @@ function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void 
             ))}
           </div>
           <div className="space-y-1.5">
-            {byType.map((t) => (
-              <div key={t.value} className="flex items-center gap-2 text-[11px]">
-                <span className="w-20 shrink-0 text-black/65">{t.label}</span>
+            {byType.map((ty) => (
+              <div key={ty.value} className="flex items-center gap-2 text-[11px]">
+                <span className="w-20 shrink-0 text-black/65">{t(ty.labelKey)}</span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-black/5">
                   <div
                     className="h-full rounded-full transition-[width] duration-500"
-                    style={{ width: `${(t.n / max) * 100}%`, backgroundColor: t.colorVar }}
+                    style={{ width: `${(ty.n / max) * 100}%`, backgroundColor: ty.colorVar }}
                   />
                 </div>
-                <span className="w-4 text-right font-semibold tabular-nums">{t.n}</span>
+                <span className="w-4 text-right font-semibold tabular-nums">{ty.n}</span>
               </div>
             ))}
           </div>
@@ -811,7 +819,7 @@ function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void 
                   <span className="w-8 shrink-0 font-semibold tabular-nums text-black/55">
                     {a.day}
                   </span>
-                  <span className="truncate">{a.title}</span>
+                  <span className="truncate">{actTitle(a, t)}</span>
                 </li>
               ))}
           </ul>
@@ -821,17 +829,14 @@ function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void 
       <div className="flex flex-col items-center gap-2">
         <Button type="button" variant="hero" onClick={exportDemo} disabled={state === "busy"}>
           <FileDown className="h-4 w-4" />
-          {state === "busy" ? "Đang tạo…" : "Xuất PDF mẫu"}
+          {state === "busy" ? t("demo.creating") : t("demo.exportSample")}
         </Button>
         {state === "done" && (
           <p className="animate-pop-in text-center text-xs text-muted-foreground">
-            Trong app thật, file PDF có đủ ảnh của từng hoạt động sẽ tải về, sẵn sàng gửi nhà tài
-            trợ.
+            {t("demo.exportNote")}
           </p>
         )}
-        <p className="text-center text-xs text-muted-foreground">
-          Thử thêm hoạt động hoặc ảnh ở các tab khác, rồi quay lại: báo cáo tự cập nhật.
-        </p>
+        <p className="text-center text-xs text-muted-foreground">{t("demo.reportHint")}</p>
       </div>
     </div>
   );
@@ -840,6 +845,7 @@ function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void 
 /* ---------- 6. Màu dự án ---------- */
 
 function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) => void }) {
+  const { t } = useI18n();
   return (
     <div className="space-y-4">
       <div className="relative overflow-hidden rounded-xl shadow-pop">
@@ -847,21 +853,23 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-4 text-white">
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">
-            Tổ chức của bạn
+            {t("demo.yourOrg")}
           </p>
-          <p className="font-display text-xl font-semibold leading-tight">Dự án mẫu</p>
+          <p className="font-display text-xl font-semibold leading-tight">
+            {t("demo.sampleProject")}
+          </p>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-        {PROJECT_THEMES.map((t) => {
-          const on = theme === t.key;
-          const end = "h2" in t ? t.h2 : t.hue - 76;
+        {PROJECT_THEMES.map((th) => {
+          const on = theme === th.key;
+          const end = "h2" in th ? th.h2 : th.hue - 76;
           return (
             <button
-              key={t.key}
+              key={th.key}
               type="button"
               aria-pressed={on}
-              onClick={() => setTheme(t.key)}
+              onClick={() => setTheme(th.key)}
               className={`flex items-center gap-3 rounded-xl border p-2.5 text-left transition-all ${
                 on
                   ? "border-primary bg-primary/5 shadow-soft"
@@ -871,20 +879,17 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
               <span
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-btn"
                 style={{
-                  backgroundImage: `linear-gradient(135deg, oklch(0.78 0.15 ${t.hue + 34}), oklch(0.62 0.19 ${end}))`,
+                  backgroundImage: `linear-gradient(135deg, oklch(0.78 0.15 ${th.hue + 34}), oklch(0.62 0.19 ${end}))`,
                 }}
               >
                 {on && <Check className="h-4 w-4" />}
               </span>
-              <span className="text-sm font-semibold">{t.label}</span>
+              <span className="text-sm font-semibold">{t(`theme.${th.key}` as Key)}</span>
             </button>
           );
         })}
       </div>
-      <p className="text-xs text-muted-foreground">
-        Nhìn lên đầu trang: nút, tiêu đề và nền của cả trang này vừa đổi màu theo. Trong app, mỗi dự
-        án chọn một màu riêng cùng ảnh bìa riêng.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("demo.themeNote")}</p>
     </div>
   );
 }
@@ -892,6 +897,7 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
 /* ---------- khung chính ---------- */
 
 export function LandingDemo() {
+  const { t } = useI18n();
   const now = useMemo(() => new Date(), []);
   const [acts, setActs] = useState<DemoActivity[]>(SEED_ACTIVITIES);
   const [selectedId, setSelectedId] = useState("a1");
@@ -944,7 +950,7 @@ export function LandingDemo() {
     mark("lich");
   }
 
-  const current = DEMO_TABS.find((t) => t.key === tab)!;
+  const current = DEMO_TABS.find((x) => x.key === tab)!;
   const triedCount = tried.size;
 
   return (
@@ -952,15 +958,12 @@ export function LandingDemo() {
       <div className="mx-auto max-w-6xl px-5">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            Dùng thử ngay
+            {t("hero.tryNow")}
           </p>
           <h2 className="mt-3 text-balance font-display text-3xl font-semibold leading-tight sm:text-5xl">
-            Tự tay thử, <em className="text-gradient font-medium">không cần đăng nhập.</em>
+            {t("demo.title1")} <em className="text-gradient font-medium">{t("demo.title2")}</em>
           </h2>
-          <p className="mt-3 max-w-xl text-muted-foreground">
-            Đây là bản thu nhỏ của app thật, chạy ngay trong trang này với dữ liệu mẫu. Bấm vào
-            lịch, ghi âm, thả tim, đổi vai trò, đổi màu… thử gì cũng được.
-          </p>
+          <p className="mt-3 max-w-xl text-muted-foreground">{t("demo.intro")}</p>
         </div>
 
         <div className="surface mt-10 overflow-hidden rounded-3xl shadow-pop">
@@ -972,13 +975,13 @@ export function LandingDemo() {
               <span className="h-2.5 w-2.5 rounded-full bg-mint" />
             </div>
             <p className="min-w-0 flex-1 truncate text-xs font-semibold text-muted-foreground">
-              Dự án mẫu
+              {t("demo.sampleProject")}
             </p>
             <span className="hidden rounded-full border border-border bg-card px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground sm:block">
-              {ROLE_META[role].label}
+              {t(ROLE_META[role].label)}
             </span>
             <span className="rounded-full bg-sunny px-2.5 py-0.5 text-[10px] font-semibold text-sunny-foreground">
-              Dữ liệu minh họa
+              {t("demo.sample")}
             </span>
           </div>
 
@@ -986,19 +989,19 @@ export function LandingDemo() {
             {/* thanh chọn tính năng */}
             <div
               role="tablist"
-              aria-label="Tính năng"
+              aria-label={t("demo.tabsLabel")}
               className="flex gap-2 overflow-x-auto border-b border-border p-3 lg:flex-col lg:gap-1 lg:border-b-0 lg:border-r lg:p-4"
             >
-              {DEMO_TABS.map((t, i) => {
-                const on = tab === t.key;
-                const done = tried.has(t.key);
+              {DEMO_TABS.map((tb, i) => {
+                const on = tab === tb.key;
+                const done = tried.has(tb.key);
                 return (
                   <button
-                    key={t.key}
+                    key={tb.key}
                     type="button"
                     role="tab"
                     aria-selected={on}
-                    onClick={() => setTab(t.key)}
+                    onClick={() => setTab(tb.key)}
                     className={`flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors lg:w-full ${
                       on
                         ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_20%,transparent)]"
@@ -1016,7 +1019,7 @@ export function LandingDemo() {
                     >
                       {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
                     </span>
-                    <span className="whitespace-nowrap">{t.label}</span>
+                    <span className="whitespace-nowrap">{t(tb.label)}</span>
                   </button>
                 );
               })}
@@ -1024,7 +1027,7 @@ export function LandingDemo() {
 
             {/* nội dung */}
             <div className="min-w-0 p-4 sm:p-6">
-              <p className="mb-4 text-sm font-medium text-muted-foreground">{current.hint}</p>
+              <p className="mb-4 text-sm font-medium text-muted-foreground">{t(current.hint)}</p>
               <div key={tab} className="animate-pop-in">
                 {tab === "lich" && (
                   <CalendarPanel
@@ -1084,18 +1087,16 @@ export function LandingDemo() {
             <div>
               <p className="font-display text-lg font-semibold leading-snug">
                 {triedCount === 0
-                  ? "Bấm thử một tính năng bên trên nhé."
+                  ? t("demo.cta0")
                   : triedCount < DEMO_TABS.length
-                    ? `Bạn đã thử ${triedCount}/${DEMO_TABS.length} tính năng. Thích rồi chứ?`
-                    : "Bạn đã thử hết rồi. Giờ làm thật nhé!"}
+                    ? t("demo.ctaSome", { n: triedCount, total: DEMO_TABS.length })
+                    : t("demo.ctaAll")}
               </p>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                Đăng nhập bằng Google để tạo nhật ký thật cho đội của bạn.
-              </p>
+              <p className="mt-0.5 text-sm text-muted-foreground">{t("demo.ctaSub")}</p>
             </div>
             <Button asChild variant="hero" size="lg" className="shrink-0">
               <Link to="/auth">
-                Vào nhật ký thật
+                {t("demo.ctaBtn")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

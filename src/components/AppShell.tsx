@@ -8,13 +8,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePendingCount } from "@/hooks/use-pending-count";
 import { useProjectBranding, useApplyTheme } from "@/hooks/use-project-branding";
 import { useTheme, type Theme } from "@/hooks/use-theme";
-import { ROLE_LABELS } from "@/lib/activity-constants";
+import { ROLE_LABEL_KEYS } from "@/lib/activity-constants";
 import { ActivityDialogProvider, useActivityDialog } from "@/hooks/use-activity-dialog";
 import { ActivityFormDialog } from "@/components/activity/ActivityFormDialog";
 import { ActivityDetailSheet } from "@/components/activity/ActivityDetailSheet";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { OnboardingPanel } from "@/components/Onboarding";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,13 +51,14 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { BRAND } from "@/lib/brand";
+import { useI18n, type Lang } from "@/lib/i18n";
 
 const NAV = [
-  { to: "/lich", label: "Lịch", icon: CalendarDays },
-  { to: "/danh-sach", label: "Danh sách", icon: ListChecks },
-  { to: "/thong-ke", label: "Thống kê", icon: BarChart3 },
-  { to: "/thanh-vien", label: "Thành viên", icon: Users },
-  { to: "/bao-cao", label: "Báo cáo", icon: FileText },
+  { to: "/lich", label: "nav.calendar", icon: CalendarDays },
+  { to: "/danh-sach", label: "nav.list", icon: ListChecks },
+  { to: "/thong-ke", label: "nav.stats", icon: BarChart3 },
+  { to: "/thanh-vien", label: "nav.members", icon: Users },
+  { to: "/bao-cao", label: "nav.report", icon: FileText },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -70,6 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 function ShellInner({ children }: { children: ReactNode }) {
+  const { t, lang, setLang } = useI18n();
   const { current, projects, setCurrentId, canEdit, isAdmin, pendingApproval, needsOnboarding } =
     useProject();
   const { openCreate } = useActivityDialog();
@@ -81,7 +84,7 @@ function ShellInner({ children }: { children: ReactNode }) {
   const branding = useProjectBranding(current?.id);
   useApplyTheme(branding.theme);
   const displayName =
-    (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "Tài khoản";
+    (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? t("common.account");
   const navigate = useNavigate();
   const qc = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -90,7 +93,7 @@ function ShellInner({ children }: { children: ReactNode }) {
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
-    toast.success("Đã đăng xuất. Hẹn gặp lại!");
+    toast.success(t("shell.signedOut"));
     navigate({ to: "/auth", replace: true });
   }
 
@@ -98,14 +101,17 @@ function ShellInner({ children }: { children: ReactNode }) {
     setChecking(true);
     await qc.invalidateQueries({ queryKey: ["my-projects"] });
     setChecking(false);
-    toast.info("Tài khoản vẫn đang chờ duyệt", {
-      description: "Khi quản trị viên duyệt, bấm Kiểm tra lại để vào ngay.",
+    toast.info(t("shell.stillPending"), {
+      description: t("shell.stillPendingDesc"),
     });
   }
 
   if (needsOnboarding) {
     return (
       <div className="grain relative min-h-screen bg-mesh-warm px-4 py-10 sm:py-16">
+        <div className="absolute right-4 top-4">
+          <LanguageToggle />
+        </div>
         <div className="mx-auto max-w-2xl animate-pop-in">
           <img
             src={logoAsset.url}
@@ -113,14 +119,14 @@ function ShellInner({ children }: { children: ReactNode }) {
             className="h-14 w-14 rounded-xl object-cover shadow-pop ring-4 ring-card"
           />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            Chào mừng bạn
+            {t("shell.welcome")}
           </p>
           <h1 className="mt-2 text-balance font-display text-3xl font-semibold leading-tight sm:text-4xl">
-            Bạn muốn bắt đầu thế nào?
+            {t("shell.howStart")}
           </h1>
           <p className="mt-2 text-muted-foreground">
-            {displayName !== "Tài khoản" ? `Xin chào ${displayName}. ` : ""}Chọn một cách để vào
-            nhật ký của đội.
+            {displayName !== t("common.account") ? t("shell.hello", { name: displayName }) : ""}
+            {t("shell.chooseWay")}
           </p>
           <div className="mt-8">
             <OnboardingPanel />
@@ -130,7 +136,7 @@ function ShellInner({ children }: { children: ReactNode }) {
             onClick={signOut}
             className="mt-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary"
           >
-            <LogOut className="h-4 w-4" /> Đăng xuất
+            <LogOut className="h-4 w-4" /> {t("common.signOut")}
           </button>
         </div>
       </div>
@@ -140,24 +146,27 @@ function ShellInner({ children }: { children: ReactNode }) {
   if (pendingApproval) {
     return (
       <div className="grain relative flex min-h-screen items-center justify-center bg-gradient-hero px-4 py-10">
+        <div className="absolute right-4 top-4">
+          <LanguageToggle />
+        </div>
         <div className="surface w-full max-w-md animate-pop-in rounded-2xl p-8 text-center shadow-pop">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-btn">
             <Hourglass className="h-8 w-8 text-foreground/80" />
           </div>
-          <h1 className="font-display text-3xl font-semibold text-foreground">Chờ duyệt</h1>
+          <h1 className="font-display text-3xl font-semibold text-foreground">
+            {t("shell.pendingTitle")}
+          </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Tài khoản của bạn đã được tạo và đang chờ quản trị viên duyệt. Khi được chấp nhận, bạn
-            sẽ có thể xem và ghi lại hành trình cùng cả đội.
+            {t("shell.pendingBody")}
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Hãy liên hệ quản trị viên nếu bạn cần được duyệt sớm.
-          </p>
+          <p className="mt-2 text-xs text-muted-foreground">{t("shell.pendingHint")}</p>
           <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
             <Button variant="hero" onClick={recheck} disabled={checking}>
-              <RefreshCw className={`h-4 w-4 ${checking ? "animate-spin" : ""}`} /> Kiểm tra lại
+              <RefreshCw className={`h-4 w-4 ${checking ? "animate-spin" : ""}`} />{" "}
+              {t("shell.checkAgain")}
             </Button>
             <Button variant="outline" onClick={signOut}>
-              <LogOut className="h-4 w-4" /> Đăng xuất
+              <LogOut className="h-4 w-4" /> {t("common.signOut")}
             </Button>
           </div>
         </div>
@@ -213,7 +222,7 @@ function ShellInner({ children }: { children: ReactNode }) {
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
-                  {item.label}
+                  {t(item.label)}
                   {item.to === "/thanh-vien" && pendingCount > 0 && (
                     <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-primary px-1.5 text-[10px] font-bold text-primary-foreground shadow-btn">
                       {pendingCount}
@@ -232,7 +241,7 @@ function ShellInner({ children }: { children: ReactNode }) {
                 className="hidden md:inline-flex"
                 onClick={() => openCreate()}
               >
-                <Plus className="h-4 w-4" /> Ghi hoạt động
+                <Plus className="h-4 w-4" /> {t("shell.logActivity")}
               </Button>
             )}
             <DropdownMenu>
@@ -251,37 +260,47 @@ function ShellInner({ children }: { children: ReactNode }) {
                     {current?.name ?? "—"}
                   </div>
                   <div className="text-xs font-normal text-muted-foreground">
-                    Vai trò: {current?.role ? ROLE_LABELS[current.role] : "—"}
+                    {t("shell.roleLabel", {
+                      role: current?.role ? t(ROLE_LABEL_KEYS[current.role]) : "—",
+                    })}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                  Giao diện
+                  {t("lang.switch")}
+                </DropdownMenuLabel>
+                <DropdownMenuRadioGroup value={lang} onValueChange={(v) => setLang(v as Lang)}>
+                  <DropdownMenuRadioItem value="vi">{t("lang.vi")}</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="en">{t("lang.en")}</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                  {t("themeMode.appearance")}
                 </DropdownMenuLabel>
                 <DropdownMenuRadioGroup value={theme} onValueChange={(v) => setTheme(v as Theme)}>
                   <DropdownMenuRadioItem value="light">
-                    <Sun className="mr-2 h-4 w-4" /> Sáng
+                    <Sun className="mr-2 h-4 w-4" /> {t("themeMode.light")}
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="dark">
-                    <Moon className="mr-2 h-4 w-4" /> Tối dịu
+                    <Moon className="mr-2 h-4 w-4" /> {t("themeMode.dark")}
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="system">
-                    <Laptop className="mr-2 h-4 w-4" /> Theo thiết bị
+                    <Laptop className="mr-2 h-4 w-4" /> {t("themeMode.system")}
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
                 {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link to="/cai-dat">
-                      <Settings className="h-4 w-4" /> Cài đặt dự án
+                      <Settings className="h-4 w-4" /> {t("shell.projectSettings")}
                     </Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={() => setJoinOpen(true)}>
-                  <Plus className="h-4 w-4" /> Tham gia / tạo dự án khác
+                  <Plus className="h-4 w-4" /> {t("shell.joinOrCreate")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={signOut} className="text-destructive">
-                  <LogOut className="h-4 w-4" /> Đăng xuất
+                  <LogOut className="h-4 w-4" /> {t("common.signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -313,7 +332,7 @@ function ShellInner({ children }: { children: ReactNode }) {
                   </span>
                 )}
               </span>
-              {item.label}
+              {t(item.label)}
             </Link>
           );
         })}
@@ -327,7 +346,7 @@ function ShellInner({ children }: { children: ReactNode }) {
           size="icon"
           variant="hero"
           className="fixed bottom-20 right-4 z-30 h-14 w-14 rounded-full md:hidden"
-          aria-label="Ghi hoạt động"
+          aria-label={t("shell.logActivity")}
         >
           <Plus className="h-6 w-6" />
         </Button>
@@ -335,7 +354,7 @@ function ShellInner({ children }: { children: ReactNode }) {
       <Dialog open={joinOpen} onOpenChange={setJoinOpen}>
         <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="font-display text-2xl">Dự án khác</DialogTitle>
+            <DialogTitle className="font-display text-2xl">{t("shell.otherProjects")}</DialogTitle>
           </DialogHeader>
           <OnboardingPanel onDone={() => setJoinOpen(false)} />
         </DialogContent>

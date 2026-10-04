@@ -1,7 +1,8 @@
-import { typeMeta, statusMeta, MONTH_NAMES } from "@/lib/activity-constants";
+import { typeMeta, statusMeta } from "@/lib/activity-constants";
 import type { ActivityWithExtras } from "@/hooks/use-activities";
 import { TypeDot } from "@/components/activity/TypeDot";
 import { MapPin, Users, Paperclip, ImageIcon, Heart, MessageCircle, UserCheck } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function ActivityCard({
   activity,
@@ -12,6 +13,7 @@ export function ActivityCard({
   onClick: () => void;
   index?: number;
 }) {
+  const { t, lang, locale } = useI18n();
   const tm = typeMeta(activity.type);
   const sm = statusMeta(activity.status);
   const photoCount = activity.attachments.filter((a) => a.kind === "photo").length;
@@ -36,7 +38,12 @@ export function ActivityCard({
           {date.getDate()}
         </span>
         <span className="mt-1 text-[10px] font-semibold uppercase tracking-wide">
-          {MONTH_NAMES[date.getMonth()].replace("Tháng ", "Th ")}
+          {t("card.monthShort", {
+            n:
+              lang === "vi"
+                ? date.getMonth() + 1
+                : new Intl.DateTimeFormat(locale, { month: "short" }).format(date),
+          })}
         </span>
       </div>
 
@@ -44,10 +51,10 @@ export function ActivityCard({
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
           <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             <TypeDot color={tm.colorVar} />
-            {tm.label}
+            {t(tm.labelKey)}
           </span>
           <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${sm.className}`}>
-            {sm.label}
+            {t(sm.labelKey)}
           </span>
         </div>
         <h3 className="mt-1.5 font-display text-lg font-semibold leading-snug text-foreground">
@@ -91,8 +98,8 @@ export function ActivityCard({
           )}
           {activity.attendance_count > 0 && (
             <span className="flex items-center gap-1">
-              <UserCheck className="h-3.5 w-3.5 text-mint-foreground" /> {activity.attendance_count}{" "}
-              đã tham gia
+              <UserCheck className="h-3.5 w-3.5 text-mint-foreground" />{" "}
+              {t("card.attended", { n: activity.attendance_count })}
             </span>
           )}
         </div>

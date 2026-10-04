@@ -11,6 +11,7 @@ import type { ActivityWithExtras } from "@/hooks/use-activities";
 import type { EngagementData, PersonRef } from "@/hooks/use-engagement";
 import { toast } from "sonner";
 import { Heart, UserCheck, Send, Trash2, ImagePlus, Loader2, MessageCircle } from "lucide-react";
+import { useI18n, type Key, type Params } from "@/lib/i18n";
 
 function initials(name: string) {
   return name
@@ -44,16 +45,16 @@ function PeopleList({ people, empty }: { people: PersonRef[]; empty: string }) {
   );
 }
 
-function timeAgo(d: string) {
+function timeAgo(d: string, t: (k: Key, p?: Params) => string, locale: string) {
   const diff = Date.now() - new Date(d).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return "vừa xong";
-  if (m < 60) return `${m} phút trước`;
+  if (m < 1) return t("time.justNow");
+  if (m < 60) return t("time.minutes", { n: m });
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h} giờ trước`;
+  if (h < 24) return t("time.hours", { n: h });
   const day = Math.floor(h / 24);
-  if (day < 7) return `${day} ngày trước`;
-  return new Date(d).toLocaleDateString("vi-VN", { day: "numeric", month: "numeric" });
+  if (day < 7) return t("time.days", { n: day });
+  return new Date(d).toLocaleDateString(locale, { day: "numeric", month: "numeric" });
 }
 
 export function ActivityEngagement({
@@ -63,6 +64,7 @@ export function ActivityEngagement({
   activity: ActivityWithExtras;
   engagement: EngagementData | undefined;
 }) {
+  const { t, locale } = useI18n();
   const { user } = useAuth();
   const { canEdit, isAdmin } = useProject();
   const qc = useQueryClient();
@@ -106,7 +108,7 @@ export function ActivityEngagement({
       }
       refresh();
     } catch {
-      toast.error("Không thể cập nhật lượt thích");
+      toast.error(t("engage.likeFail"));
     } finally {
       setBusyLike(false);
     }
@@ -127,11 +129,11 @@ export function ActivityEngagement({
           .from("activity_attendance")
           .insert({ activity_id: activity.id });
         if (error) throw error;
-        toast.success("Đã ghi nhận bạn tham gia! 🎉");
+        toast.success(t("engage.attendOk"));
       }
       refresh();
     } catch {
-      toast.error("Không thể cập nhật điểm danh");
+      toast.error(t("engage.attendFail"));
     } finally {
       setBusyAttend(false);
     }
@@ -149,7 +151,7 @@ export function ActivityEngagement({
       setCommentText("");
       refresh();
     } catch {
-      toast.error("Không gửi được bình luận");
+      toast.error(t("engage.commentFail"));
     } finally {
       setPosting(false);
     }
@@ -158,7 +160,7 @@ export function ActivityEngagement({
   async function deleteComment(id: string) {
     const { error } = await supabase.from("activity_comments").delete().eq("id", id);
     if (error) {
-      toast.error("Không xóa được bình luận");
+      toast.error(t("engage.commentDeleteFail"));
       return;
     }
     refresh();
@@ -179,10 +181,10 @@ export function ActivityEngagement({
         });
         if (error) throw error;
       }
-      toast.success("Đã thêm ảnh đóng góp 💛");
+      toast.success(t("engage.photoAdded"));
       refresh();
     } catch {
-      toast.error("Tải ảnh lên không thành công");
+      toast.error(t("engage.uploadFail"));
     } finally {
       setUploading(false);
       if (photoRef.current) photoRef.current.value = "";
@@ -193,7 +195,7 @@ export function ActivityEngagement({
     <section className="space-y-5 border-t pt-5">
       <div className="flex items-center gap-2">
         <MessageCircle className="h-4 w-4 text-grape" />
-        <h4 className="text-sm font-semibold">Tương tác của nhóm</h4>
+        <h4 className="text-sm font-semibold">{t("engage.title")}</h4>
       </div>
 
       {/* like + attendance */}
@@ -220,7 +222,7 @@ export function ActivityEngagement({
                 }`}
               />
             </span>
-            Thả tim
+            {t("engage.like")}
           </Button>
         )}
         <Popover>
@@ -233,8 +235,10 @@ export function ActivityEngagement({
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-60 rounded-2xl">
-            <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Đã thả tim</p>
-            <PeopleList people={likes} empty="Chưa có ai thả tim" />
+            <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
+              {t("engage.liked")}
+            </p>
+            <PeopleList people={likes} empty={t("engage.noLikes")} />
           </PopoverContent>
         </Popover>
 
@@ -248,7 +252,7 @@ export function ActivityEngagement({
             className={myAttend ? "bg-none bg-mint text-mint-foreground hover:bg-mint/90" : ""}
           >
             <UserCheck className="h-4 w-4" />
-            {myAttend ? "Đã tham gia" : "Đánh dấu tham gia"}
+            {myAttend ? t("engage.attending") : t("engage.attend")}
           </Button>
         )}
         <Popover>
@@ -257,14 +261,15 @@ export function ActivityEngagement({
               type="button"
               className="flex items-center gap-1 rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
             >
-              <UserCheck className="h-3.5 w-3.5" /> {attendance.length} đã tham gia
+              <UserCheck className="h-3.5 w-3.5" />{" "}
+              {t("engage.attendCount", { n: attendance.length })}
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-60 rounded-2xl">
             <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-              Thành viên đã tham gia
+              {t("engage.attendees")}
             </p>
-            <PeopleList people={attendance} empty="Chưa có ai điểm danh" />
+            <PeopleList people={attendance} empty={t("engage.noAttendees")} />
           </PopoverContent>
         </Popover>
       </div>
@@ -292,7 +297,7 @@ export function ActivityEngagement({
             ) : (
               <ImagePlus className="h-4 w-4" />
             )}
-            Đóng góp ảnh
+            {t("engage.contribute")}
           </Button>
         </div>
       )}
@@ -300,7 +305,7 @@ export function ActivityEngagement({
       {/* comments */}
       <div className="space-y-3">
         <p className="text-xs font-semibold uppercase text-muted-foreground">
-          Bình luận ({comments.length})
+          {t("engage.comments", { n: comments.length })}
         </p>
 
         {canEdit && (
@@ -308,7 +313,7 @@ export function ActivityEngagement({
             <Textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Viết bình luận để cùng sống động hơn…"
+              placeholder={t("engage.commentPh")}
               rows={2}
               className="min-h-0 flex-1 resize-none rounded-2xl"
               onKeyDown={(e) => {
@@ -332,9 +337,7 @@ export function ActivityEngagement({
         )}
 
         {comments.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Chưa có bình luận nào. Hãy là người đầu tiên!
-          </p>
+          <p className="text-sm text-muted-foreground">{t("engage.noComments")}</p>
         ) : (
           <div className="space-y-3">
             {comments.map((c) => {
@@ -345,7 +348,9 @@ export function ActivityEngagement({
                   <div className="flex-1 rounded-2xl bg-muted/60 px-3 py-2">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold">{c.name}</span>
-                      <span className="text-xs text-muted-foreground">{timeAgo(c.created_at)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {timeAgo(c.created_at, t, locale)}
+                      </span>
                       {canDelete && (
                         <button
                           type="button"

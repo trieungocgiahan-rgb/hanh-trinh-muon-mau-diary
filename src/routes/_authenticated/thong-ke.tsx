@@ -8,9 +8,10 @@ import { useActivities } from "@/hooks/use-activities";
 import { ACTIVITY_TYPES, ACTIVITY_STATUSES, typeMeta } from "@/lib/activity-constants";
 import { CalendarRange, Sparkles, Users, CheckCircle2, Loader2 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/thong-ke")({
-  head: () => ({ meta: [{ title: `Thống kê — ${BRAND}` }] }),
+  head: () => ({ meta: [{ title: `${tNow("stats.pageTitle")} — ${BRAND}` }] }),
   component: StatsPage,
 });
 
@@ -46,6 +47,7 @@ function StatCard({
 }
 
 function StatsPage() {
+  const { t } = useI18n();
   const { current } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
   const [grown, setGrown] = useState(false);
@@ -85,34 +87,34 @@ function StatsPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Tổng quan"
-        title="Thống kê"
-        description={`Hành trình của ${current?.name ?? "dự án"} qua các con số`}
+        eyebrow={t("stats.eyebrow")}
+        title={t("stats.pageTitle")}
+        description={t("stats.desc", { name: current?.name ?? t("stats.projectFallback") })}
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
           icon={CalendarRange}
-          label="Tổng hoạt động"
+          label={t("stats.total")}
           value={stats.total}
           gradient="bg-gradient-hero"
         />
         <StatCard
           icon={Sparkles}
-          label="Workshop"
+          label={t("type.workshop")}
           value={stats.workshops}
           gradient="bg-gradient-sun"
           tone="text-sunny-foreground"
         />
         <StatCard
           icon={Users}
-          label="Lượt tham gia"
+          label={t("stats.participants")}
           value={stats.participants}
           gradient="bg-gradient-grape"
         />
         <StatCard
           icon={CheckCircle2}
-          label="Đã hoàn thành"
+          label={t("stats.completed")}
           value={stats.completed}
           gradient="bg-gradient-mint"
         />
@@ -120,23 +122,23 @@ function StatsPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="surface rounded-2xl p-5">
-          <h2 className="mb-4 font-display text-xl font-semibold">Theo loại hoạt động</h2>
+          <h2 className="mb-4 font-display text-xl font-semibold">{t("stats.byType")}</h2>
           <div className="space-y-3">
-            {stats.byType.map((t) => (
-              <div key={t.value}>
+            {stats.byType.map((ty) => (
+              <div key={ty.value}>
                 <div className="mb-1 flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
-                    <TypeDot color={t.colorVar} />
-                    {t.label}
+                    <TypeDot color={ty.colorVar} />
+                    {t(ty.labelKey)}
                   </span>
-                  <span className="font-semibold">{t.count}</span>
+                  <span className="font-semibold">{ty.count}</span>
                 </div>
                 <div className="h-2.5 overflow-hidden rounded-full bg-muted">
                   <div
                     className="h-full rounded-full transition-[width] duration-700 ease-out"
                     style={{
-                      width: grown ? `${(t.count / maxType) * 100}%` : "0%",
-                      backgroundColor: t.colorVar,
+                      width: grown ? `${(ty.count / maxType) * 100}%` : "0%",
+                      backgroundColor: ty.colorVar,
                     }}
                   />
                 </div>
@@ -146,12 +148,12 @@ function StatsPage() {
         </div>
 
         <div className="surface rounded-2xl p-5">
-          <h2 className="mb-4 font-display text-xl font-semibold">Theo trạng thái</h2>
+          <h2 className="mb-4 font-display text-xl font-semibold">{t("stats.byStatus")}</h2>
           <div className="grid grid-cols-2 gap-3">
             {stats.byStatus.map((s) => (
               <div key={s.value} className={`rounded-2xl p-4 ${s.className}`}>
                 <div className="font-display text-2xl font-bold">{s.count}</div>
-                <div className="text-sm">{s.label}</div>
+                <div className="text-sm">{t(s.labelKey)}</div>
               </div>
             ))}
           </div>
@@ -159,15 +161,15 @@ function StatsPage() {
       </div>
 
       <div className="surface rounded-2xl p-5">
-        <h2 className="mb-3 font-display text-xl font-semibold">Phân bố nhanh</h2>
+        <h2 className="mb-3 font-display text-xl font-semibold">{t("stats.distribution")}</h2>
         <div className="flex h-6 overflow-hidden rounded-full">
           {stats.byType
-            .filter((t) => t.count > 0)
-            .map((t) => (
+            .filter((ty) => ty.count > 0)
+            .map((ty) => (
               <div
-                key={t.value}
-                style={{ flex: t.count, backgroundColor: t.colorVar }}
-                title={`${t.label}: ${t.count}`}
+                key={ty.value}
+                style={{ flex: ty.count, backgroundColor: ty.colorVar }}
+                title={`${t(ty.labelKey)}: ${ty.count}`}
               />
             ))}
           {stats.total === 0 && <div className="flex-1 bg-muted" />}

@@ -9,13 +9,15 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FileText, FileDown, Copy, Loader2, FileType2 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { useI18n, tNow } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/bao-cao")({
-  head: () => ({ meta: [{ title: `Xuất báo cáo — ${BRAND}` }] }),
+  head: () => ({ meta: [{ title: `${tNow("report.pageTitle")} — ${BRAND}` }] }),
   component: ReportPage,
 });
 
 function ReportPage() {
+  const { t, locale } = useI18n();
   const { current } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
   const [copied, setCopied] = useState(false);
@@ -55,8 +57,8 @@ function ReportPage() {
 
   const markdown = useMemo(() => {
     if (!current || !activities) return "";
-    return buildMarkdown(current.name, current.org_name, filtered);
-  }, [current, activities, filtered]);
+    return buildMarkdown(current.name, current.org_name, filtered, t, locale);
+  }, [current, activities, filtered, t, locale]);
 
   const slug = (current?.name ?? "bao-cao")
     .toLowerCase()
@@ -68,16 +70,16 @@ function ReportPage() {
   function copyMd() {
     navigator.clipboard.writeText(markdown);
     setCopied(true);
-    toast.success("Đã sao chép báo cáo");
+    toast.success(t("report.copied"));
     setTimeout(() => setCopied(false), 2000);
   }
 
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Gửi đi"
-        title="Xuất báo cáo"
-        description="Tạo báo cáo tổng hợp để gửi cố vấn và nhà tài trợ"
+        eyebrow={t("report.eyebrow")}
+        title={t("report.pageTitle")}
+        description={t("report.desc")}
       />
 
       {isLoading ? (
@@ -88,18 +90,20 @@ function ReportPage() {
         <>
           <section className="surface space-y-4 rounded-2xl p-5">
             <div>
-              <h2 className="font-display text-xl font-semibold">Khoảng thời gian</h2>
+              <h2 className="font-display text-xl font-semibold">{t("report.period")}</h2>
               <p className="mt-0.5 text-sm text-muted-foreground">
-                {filtered.length} hoạt động sẽ có trong báo cáo.
+                {t(filtered.length === 1 ? "report.periodCount.one" : "report.periodCount.other", {
+                  n: filtered.length,
+                })}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {(
                 [
-                  ["all", "Tất cả"],
-                  ["month", "Tháng này"],
-                  ["quarter", "3 tháng gần đây"],
-                  ["year", "Năm nay"],
+                  ["all", "report.p.all"],
+                  ["month", "report.p.month"],
+                  ["quarter", "report.p.quarter"],
+                  ["year", "report.p.year"],
                 ] as const
               ).map(([k, label]) => (
                 <Button
@@ -109,14 +113,14 @@ function ReportPage() {
                   size="sm"
                   onClick={() => setPreset(k)}
                 >
-                  {label}
+                  {t(label)}
                 </Button>
               ))}
             </div>
             <div className="grid max-w-md grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label htmlFor="from" className="text-xs font-medium text-muted-foreground">
-                  Từ ngày
+                  {t("report.from")}
                 </label>
                 <Input
                   id="from"
@@ -127,7 +131,7 @@ function ReportPage() {
               </div>
               <div className="space-y-1">
                 <label htmlFor="to" className="text-xs font-medium text-muted-foreground">
-                  Đến ngày
+                  {t("report.to")}
                 </label>
                 <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
               </div>
@@ -136,11 +140,8 @@ function ReportPage() {
 
           <div className="surface flex flex-col gap-3 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="font-display text-xl font-semibold">Báo cáo PDF có ảnh</h2>
-              <p className="mt-0.5 max-w-lg text-sm text-muted-foreground">
-                Trình bày đẹp để gửi nhà tài trợ: ảnh bìa, số liệu, trích dẫn nổi bật và ảnh của
-                từng hoạt động.
-              </p>
+              <h2 className="font-display text-xl font-semibold">{t("report.pdfTitle")}</h2>
+              <p className="mt-0.5 max-w-lg text-sm text-muted-foreground">{t("report.pdfDesc")}</p>
             </div>
             <Button
               variant="hero"
@@ -149,7 +150,7 @@ function ReportPage() {
               onClick={openPdf}
               disabled={!filtered.length}
             >
-              <FileType2 className="h-4 w-4" /> Xuất PDF
+              <FileType2 className="h-4 w-4" /> {t("report.exportPdf")}
             </Button>
           </div>
 
@@ -158,10 +159,10 @@ function ReportPage() {
               variant="outline"
               onClick={() => {
                 downloadFile(markdown, `bao-cao-${slug}.md`, "text/markdown;charset=utf-8");
-                toast.success("Đã tải báo cáo Markdown");
+                toast.success(t("report.mdDone"));
               }}
             >
-              <FileDown className="h-4 w-4" /> Tải Markdown (.md)
+              <FileDown className="h-4 w-4" /> {t("report.mdBtn")}
             </Button>
             <Button
               variant="secondary"
@@ -171,22 +172,22 @@ function ReportPage() {
                   `bao-cao-${slug}.doc`,
                   "application/msword;charset=utf-8",
                 );
-                toast.success("Đã tải báo cáo Word");
+                toast.success(t("report.wordDone"));
               }}
             >
-              <FileText className="h-4 w-4" /> Tải Word (.doc)
+              <FileText className="h-4 w-4" /> {t("report.wordBtn")}
             </Button>
             <Button variant="outline" onClick={copyMd}>
-              <Copy className="h-4 w-4" /> {copied ? "Đã sao chép" : "Sao chép"}
+              <Copy className="h-4 w-4" /> {copied ? t("report.copiedBtn") : t("report.copy")}
             </Button>
           </div>
 
           <div className="surface rounded-2xl p-5">
             <h2 className="mb-3 font-display text-sm font-semibold text-muted-foreground">
-              Xem trước
+              {t("report.preview")}
             </h2>
             <pre className="max-h-[60vh] overflow-auto whitespace-pre-wrap rounded-2xl bg-muted/40 p-4 text-sm leading-relaxed">
-              {markdown || "Chưa có hoạt động nào để xuất báo cáo."}
+              {markdown || t("report.noActivities")}
             </pre>
           </div>
         </>

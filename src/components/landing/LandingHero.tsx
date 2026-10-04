@@ -2,8 +2,17 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronLeft, ChevronRight, Mic, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import group from "@/assets/landing-group.jpg";
+import { useI18n } from "@/lib/i18n";
 
-const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+const WEEKDAY_KEYS = [
+  "weekday.1",
+  "weekday.2",
+  "weekday.3",
+  "weekday.4",
+  "weekday.5",
+  "weekday.6",
+  "weekday.7",
+] as const;
 
 // Lịch tháng mẫu: [ngày, màu loại hoạt động | null]
 const DAYS: { d: number; chips: string[] }[] = Array.from({ length: 35 }, (_, i) => {
@@ -21,10 +30,11 @@ const DAYS: { d: number; chips: string[] }[] = Array.from({ length: 35 }, (_, i)
 });
 
 function CalendarPreview() {
+  const { t } = useI18n();
   return (
     <div className="surface rounded-2xl p-4 shadow-pop sm:p-5">
       <div className="flex items-center justify-between pb-3">
-        <p className="font-display text-lg font-semibold">Tháng 10, 2026</p>
+        <p className="font-display text-lg font-semibold">{t("hero.mockMonth")}</p>
         <div className="flex items-center gap-1 text-muted-foreground" aria-hidden>
           <span className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card">
             <ChevronLeft className="h-3.5 w-3.5" />
@@ -35,12 +45,12 @@ function CalendarPreview() {
         </div>
       </div>
       <div className="grid grid-cols-7 gap-px overflow-hidden rounded-xl border border-border bg-border">
-        {WEEKDAYS.map((w) => (
+        {WEEKDAY_KEYS.map((w) => (
           <div
             key={w}
             className="bg-secondary/60 py-1.5 text-center text-[10px] font-semibold text-muted-foreground"
           >
-            {w}
+            {t(w)}
           </div>
         ))}
         {DAYS.map(({ d, chips }, i) => {
@@ -72,39 +82,41 @@ function CalendarPreview() {
 }
 
 export function LandingHero() {
+  const { t } = useI18n();
   return (
     <section className="grain relative overflow-hidden bg-mesh-warm pb-20 pt-12 sm:pb-28 sm:pt-20">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-[1fr_1.05fr] lg:gap-10">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            Nhật ký chung cho dự án, đội nhóm và công ty
+            {t("brand.taglineLong")}
           </p>
           <h1 className="mt-5 font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
-            Cả đội
+            {t("hero.l1")}
             <br />
-            <em className="text-gradient pr-1 font-medium">cùng nhau</em>
-            <br />
-            ghi lại hành trình.
+            <em className="text-gradient pr-1 font-medium">{t("hero.l2")}</em>
+            {t("hero.l3") && (
+              <>
+                <br />
+                {t("hero.l3")}
+              </>
+            )}
           </h1>
           <p className="mt-6 max-w-md text-base leading-7 text-muted-foreground sm:text-lg">
-            Ghi lại từng buổi workshop, chuyến đi, cuộc họp — kèm ảnh và giọng nói — rồi xem lại tất
-            cả trên một tấm lịch chung.
+            {t("hero.sub")}
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button asChild variant="hero" size="lg" className="w-full sm:w-auto">
               <Link to="/auth">
-                Vào nhật ký
+                {t("common.enterJournal")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-              <a href="#dung-thu">Dùng thử ngay</a>
+              <a href="#dung-thu">{t("hero.tryNow")}</a>
             </Button>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Đăng nhập một chạm bằng Google, không cần tạo mật khẩu.
-          </p>
+          <p className="mt-4 text-sm text-muted-foreground">{t("hero.signInNote")}</p>
         </div>
 
         <div className="relative pb-16 lg:pb-10">
@@ -114,7 +126,7 @@ export function LandingHero() {
           <div className="surface absolute -bottom-4 left-0 w-[88%] overflow-hidden rounded-xl shadow-pop sm:-bottom-10 sm:-left-8 sm:w-80">
             <img
               src={group}
-              alt="Cả đội cùng nhau sau một buổi workshop"
+              alt={t("hero.photoAlt")}
               width={1200}
               height={912}
               className="h-20 w-full object-cover"
@@ -122,11 +134,11 @@ export function LandingHero() {
             <div className="flex items-center gap-3 px-3.5 py-3">
               <span className="h-9 w-1.5 shrink-0 rounded-full bg-type-workshop" aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">Workshop khởi động</p>
-                <p className="truncate text-xs text-muted-foreground">17/10 · 24 người</p>
+                <p className="truncate text-sm font-semibold">{t("hero.mockActivity")}</p>
+                <p className="truncate text-xs text-muted-foreground">{t("hero.mockMeta")}</p>
               </div>
               <span className="shrink-0 rounded-full bg-mint px-2 py-0.5 text-[10px] font-semibold text-mint-foreground">
-                Hoàn thành
+                {t("status.completed")}
               </span>
             </div>
           </div>

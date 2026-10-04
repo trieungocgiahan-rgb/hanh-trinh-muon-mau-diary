@@ -2,12 +2,14 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, Square, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n";
 
 interface Props {
   onRecorded: (blob: Blob, durationSec: number) => void;
 }
 
 export function VoiceRecorder({ onRecorded }: Props) {
+  const { t } = useI18n();
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const mediaRef = useRef<MediaRecorder | null>(null);
@@ -34,8 +36,8 @@ export function VoiceRecorder({ onRecorded }: Props) {
       setSeconds(0);
       timerRef.current = setInterval(() => setSeconds((s) => s + 1), 1000);
     } catch {
-      toast.error("Không thể truy cập micro", {
-        description: "Hãy cho phép trình duyệt sử dụng micro để ghi âm.",
+      toast.error(t("voice.micFail"), {
+        description: t("voice.micFailDesc"),
       });
     }
   }
@@ -54,7 +56,7 @@ export function VoiceRecorder({ onRecorded }: Props) {
       {recording ? (
         <>
           <Button type="button" variant="destructive" size="sm" onClick={stop}>
-            <Square className="h-4 w-4" /> Dừng
+            <Square className="h-4 w-4" /> {t("voice.stop")}
           </Button>
           <span className="flex items-center gap-2 text-sm font-medium text-destructive">
             <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-destructive" />
@@ -63,7 +65,7 @@ export function VoiceRecorder({ onRecorded }: Props) {
         </>
       ) : (
         <Button type="button" variant="outline" size="sm" onClick={start}>
-          <Mic className="h-4 w-4" /> Ghi âm
+          <Mic className="h-4 w-4" /> {t("voice.record")}
         </Button>
       )}
     </div>
