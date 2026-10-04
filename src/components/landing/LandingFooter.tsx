@@ -10,8 +10,8 @@ export function LandingFooter() {
           <span className="font-display text-base font-semibold">Nhật Ký Hành Trình</span>
         </Link>
         <nav className="flex items-center gap-6 text-sm text-muted-foreground">
-          <a href="#tinh-nang" className="hover:text-primary">
-            Tính năng
+          <a href="#dung-thu" className="hover:text-primary">
+            Dùng thử
           </a>
           <a href="#bat-dau" className="hover:text-primary">
             Bắt đầu

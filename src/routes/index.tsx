@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import logoAsset from "@/assets/logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
-import { LandingFeatures } from "@/components/landing/LandingFeatures";
+import { LandingDemo } from "@/components/landing/LandingDemo";
 import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
@@ -70,10 +70,10 @@ function LandingPage() {
 
           <nav className="hidden items-center gap-1 text-sm font-medium text-muted-foreground sm:flex">
             <a
-              href="#tinh-nang"
+              href="#dung-thu"
               className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
             >
-              Tính năng
+              Dùng thử
             </a>
             <a
               href="#bat-dau"
@@ -94,7 +94,7 @@ function LandingPage() {
 
       <main>
         <LandingHero />
-        <LandingFeatures />
+        <LandingDemo />
         <LandingSteps />
         <LandingCTA />
       </main>

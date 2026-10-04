@@ -25,7 +25,7 @@ export function themeHue(key: string | null | undefined): number {
 }
 
 // Ghi các biến màu lên <html>; dùng cho cả xem trước ở trang Cài đặt.
-export function applyThemeVars(key: string | null | undefined) {
+export function applyThemeVars(key: string | null | undefined, persist = true) {
   const t = findTheme(key);
   const root = document.documentElement;
   root.style.setProperty("--h", String(t.hue));
@@ -33,6 +33,7 @@ export function applyThemeVars(key: string | null | undefined) {
   else root.style.removeProperty("--hm");
   if (t.h2 !== undefined) root.style.setProperty("--h2", String(t.h2));
   else root.style.removeProperty("--h2");
+  if (!persist) return;
   try {
     localStorage.setItem(HUE_STORAGE_KEY, `${t.hue},${t.hm ?? ""},${t.h2 ?? ""}`);
   } catch {
