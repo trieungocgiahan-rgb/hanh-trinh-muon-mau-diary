@@ -9,26 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as InBaoCaoRouteImport } from './routes/in-bao-cao'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedThongKeRouteImport } from './routes/_authenticated/thong-ke'
-import { Route as AuthenticatedThanhVienRouteImport } from './routes/_authenticated/thanh-vien'
-import { Route as AuthenticatedLichRouteImport } from './routes/_authenticated/lich'
-import { Route as AuthenticatedDanhSachRouteImport } from './routes/_authenticated/danh-sach'
-import { Route as AuthenticatedCaiDatRouteImport } from './routes/_authenticated/cai-dat'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as InBaoCaoRouteImport } from './routes/in-bao-cao'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedBaoCaoRouteImport } from './routes/_authenticated/bao-cao'
+import { Route as AuthenticatedCaiDatRouteImport } from './routes/_authenticated/cai-dat'
+import { Route as AuthenticatedDanhSachRouteImport } from './routes/_authenticated/danh-sach'
+import { Route as AuthenticatedLichRouteImport } from './routes/_authenticated/lich'
+import { Route as AuthenticatedThanhVienRouteImport } from './routes/_authenticated/thanh-vien'
+import { Route as AuthenticatedThongKeRouteImport } from './routes/_authenticated/thong-ke'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InBaoCaoRoute = InBaoCaoRouteImport.update({
-  id: '/in-bao-cao',
-  path: '/in-bao-cao',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -36,33 +35,19 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const InBaoCaoRoute = InBaoCaoRouteImport.update({
+  id: '/in-bao-cao',
+  path: '/in-bao-cao',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedThongKeRoute = AuthenticatedThongKeRouteImport.update({
-  id: '/thong-ke',
-  path: '/thong-ke',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedThanhVienRoute = AuthenticatedThanhVienRouteImport.update({
-  id: '/thanh-vien',
-  path: '/thanh-vien',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedLichRoute = AuthenticatedLichRouteImport.update({
-  id: '/lich',
-  path: '/lich',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedDanhSachRoute = AuthenticatedDanhSachRouteImport.update({
-  id: '/danh-sach',
-  path: '/danh-sach',
+const AuthenticatedBaoCaoRoute = AuthenticatedBaoCaoRouteImport.update({
+  id: '/bao-cao',
+  path: '/bao-cao',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCaiDatRoute = AuthenticatedCaiDatRouteImport.update({
@@ -70,9 +55,24 @@ const AuthenticatedCaiDatRoute = AuthenticatedCaiDatRouteImport.update({
   path: '/cai-dat',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedBaoCaoRoute = AuthenticatedBaoCaoRouteImport.update({
-  id: '/bao-cao',
-  path: '/bao-cao',
+const AuthenticatedDanhSachRoute = AuthenticatedDanhSachRouteImport.update({
+  id: '/danh-sach',
+  path: '/danh-sach',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLichRoute = AuthenticatedLichRouteImport.update({
+  id: '/lich',
+  path: '/lich',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedThanhVienRoute = AuthenticatedThanhVienRouteImport.update({
+  id: '/thanh-vien',
+  path: '/thanh-vien',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedThongKeRoute = AuthenticatedThongKeRouteImport.update({
+  id: '/thong-ke',
+  path: '/thong-ke',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
@@ -164,25 +164,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/in-bao-cao': {
-      id: '/in-bao-cao'
-      path: '/in-bao-cao'
-      fullPath: '/in-bao-cao'
-      preLoaderRoute: typeof InBaoCaoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -192,39 +178,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/thong-ke': {
-      id: '/_authenticated/thong-ke'
-      path: '/thong-ke'
-      fullPath: '/thong-ke'
-      preLoaderRoute: typeof AuthenticatedThongKeRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/in-bao-cao': {
+      id: '/in-bao-cao'
+      path: '/in-bao-cao'
+      fullPath: '/in-bao-cao'
+      preLoaderRoute: typeof InBaoCaoRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/thanh-vien': {
-      id: '/_authenticated/thanh-vien'
-      path: '/thanh-vien'
-      fullPath: '/thanh-vien'
-      preLoaderRoute: typeof AuthenticatedThanhVienRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/lich': {
-      id: '/_authenticated/lich'
-      path: '/lich'
-      fullPath: '/lich'
-      preLoaderRoute: typeof AuthenticatedLichRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/danh-sach': {
-      id: '/_authenticated/danh-sach'
-      path: '/danh-sach'
-      fullPath: '/danh-sach'
-      preLoaderRoute: typeof AuthenticatedDanhSachRouteImport
+    '/_authenticated/bao-cao': {
+      id: '/_authenticated/bao-cao'
+      path: '/bao-cao'
+      fullPath: '/bao-cao'
+      preLoaderRoute: typeof AuthenticatedBaoCaoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/cai-dat': {
@@ -234,11 +213,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCaiDatRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/bao-cao': {
-      id: '/_authenticated/bao-cao'
-      path: '/bao-cao'
-      fullPath: '/bao-cao'
-      preLoaderRoute: typeof AuthenticatedBaoCaoRouteImport
+    '/_authenticated/danh-sach': {
+      id: '/_authenticated/danh-sach'
+      path: '/danh-sach'
+      fullPath: '/danh-sach'
+      preLoaderRoute: typeof AuthenticatedDanhSachRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lich': {
+      id: '/_authenticated/lich'
+      path: '/lich'
+      fullPath: '/lich'
+      preLoaderRoute: typeof AuthenticatedLichRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/thanh-vien': {
+      id: '/_authenticated/thanh-vien'
+      path: '/thanh-vien'
+      fullPath: '/thanh-vien'
+      preLoaderRoute: typeof AuthenticatedThanhVienRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/thong-ke': {
+      id: '/_authenticated/thong-ke'
+      path: '/thong-ke'
+      fullPath: '/thong-ke'
+      preLoaderRoute: typeof AuthenticatedThongKeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
