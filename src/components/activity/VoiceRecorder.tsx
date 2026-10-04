@@ -70,13 +70,7 @@ export function VoiceRecorder({ onRecorded }: Props) {
   );
 }
 
-export function PendingAudioPreview({
-  blob,
-  onRemove,
-}: {
-  blob: Blob;
-  onRemove: () => void;
-}) {
+export function PendingAudioPreview({ blob, onRemove }: { blob: Blob; onRemove: () => void }) {
   const url = URL.createObjectURL(blob);
   return (
     <div className="flex items-center gap-2 rounded-xl bg-muted px-3 py-2">

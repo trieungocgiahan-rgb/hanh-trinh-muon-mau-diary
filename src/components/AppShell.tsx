@@ -81,7 +81,7 @@ function ShellInner({ children }: { children: ReactNode }) {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-btn">
             <Hourglass className="h-8 w-8 text-foreground/80" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Chờ duyệt</h1>
+          <h1 className="font-display text-3xl font-semibold text-foreground">Chờ duyệt</h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Tài khoản của bạn đã được tạo và đang chờ quản trị viên duyệt. Khi được chấp nhận, bạn
             sẽ có thể xem và ghi lại hành trình cùng cả đội.
@@ -107,7 +107,7 @@ function ShellInner({ children }: { children: ReactNode }) {
               alt="Nhật Ký Hành Trình"
               className="h-10 w-10 rounded-xl object-cover shadow-soft ring-2 ring-white/80"
             />
-            <span className="hidden font-display text-lg font-bold sm:block">
+            <span className="hidden font-display text-lg font-semibold sm:block">
               Nhật Ký Hành Trình
             </span>
           </Link>
@@ -127,7 +127,7 @@ function ShellInner({ children }: { children: ReactNode }) {
             </Select>
           ) : (
             current && (
-              <span className="ml-1 hidden truncate rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground lg:block">
+              <span className="ml-1 hidden max-w-[200px] truncate rounded-full border border-border bg-card/70 px-3 py-1 text-xs font-medium text-muted-foreground xl:block">
                 {current.name}
               </span>
             )
@@ -140,7 +140,7 @@ function ShellInner({ children }: { children: ReactNode }) {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
                     active
                       ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_oklch(0.69_0.17_28/0.18),inset_0_1px_0_oklch(1_0_0/0.6)]"
                       : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
@@ -193,7 +193,7 @@ function ShellInner({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">{children}</main>
 
       {/* mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-border/50 bg-background/90 px-1 py-1.5 shadow-[0_-8px_24px_-16px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl md:hidden">

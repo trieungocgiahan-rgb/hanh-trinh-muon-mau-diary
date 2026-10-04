@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { TypeDot } from "@/components/activity/TypeDot";
 import { Badge } from "@/components/ui/badge";
 import { SignedImage, SignedAudio, SignedVideo, SignedDocLink } from "./SignedMedia";
 import { useActivityDialog } from "@/hooks/use-activity-dialog";
@@ -137,9 +138,10 @@ export function ActivityDetailSheet() {
           <div className="h-2 w-full" style={{ backgroundColor: tm.colorVar }} />
           <SheetHeader className="px-6 pt-5">
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <Badge className="border-0 text-white" style={{ backgroundColor: tm.colorVar }}>
-                {tm.emoji} {tm.label}
-              </Badge>
+              <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                <TypeDot color={tm.colorVar} />
+                {tm.label}
+              </span>
               <Badge variant="secondary" className={sm.className}>
                 {sm.label}
               </Badge>

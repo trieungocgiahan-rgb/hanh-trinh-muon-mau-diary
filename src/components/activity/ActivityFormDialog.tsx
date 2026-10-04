@@ -1,3 +1,4 @@
+import { TypeDot } from "@/components/activity/TypeDot";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -191,7 +192,13 @@ export function ActivityFormDialog() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="d">Ngày *</Label>
-                <Input id="d" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+                <Input
+                  id="d"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="p">Số người tham gia</Label>
@@ -216,7 +223,10 @@ export function ActivityFormDialog() {
                   <SelectContent>
                     {ACTIVITY_TYPES.map((t) => (
                       <SelectItem key={t.value} value={t.value}>
-                        {t.emoji} {t.label}
+                        <span className="flex items-center gap-2">
+                          <TypeDot color={t.colorVar} />
+                          {t.label}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -275,11 +285,21 @@ export function ActivityFormDialog() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="is">Vấn đề phát sinh</Label>
-                <Textarea id="is" value={issues} onChange={(e) => setIssues(e.target.value)} rows={3} />
+                <Textarea
+                  id="is"
+                  value={issues}
+                  onChange={(e) => setIssues(e.target.value)}
+                  rows={3}
+                />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="ns">Bước tiếp theo</Label>
-                <Textarea id="ns" value={nextSteps} onChange={(e) => setNextSteps(e.target.value)} rows={3} />
+                <Textarea
+                  id="ns"
+                  value={nextSteps}
+                  onChange={(e) => setNextSteps(e.target.value)}
+                  rows={3}
+                />
               </div>
             </div>
 
@@ -299,7 +319,13 @@ export function ActivityFormDialog() {
               Hủy
             </Button>
             <Button type="submit" variant="hero" disabled={saving}>
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editing ? "Lưu thay đổi" : "Ghi vào nhật ký"}
+              {saving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : editing ? (
+                "Lưu thay đổi"
+              ) : (
+                "Ghi vào nhật ký"
+              )}
             </Button>
           </DialogFooter>
         </form>

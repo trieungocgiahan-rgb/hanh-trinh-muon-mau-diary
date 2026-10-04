@@ -1,23 +1,7 @@
-import { Badge } from "@/components/ui/badge";
-import { typeMeta, statusMeta } from "@/lib/activity-constants";
+import { typeMeta, statusMeta, MONTH_NAMES } from "@/lib/activity-constants";
 import type { ActivityWithExtras } from "@/hooks/use-activities";
-import {
-  CalendarDays,
-  MapPin,
-  Users,
-  Paperclip,
-  ImageIcon,
-  Heart,
-  MessageCircle,
-  UserCheck,
-} from "lucide-react";
-
-function shortDate(d: string) {
-  return new Date(d + "T00:00:00").toLocaleDateString("vi-VN", {
-    day: "numeric",
-    month: "numeric",
-  });
-}
+import { TypeDot } from "@/components/activity/TypeDot";
+import { MapPin, Users, Paperclip, ImageIcon, Heart, MessageCircle, UserCheck } from "lucide-react";
 
 export function ActivityCard({
   activity,
@@ -30,41 +14,48 @@ export function ActivityCard({
   const sm = statusMeta(activity.status);
   const photoCount = activity.attachments.filter((a) => a.kind === "photo").length;
   const otherCount = activity.attachments.length - photoCount;
+  const date = new Date(activity.date + "T00:00:00");
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="surface surface-lift group flex w-full overflow-hidden rounded-2xl text-left"
+      className="surface surface-lift group flex w-full gap-4 rounded-2xl p-4 text-left"
     >
       <div
-        className="bg-ombre w-1.5 shrink-0"
-        style={{ "--c": tm.colorVar } as React.CSSProperties}
-      />
-      <div className="flex-1 p-4">
-        <div className="mb-1.5 flex flex-wrap items-center gap-2">
-          <Badge
-            className="bg-ombre border-0 text-white"
-            style={{ "--c": tm.colorVar } as React.CSSProperties}
-          >
-            {tm.emoji} {tm.label}
-          </Badge>
-          <Badge variant="secondary" className={sm.className}>
+        className="flex h-16 w-14 shrink-0 flex-col items-center justify-center rounded-xl"
+        style={{
+          backgroundColor: `color-mix(in oklab, ${tm.colorVar} 14%, white)`,
+          color: `color-mix(in oklab, ${tm.colorVar} 70%, black)`,
+        }}
+      >
+        <span className="font-display text-2xl font-semibold leading-none tabular-nums">
+          {date.getDate()}
+        </span>
+        <span className="mt-1 text-[10px] font-semibold uppercase tracking-wide">
+          {MONTH_NAMES[date.getMonth()].replace("Tháng ", "Th ")}
+        </span>
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            <TypeDot color={tm.colorVar} />
+            {tm.label}
+          </span>
+          <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${sm.className}`}>
             {sm.label}
-          </Badge>
+          </span>
         </div>
-        <h3 className="font-display text-lg font-semibold leading-snug text-foreground">
+        <h3 className="mt-1.5 font-display text-lg font-semibold leading-snug text-foreground">
           {activity.title}
         </h3>
         {activity.highlight && (
-          <p className="mt-1 line-clamp-2 text-sm italic text-muted-foreground">
+          <p className="mt-1 line-clamp-2 font-display text-sm italic text-muted-foreground">
             “{activity.highlight}”
           </p>
         )}
-        <div className="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <CalendarDays className="h-3.5 w-3.5" /> {shortDate(activity.date)}
-          </span>
+        <div className="mt-2.5 flex flex-wrap gap-x-3.5 gap-y-1 text-xs text-muted-foreground">
           {activity.location && (
             <span className="flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5" /> {activity.location}
@@ -85,29 +76,23 @@ export function ActivityCard({
               <Paperclip className="h-3.5 w-3.5" /> {otherCount}
             </span>
           )}
+          {activity.like_count > 0 && (
+            <span className="flex items-center gap-1">
+              <Heart className="h-3.5 w-3.5 fill-primary/70 text-primary" /> {activity.like_count}
+            </span>
+          )}
+          {activity.comment_count > 0 && (
+            <span className="flex items-center gap-1">
+              <MessageCircle className="h-3.5 w-3.5 text-grape" /> {activity.comment_count}
+            </span>
+          )}
+          {activity.attendance_count > 0 && (
+            <span className="flex items-center gap-1">
+              <UserCheck className="h-3.5 w-3.5 text-mint-foreground" /> {activity.attendance_count}{" "}
+              đã tham gia
+            </span>
+          )}
         </div>
-        {(activity.like_count > 0 ||
-          activity.comment_count > 0 ||
-          activity.attendance_count > 0) && (
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
-            {activity.like_count > 0 && (
-              <span className="flex items-center gap-1">
-                <Heart className="h-3.5 w-3.5 fill-primary/70 text-primary" /> {activity.like_count}
-              </span>
-            )}
-            {activity.comment_count > 0 && (
-              <span className="flex items-center gap-1">
-                <MessageCircle className="h-3.5 w-3.5 text-grape" /> {activity.comment_count}
-              </span>
-            )}
-            {activity.attendance_count > 0 && (
-              <span className="flex items-center gap-1">
-                <UserCheck className="h-3.5 w-3.5 text-mint-foreground" />{" "}
-                {activity.attendance_count} đã tham gia
-              </span>
-            )}
-          </div>
-        )}
       </div>
     </button>
   );

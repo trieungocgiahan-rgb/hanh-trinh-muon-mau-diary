@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "@/components/PageHeader";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useProject } from "@/hooks/use-project";
@@ -100,13 +101,14 @@ function MembersPage() {
   const activeMembers = (members ?? []).filter((m) => m.role !== "pending");
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="font-display text-2xl font-bold">Thành viên</h1>
-        <p className="text-sm text-muted-foreground">Cả đội của {current?.name}</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Cả đội"
+        title="Thành viên"
+        description={`Những người cùng viết nên hành trình của ${current?.name ?? "dự án"}`}
+      />
 
-      <div className="flex items-start gap-3 rounded-2xl bg-accent/50 p-4 text-sm text-accent-foreground">
+      <div className="flex items-start gap-3 rounded-2xl border border-accent-foreground/10 bg-gradient-to-r from-accent/70 to-accent/30 p-4 text-sm text-accent-foreground">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <p>
           Mời người mới bằng cách chia sẻ đường dẫn ứng dụng. Khi họ đăng ký, họ sẽ ở trạng thái{" "}
@@ -122,7 +124,7 @@ function MembersPage() {
         <>
           {isAdmin && pendingMembers.length > 0 && (
             <div>
-              <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold">
+              <h2 className="mb-2 flex items-center gap-2 font-display text-xl font-semibold">
                 Chờ duyệt
                 <span className="rounded-full bg-sunny px-2 py-0.5 text-xs font-semibold text-sunny-foreground">
                   {pendingMembers.length}
@@ -134,7 +136,7 @@ function MembersPage() {
                     key={m.id}
                     className={`flex items-center gap-3 px-4 py-3.5 ${idx > 0 ? "border-t border-border" : ""}`}
                   >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-grape text-sm font-semibold text-grape-foreground">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-grape text-sm font-semibold text-grape-foreground shadow-btn">
                       {(m.full_name ?? "?").charAt(0).toUpperCase()}
                     </span>
                     <div className="min-w-0 flex-1">
@@ -192,7 +194,7 @@ function MembersPage() {
                 key={m.id}
                 className={`flex items-center gap-3 px-4 py-3.5 ${idx > 0 ? "border-t border-border" : ""}`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-grape text-sm font-semibold text-grape-foreground">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-grape text-sm font-semibold text-grape-foreground shadow-btn">
                   {(m.full_name ?? "?").charAt(0).toUpperCase()}
                 </span>
                 <div className="min-w-0 flex-1">
