@@ -11,9 +11,10 @@ import { useProjectBranding } from "@/hooks/use-project-branding";
 import { TypeDot } from "@/components/activity/TypeDot";
 import { ACTIVITY_TYPES, MONTH_NAMES, WEEKDAY_SHORT, typeMeta } from "@/lib/activity-constants";
 import { ChevronLeft, ChevronRight, Plus, Loader2, CalendarHeart, ImageIcon } from "lucide-react";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/lich")({
-  head: () => ({ meta: [{ title: "Lịch hoạt động — Nhật Ký Hành Trình" }] }),
+  head: () => ({ meta: [{ title: `Lịch hoạt động — ${BRAND}` }] }),
   component: CalendarPage,
 });
 

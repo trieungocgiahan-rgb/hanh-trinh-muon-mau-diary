@@ -16,9 +16,10 @@ import {
   type ActivityStatus,
 } from "@/lib/activity-constants";
 import { Search, Loader2, ListChecks } from "lucide-react";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/danh-sach")({
-  head: () => ({ meta: [{ title: "Danh sách hoạt động — Nhật Ký Hành Trình" }] }),
+  head: () => ({ meta: [{ title: `Danh sách hoạt động — ${BRAND}` }] }),
   component: ListPage,
 });
 

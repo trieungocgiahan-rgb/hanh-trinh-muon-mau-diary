@@ -16,6 +16,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { ProjectProvider } from "@/hooks/use-project";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { BRAND } from "@/lib/brand";
 
 function NotFoundComponent() {
   return (
@@ -82,21 +83,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Nhật Ký Hành Trình" },
+      { title: BRAND },
       {
         name: "description",
         content:
           "Nhật ký chung cho dự án, đội nhóm và công ty — ghi lại từng hoạt động, ảnh, ghi âm và xem trên lịch.",
       },
-      { name: "author", content: "Nhật Ký Hành Trình" },
-      { property: "og:title", content: "Nhật Ký Hành Trình" },
+      { name: "author", content: BRAND },
+      { property: "og:title", content: BRAND },
       {
         property: "og:description",
         content: "Nhật ký chung cho dự án, đội nhóm và công ty.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Nhật Ký Hành Trình" },
+      { name: "twitter:title", content: BRAND },
       { name: "description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
       { property: "og:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
       { name: "twitter:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },

@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import logoAsset from "@/assets/logo.png.asset.json";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Đăng nhập — Nhật Ký Hành Trình" },
+      { title: `Đăng nhập — ${BRAND}` },
       {
         name: "description",
         content: "Đăng nhập bằng Google để ghi nhật ký chung cùng cả đội.",
       },
-      { property: "og:title", content: "Đăng nhập — Nhật Ký Hành Trình" },
+      { property: "og:title", content: `Đăng nhập — ${BRAND}` },
       {
         property: "og:description",
         content: "Đăng nhập bằng Google để ghi nhật ký chung cùng cả đội.",
@@ -59,12 +60,12 @@ function AuthPage() {
       <div className="surface relative w-full max-w-md animate-pop-in rounded-2xl p-7 text-center shadow-pop sm:p-9">
         <img
           src={logoAsset.url}
-          alt="Nhật Ký Hành Trình"
+          alt={BRAND}
           className="mx-auto mb-5 h-16 w-16 rounded-xl object-cover shadow-pop ring-4 ring-card"
         />
         <p className="font-display text-lg font-medium italic text-primary">Chào bạn trở lại</p>
         <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground">
-          Nhật Ký Hành Trình
+          {BRAND}
         </h1>
         <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
           Đăng nhập hoặc tạo tài khoản chỉ bằng một bước với Google.

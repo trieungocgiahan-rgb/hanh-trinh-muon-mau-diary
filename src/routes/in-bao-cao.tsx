@@ -7,6 +7,7 @@ import { useActivities } from "@/hooks/use-activities";
 import { useApplyTheme, useProjectBranding } from "@/hooks/use-project-branding";
 import { ACTIVITY_TYPES, statusMeta, typeMeta } from "@/lib/activity-constants";
 import { Button } from "@/components/ui/button";
+import { BRAND } from "@/lib/brand";
 
 type Search = { from?: string; to?: string; auto?: boolean };
 
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/in-bao-cao")({
     const { data } = await supabase.auth.getSession();
     if (!data.session) throw redirect({ to: "/auth" });
   },
-  head: () => ({ meta: [{ title: "Báo cáo hành trình — Nhật Ký Hành Trình" }] }),
+  head: () => ({ meta: [{ title: `Báo cáo hành trình — ${BRAND}` }] }),
   component: PrintReport,
 });
 
@@ -355,7 +356,7 @@ function PrintReport() {
         </section>
 
         <footer className="border-t border-black/10 pt-4 text-center text-xs text-black/45">
-          Xuất từ Nhật Ký Hành Trình · {new Date().toLocaleDateString("vi-VN")}
+          Xuất từ {BRAND} · {new Date().toLocaleDateString("vi-VN")}
         </footer>
       </div>
     </div>

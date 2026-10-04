@@ -7,9 +7,10 @@ import { useProject } from "@/hooks/use-project";
 import { useActivities } from "@/hooks/use-activities";
 import { ACTIVITY_TYPES, ACTIVITY_STATUSES, typeMeta } from "@/lib/activity-constants";
 import { CalendarRange, Sparkles, Users, CheckCircle2, Loader2 } from "lucide-react";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/thong-ke")({
-  head: () => ({ meta: [{ title: "Thống kê — Nhật Ký Hành Trình" }] }),
+  head: () => ({ meta: [{ title: `Thống kê — ${BRAND}` }] }),
   component: StatsPage,
 });
 
