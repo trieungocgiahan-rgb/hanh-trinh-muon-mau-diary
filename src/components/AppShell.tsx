@@ -73,7 +73,7 @@ function ShellInner({ children }: { children: ReactNode }) {
   if (pendingApproval) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-hero px-4 py-10">
-        <div className="w-full max-w-md animate-pop-in rounded-3xl bg-card p-8 text-center shadow-pop">
+        <div className="w-full max-w-md animate-pop-in rounded-lg border border-border/70 bg-card p-8 text-center shadow-pop">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-soft">
             <Hourglass className="h-8 w-8 text-foreground/80" />
           </div>
@@ -96,13 +96,13 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/88 shadow-soft backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <Link to="/lich" className="flex shrink-0 items-center gap-2">
             <img
               src={logoAsset.url}
               alt="Nhật Ký Hành Trình"
-              className="h-9 w-9 rounded-xl object-cover shadow-soft"
+               className="h-10 w-10 rounded-lg object-cover shadow-soft"
             />
             <span className="hidden font-display text-lg font-bold sm:block">Nhật Ký Hành Trình</span>
           </Link>
@@ -178,7 +178,7 @@ function ShellInner({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
 
       {/* mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-border/70 bg-background/95 px-1 py-1.5 backdrop-blur-md md:hidden">
@@ -201,14 +201,16 @@ function ShellInner({ children }: { children: ReactNode }) {
 
       {/* mobile floating add button */}
       {canEdit && (
-        <button
+        <Button
           type="button"
           onClick={() => openCreate()}
-          className="fixed bottom-20 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-hero text-primary-foreground shadow-pop transition-transform active:scale-95 md:hidden"
+          size="icon"
+          variant="hero"
+          className="fixed bottom-20 right-4 z-30 h-14 w-14 md:hidden"
           aria-label="Ghi hoạt động"
         >
           <Plus className="h-6 w-6" />
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -3,16 +3,8 @@ import { Button } from "@/components/ui/button";
 
 export function LandingCTA() {
   return (
-    <section className="px-5 py-16">
-      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] bg-gradient-hero px-6 py-14 text-center shadow-pop">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-primary-foreground/10"
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -bottom-12 -right-8 h-48 w-48 rounded-full bg-primary-foreground/10"
-        />
+    <section className="px-5 py-20">
+      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-lg bg-gradient-hero px-6 py-16 text-center shadow-pop">
         <p className="font-hand text-2xl text-primary-foreground/90">
           Mỗi khoảnh khắc đều đáng giá
         </p>
@@ -25,7 +17,7 @@ export function LandingCTA() {
         <Button
           asChild
           size="lg"
-          className="mt-7 rounded-full bg-card text-foreground hover:bg-card/90"
+           className="mt-7 bg-card text-foreground shadow-pop hover:bg-card/90"
         >
           <Link to="/auth">Tham gia hành trình</Link>
         </Button>

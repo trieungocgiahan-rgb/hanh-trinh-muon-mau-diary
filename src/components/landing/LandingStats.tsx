@@ -7,10 +7,10 @@ const stats = [
 
 export function LandingStats() {
   return (
-    <section className="bg-gradient-blush py-16">
-      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-8 px-5 text-center sm:grid-cols-4">
+    <section className="border-y border-border/60 bg-background py-16">
+      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-x-5 gap-y-10 px-5 text-center sm:grid-cols-4">
         {stats.map((s) => (
-          <div key={s.label}>
+          <div key={s.label} className="relative after:absolute after:-right-2 after:top-1/2 after:hidden after:h-10 after:w-px after:-translate-y-1/2 after:bg-border sm:after:block sm:last:after:hidden">
             <p className="font-display text-4xl font-extrabold text-primary sm:text-5xl">
               {s.value}
             </p>
