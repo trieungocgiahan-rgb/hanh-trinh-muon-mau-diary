@@ -4,7 +4,15 @@ import { Button } from "@/components/ui/button";
 import group from "@/assets/landing-group.jpg";
 import { useI18n } from "@/lib/i18n";
 
-const WEEKDAY_KEYS = ["weekday.1", "weekday.2", "weekday.3", "weekday.4", "weekday.5", "weekday.6", "weekday.7"] as const;
+const WEEKDAY_KEYS = [
+  "weekday.1",
+  "weekday.2",
+  "weekday.3",
+  "weekday.4",
+  "weekday.5",
+  "weekday.6",
+  "weekday.7",
+] as const;
 
 // Lịch tháng mẫu: [ngày, màu loại hoạt động | null]
 const DAYS: { d: number; chips: string[] }[] = Array.from({ length: 35 }, (_, i) => {
@@ -86,8 +94,12 @@ export function LandingHero() {
             {t("hero.l1")}
             <br />
             <em className="text-gradient pr-1 font-medium">{t("hero.l2")}</em>
-            <br />
-            {t("hero.l3")}
+            {t("hero.l3") && (
+              <>
+                <br />
+                {t("hero.l3")}
+              </>
+            )}
           </h1>
           <p className="mt-6 max-w-md text-base leading-7 text-muted-foreground sm:text-lg">
             {t("hero.sub")}
@@ -104,9 +116,7 @@ export function LandingHero() {
               <a href="#dung-thu">{t("hero.tryNow")}</a>
             </Button>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            {t("hero.signInNote")}
-          </p>
+          <p className="mt-4 text-sm text-muted-foreground">{t("hero.signInNote")}</p>
         </div>
 
         <div className="relative pb-16 lg:pb-10">
