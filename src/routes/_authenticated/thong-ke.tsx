@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "@/components/PageHeader";
+import { TypeDot } from "@/components/activity/TypeDot";
 import { useMemo } from "react";
 import { useProject } from "@/hooks/use-project";
 import { useActivities } from "@/hooks/use-activities";
@@ -25,14 +27,14 @@ function StatCard({
 }) {
   return (
     <div
-      className={`grain relative overflow-hidden rounded-3xl p-5 shadow-pop ${tone} ${gradient}`}
+      className={`grain relative overflow-hidden rounded-2xl p-5 shadow-pop ${tone} ${gradient}`}
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-white/25 blur-2xl"
       />
       <Icon className="relative mb-3 h-7 w-7 opacity-90" />
-      <div className="relative font-display text-3xl font-bold tabular-nums">{value}</div>
+      <div className="relative font-display text-4xl font-semibold tabular-nums">{value}</div>
       <div className="relative text-sm opacity-90">{label}</div>
     </div>
   );
@@ -70,11 +72,12 @@ function StatsPage() {
   const maxType = Math.max(1, ...stats.byType.map((t) => t.count));
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold">Thống kê</h1>
-        <p className="text-sm text-muted-foreground">Tổng quan hành trình của {current?.name}</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Tổng quan"
+        title="Thống kê"
+        description={`Hành trình của ${current?.name ?? "dự án"} qua các con số`}
+      />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
@@ -105,14 +108,15 @@ function StatsPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="surface rounded-3xl p-5">
-          <h2 className="mb-4 font-display text-lg font-semibold">Theo loại hoạt động</h2>
+        <div className="surface rounded-2xl p-5">
+          <h2 className="mb-4 font-display text-xl font-semibold">Theo loại hoạt động</h2>
           <div className="space-y-3">
             {stats.byType.map((t) => (
               <div key={t.value}>
                 <div className="mb-1 flex items-center justify-between text-sm">
-                  <span>
-                    {t.emoji} {t.label}
+                  <span className="flex items-center gap-2">
+                    <TypeDot color={t.colorVar} />
+                    {t.label}
                   </span>
                   <span className="font-semibold">{t.count}</span>
                 </div>
@@ -127,8 +131,8 @@ function StatsPage() {
           </div>
         </div>
 
-        <div className="surface rounded-3xl p-5">
-          <h2 className="mb-4 font-display text-lg font-semibold">Theo trạng thái</h2>
+        <div className="surface rounded-2xl p-5">
+          <h2 className="mb-4 font-display text-xl font-semibold">Theo trạng thái</h2>
           <div className="grid grid-cols-2 gap-3">
             {stats.byStatus.map((s) => (
               <div key={s.value} className={`rounded-2xl p-4 ${s.className}`}>
@@ -140,8 +144,8 @@ function StatsPage() {
         </div>
       </div>
 
-      <div className="surface rounded-3xl p-5">
-        <h2 className="mb-3 font-display text-lg font-semibold">Phân bố nhanh</h2>
+      <div className="surface rounded-2xl p-5">
+        <h2 className="mb-3 font-display text-xl font-semibold">Phân bố nhanh</h2>
         <div className="flex h-6 overflow-hidden rounded-full">
           {stats.byType
             .filter((t) => t.count > 0)

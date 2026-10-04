@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "@/components/PageHeader";
 import { useMemo, useState } from "react";
 import { useProject } from "@/hooks/use-project";
 import { useActivities } from "@/hooks/use-activities";
@@ -37,13 +38,12 @@ function ReportPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="font-display text-2xl font-bold">Xuất báo cáo</h1>
-        <p className="text-sm text-muted-foreground">
-          Tạo báo cáo tổng hợp để gửi cố vấn &amp; nhà tài trợ
-        </p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Gửi đi"
+        title="Xuất báo cáo"
+        description="Tạo báo cáo tổng hợp để gửi cố vấn và nhà tài trợ"
+      />
 
       {isLoading ? (
         <div className="flex h-40 items-center justify-center">
@@ -79,7 +79,7 @@ function ReportPage() {
             </Button>
           </div>
 
-          <div className="surface rounded-3xl p-5">
+          <div className="surface rounded-2xl p-5">
             <h2 className="mb-3 font-display text-sm font-semibold text-muted-foreground">
               Xem trước
             </h2>

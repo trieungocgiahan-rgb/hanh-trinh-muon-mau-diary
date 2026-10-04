@@ -3,22 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { VoiceRecorder, PendingAudioPreview } from "./VoiceRecorder";
-import {
-  SignedImage,
-  SignedAudio,
-  SignedVideo,
-  SignedDocLink,
-} from "./SignedMedia";
+import { SignedImage, SignedAudio, SignedVideo, SignedDocLink } from "./SignedMedia";
 import type { AttachmentKind, AttachmentRow } from "@/lib/activity-constants";
-import {
-  ImagePlus,
-  Video,
-  FileUp,
-  LinkIcon,
-  Trash2,
-  Plus,
-  ExternalLink,
-} from "lucide-react";
+import { ImagePlus, Video, FileUp, LinkIcon, Trash2, Plus, ExternalLink } from "lucide-react";
 
 export interface PendingItem {
   id: string;
@@ -65,10 +52,7 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
     if (!u) return;
     let safe = u;
     if (!/^https?:\/\//i.test(safe)) safe = "https://" + safe;
-    setPending((p) => [
-      ...p,
-      { id: crypto.randomUUID(), kind: "link", name: safe, url: safe },
-    ]);
+    setPending((p) => [...p, { id: crypto.randomUUID(), kind: "link", name: safe, url: safe }]);
     setLinkUrl("");
   }
 
@@ -136,7 +120,11 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {existingPhotos.map((a) => (
             <div key={a.id} className="group relative aspect-square overflow-hidden rounded-xl">
-              <SignedImage path={a.storage_path!} alt={a.file_name ?? "ảnh"} className="h-full w-full object-cover" />
+              <SignedImage
+                path={a.storage_path!}
+                alt={a.file_name ?? "ảnh"}
+                className="h-full w-full object-cover"
+              />
               {onDeleteExisting && (
                 <button
                   type="button"
@@ -224,7 +212,9 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
               <div className="flex-1">
                 {a.kind === "audio" && <SignedAudio path={a.storage_path!} />}
                 {a.kind === "video" && <SignedVideo path={a.storage_path!} />}
-                {a.kind === "document" && <SignedDocLink path={a.storage_path!} fileName={a.file_name} />}
+                {a.kind === "document" && (
+                  <SignedDocLink path={a.storage_path!} fileName={a.file_name} />
+                )}
                 {a.kind === "link" && (
                   <a
                     href={a.url ?? "#"}
@@ -238,7 +228,11 @@ export function AttachmentManager({ pending, setPending, existing = [], onDelete
                 )}
               </div>
               {onDeleteExisting && (
-                <button type="button" onClick={() => onDeleteExisting(a)} className="text-destructive">
+                <button
+                  type="button"
+                  onClick={() => onDeleteExisting(a)}
+                  className="text-destructive"
+                >
                   <Trash2 className="h-4 w-4" />
                 </button>
               )}

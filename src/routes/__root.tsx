@@ -99,8 +99,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
       { property: "og:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
       { name: "twitter:description", content: "nhật ký ghi lại hành trình hoạt động của dự án" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9e972639-45be-4c02-8ae4-27017dabdfc3/id-preview-ec0478c3--15bd3bcd-e36b-4ab3-a0bc-7bc510ceee33.lovable.app-1781537729925.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9e972639-45be-4c02-8ae4-27017dabdfc3/id-preview-ec0478c3--15bd3bcd-e36b-4ab3-a0bc-7bc510ceee33.lovable.app-1781537729925.png" },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9e972639-45be-4c02-8ae4-27017dabdfc3/id-preview-ec0478c3--15bd3bcd-e36b-4ab3-a0bc-7bc510ceee33.lovable.app-1781537729925.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9e972639-45be-4c02-8ae4-27017dabdfc3/id-preview-ec0478c3--15bd3bcd-e36b-4ab3-a0bc-7bc510ceee33.lovable.app-1781537729925.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -108,7 +116,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=Dancing+Script:wght@500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&display=swap",
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
@@ -153,7 +161,6 @@ function RootComponent() {
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
-
 
   return (
     <QueryClientProvider client={queryClient}>

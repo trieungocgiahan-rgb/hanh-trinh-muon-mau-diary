@@ -52,22 +52,14 @@ function AuthPage() {
 
   return (
     <div className="grain relative flex min-h-screen items-center justify-center overflow-hidden bg-mesh-warm px-4 py-10">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-20 top-0 h-72 w-72 rounded-full bg-[oklch(0.80_0.14_55/0.35)] blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-[oklch(0.78_0.14_330/0.25)] blur-3xl"
-      />
       <div className="surface relative w-full max-w-md animate-pop-in rounded-2xl p-7 text-center shadow-pop sm:p-9">
         <img
           src={logoAsset.url}
           alt="Nhật Ký Hành Trình"
           className="mx-auto mb-5 h-16 w-16 rounded-xl object-cover shadow-pop ring-4 ring-white/80"
         />
-        <p className="font-hand text-2xl text-primary">Chào bạn trở lại</p>
-        <h1 className="mt-1 font-display text-2xl font-extrabold tracking-tight text-foreground">
+        <p className="font-display text-lg font-medium italic text-primary">Chào bạn trở lại</p>
+        <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground">
           Nhật Ký Hành Trình
         </h1>
         <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">

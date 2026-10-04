@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "@/components/PageHeader";
+import { TypeDot } from "@/components/activity/TypeDot";
 import { useMemo, useState } from "react";
 import { useProject } from "@/hooks/use-project";
 import { useActivities } from "@/hooks/use-activities";
@@ -55,11 +57,12 @@ function ListPage() {
   }, [filtered]);
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="font-display text-2xl font-bold">Danh sách &amp; dòng thời gian</h1>
-        <p className="text-sm text-muted-foreground">Tìm kiếm và lọc toàn bộ hoạt động</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Dòng thời gian"
+        title="Tất cả hoạt động"
+        description="Tìm kiếm và lọc toàn bộ hoạt động của dự án"
+      />
 
       <div className="space-y-3 surface rounded-2xl p-4">
         <div className="relative">
@@ -86,7 +89,8 @@ function ListPage() {
               size="sm"
               onClick={() => setTypeFilter(t.value)}
             >
-              {t.emoji} {t.label}
+              <TypeDot color={t.colorVar} />
+              {t.label}
             </Button>
           ))}
         </div>
@@ -116,7 +120,7 @@ function ListPage() {
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
+        <div className="rounded-2xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
           <ListChecks className="mx-auto mb-3 h-10 w-10 text-primary/60" />
           <p className="font-display text-lg font-semibold">Không có kết quả</p>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -127,9 +131,7 @@ function ListPage() {
         <div className="space-y-6">
           {groups.map(([label, items]) => (
             <div key={label}>
-              <h2 className="mb-3 font-display text-base font-semibold text-muted-foreground">
-                {label}
-              </h2>
+              <h2 className="mb-3 font-display text-xl font-semibold">{label}</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 {items.map((a) => (
                   <ActivityCard key={a.id} activity={a} onClick={() => openDetail(a)} />

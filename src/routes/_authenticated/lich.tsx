@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useProject } from "@/hooks/use-project";
 import { useActivities, type ActivityWithExtras } from "@/hooks/use-activities";
 import { useActivityDialog } from "@/hooks/use-activity-dialog";
 import { Button } from "@/components/ui/button";
 import { ActivityCard } from "@/components/activity/ActivityCard";
+import { PageHeader } from "@/components/PageHeader";
+import { TypeDot } from "@/components/activity/TypeDot";
 import { ACTIVITY_TYPES, MONTH_NAMES, WEEKDAY_SHORT, typeMeta } from "@/lib/activity-constants";
 import { ChevronLeft, ChevronRight, Plus, Loader2, CalendarHeart } from "lucide-react";
 
@@ -66,145 +68,188 @@ function CalendarPage() {
     );
   }
 
+  const monthPrefix = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}`;
+  const monthItems = (activities ?? []).filter((a) => a.date.startsWith(monthPrefix));
+  const monthPeople = monthItems.reduce((n, a) => n + (a.participant_count ?? 0), 0);
+
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-2xl font-bold">{current.name}</h1>
-          <p className="text-sm text-muted-foreground">Lịch hành trình của cả đội</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Tháng trước"
-            onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="min-w-32 text-center font-display text-lg font-semibold">
-            {MONTH_NAMES[cursor.getMonth()]} {cursor.getFullYear()}
-          </span>
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Tháng sau"
-            onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => setCursor(new Date())}>
-            Hôm nay
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow={current.org_name || "Lịch hành trình"}
+        title={current.name}
+        description={`${monthItems.length} hoạt động trong ${MONTH_NAMES[cursor.getMonth()].toLowerCase()}${
+          monthPeople ? ` · ${monthPeople} lượt tham gia` : ""
+        }`}
+        actions={
+          <div className="surface flex items-center gap-1 rounded-full p-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              aria-label="Tháng trước"
+              onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="min-w-28 text-center font-display text-base font-semibold">
+              {MONTH_NAMES[cursor.getMonth()]} {cursor.getFullYear()}
+            </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              aria-label="Tháng sau"
+              onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setCursor(new Date())}>
+              Hôm nay
+            </Button>
+          </div>
+        }
+      />
 
-      {/* legend */}
-      <div className="flex flex-wrap gap-x-4 gap-y-2 rounded-2xl border border-border/50 bg-gradient-to-r from-secondary/50 to-accent/30 px-4 py-2.5">
-        {ACTIVITY_TYPES.map((t) => (
-          <span key={t.value} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span
-              className="h-2.5 w-2.5 rounded-full shadow-[inset_0_1px_0_oklch(1_0_0/0.4)]"
-              style={{ backgroundColor: t.colorVar }}
-            />
-            {t.label}
-          </span>
-        ))}
-      </div>
-
-      {/* calendar grid */}
-      <div className="surface overflow-hidden rounded-3xl">
-        <div className="grid grid-cols-7 border-b bg-gradient-to-b from-secondary/60 to-secondary/20 text-center">
-          {WEEKDAY_SHORT.map((w) => (
-            <div key={w} className="py-2 text-xs font-semibold text-muted-foreground">
-              {w}
-            </div>
+      <div className="space-y-3">
+        <ul className="flex flex-wrap gap-x-4 gap-y-1.5 px-1">
+          {ACTIVITY_TYPES.map((t) => (
+            <li key={t.value} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <TypeDot color={t.colorVar} />
+              {t.label}
+            </li>
           ))}
-        </div>
-        <div className="grid grid-cols-7">
-          {cells.map((d, i) => {
-            if (!d)
-              return <div key={i} className="min-h-20 border-b border-r bg-muted/20 sm:min-h-28" />;
-            const key = ymd(d);
-            const items = byDay.get(key) ?? [];
-            const isToday = key === todayStr;
-            return (
+        </ul>
+
+        <div className="surface overflow-hidden rounded-2xl">
+          <div className="grid grid-cols-7 border-b border-border/70 bg-secondary/40 text-center">
+            {WEEKDAY_SHORT.map((w, i) => (
               <div
-                key={i}
-                className="group relative min-h-20 border-b border-r p-1 sm:min-h-28 sm:p-1.5"
+                key={w}
+                className={`py-2.5 text-[11px] font-semibold uppercase tracking-wider ${
+                  i >= 5 ? "text-primary/80" : "text-muted-foreground"
+                }`}
               >
-                <div className="mb-1 flex items-center justify-between">
-                  <span
-                    className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
-                      isToday
-                        ? "bg-gradient-primary text-primary-foreground shadow-btn"
-                        : "text-foreground"
-                    }`}
-                  >
-                    {d.getDate()}
-                  </span>
-                  {canEdit && (
-                    <button
-                      type="button"
-                      onClick={() => openCreate(key)}
-                      className="text-muted-foreground opacity-0 transition-opacity hover:text-primary focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-70"
-                      aria-label={`Thêm hoạt động ngày ${d.getDate()}`}
+                {w}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7">
+            {cells.map((d, i) => {
+              const weekend = i % 7 >= 5;
+              if (!d)
+                return (
+                  <div
+                    key={i}
+                    className="min-h-16 border-b border-r border-border/50 bg-[repeating-linear-gradient(135deg,transparent,transparent_6px,oklch(0.92_0.02_60/0.35)_6px,oklch(0.92_0.02_60/0.35)_7px)] sm:min-h-28"
+                  />
+                );
+              const key = ymd(d);
+              const items = byDay.get(key) ?? [];
+              const isToday = key === todayStr;
+              return (
+                <div
+                  key={i}
+                  className={`group relative min-h-16 border-b border-r border-border/50 p-1 sm:min-h-28 sm:p-1.5 ${
+                    isToday ? "bg-primary/[0.06]" : weekend ? "bg-secondary/25" : ""
+                  }`}
+                >
+                  <div className="mb-1 flex items-center justify-between">
+                    <span
+                      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold tabular-nums ${
+                        isToday
+                          ? "bg-gradient-primary text-primary-foreground shadow-btn"
+                          : "text-foreground/80"
+                      }`}
                     >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </div>
-                <div className="space-y-1">
-                  {items.slice(0, 3).map((a) => {
-                    const tm = typeMeta(a.type);
-                    return (
+                      {d.getDate()}
+                    </span>
+                    {canEdit && (
+                      <button
+                        type="button"
+                        onClick={() => openCreate(key)}
+                        className="hidden h-5 w-5 items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-primary/10 hover:text-primary focus-visible:opacity-100 group-hover:opacity-100 sm:flex"
+                        aria-label={`Thêm hoạt động ngày ${d.getDate()}`}
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* desktop: thanh sự kiện; mobile: chấm màu */}
+                  <div className="hidden space-y-1 sm:block">
+                    {items.slice(0, 3).map((a) => {
+                      const tm = typeMeta(a.type);
+                      return (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => openDetail(a)}
+                          title={a.title}
+                          className="block w-full truncate rounded-[5px] py-0.5 pl-2 pr-1 text-left text-xs font-medium text-foreground transition-colors hover:brightness-95"
+                          style={{
+                            boxShadow: `inset 3px 0 0 ${tm.colorVar}`,
+                            backgroundColor: `color-mix(in oklab, ${tm.colorVar} 14%, white)`,
+                          }}
+                        >
+                          {a.title}
+                        </button>
+                      );
+                    })}
+                    {items.length > 3 && (
+                      <span className="px-1 text-[10px] text-muted-foreground">
+                        +{items.length - 3} nữa
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1 sm:hidden">
+                    {items.map((a) => (
                       <button
                         key={a.id}
                         type="button"
                         onClick={() => openDetail(a)}
-                        className="bg-ombre block w-full truncate rounded-md px-1.5 py-0.5 text-left text-[10px] font-medium text-white transition-transform hover:-translate-y-px sm:text-xs"
-                        style={{ "--c": tm.colorVar } as React.CSSProperties}
-                        title={a.title}
-                      >
-                        {a.title}
-                      </button>
-                    );
-                  })}
-                  {items.length > 3 && (
-                    <span className="px-1 text-[10px] text-muted-foreground">
-                      +{items.length - 3} nữa
-                    </span>
-                  )}
+                        aria-label={a.title}
+                        className="h-3.5 w-3.5 rounded-full"
+                        style={{ backgroundColor: typeMeta(a.type).colorVar }}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* upcoming / recent quick list */}
       {(activities ?? []).length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
+        <div className="rounded-2xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-14 text-center">
           <CalendarHeart className="mx-auto mb-3 h-10 w-10 text-primary/60" />
-          <p className="font-display text-lg font-semibold">Chưa có hoạt động nào</p>
+          <p className="font-display text-xl font-semibold">Chưa có hoạt động nào</p>
           <p className="mt-1 text-sm text-muted-foreground">
             Bắt đầu hành trình bằng cách ghi hoạt động đầu tiên!
           </p>
           {canEdit && (
-            <Button variant="hero" className="mt-4" onClick={() => openCreate()}>
+            <Button variant="hero" className="mt-5" onClick={() => openCreate()}>
               <Plus className="h-4 w-4" /> Ghi hoạt động
             </Button>
           )}
         </div>
       ) : (
-        <div>
-          <h2 className="mb-3 font-display text-lg font-semibold">Gần đây</h2>
+        <section>
+          <div className="mb-4 flex items-end justify-between">
+            <h2 className="font-display text-2xl font-semibold">Gần đây</h2>
+            <Link
+              to="/danh-sach"
+              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Xem tất cả
+            </Link>
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {(activities ?? []).slice(0, 6).map((a) => (
               <ActivityCard key={a.id} activity={a} onClick={() => openDetail(a)} />
             ))}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
