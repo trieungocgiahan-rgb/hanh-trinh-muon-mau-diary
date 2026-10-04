@@ -11,9 +11,9 @@ import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
 const SITE = "https://hanh-trinh-muon-mau-diary.lovable.app";
-const TITLE = "Nhật Ký Hành Trình — Hành trình muôn màu của dự án cộng đồng";
+const TITLE = "Nhật Ký Hành Trình — Nhật ký chung cho dự án, đội nhóm và công ty";
 const DESC =
-  "Nơi cả đội ghi lại từng hoạt động, ảnh và cảm xúc của dự án cộng đồng — xem theo lịch, thả tim, bình luận và cùng nhau nhìn lại hành trình.";
+  "Nơi cả đội ghi lại từng hoạt động, ảnh và giọng nói của dự án — xem theo lịch, thả tim, bình luận và cùng nhau nhìn lại hành trình.";
 
 export const Route = createFileRoute("/")({
   head: () => ({

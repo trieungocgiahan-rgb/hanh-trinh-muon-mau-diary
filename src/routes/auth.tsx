@@ -14,12 +14,12 @@ export const Route = createFileRoute("/auth")({
       { title: "Đăng nhập — Nhật Ký Hành Trình" },
       {
         name: "description",
-        content: "Đăng nhập bằng Google để ghi lại hành trình dự án cộng đồng cùng cả đội.",
+        content: "Đăng nhập bằng Google để ghi nhật ký chung cùng cả đội.",
       },
       { property: "og:title", content: "Đăng nhập — Nhật Ký Hành Trình" },
       {
         property: "og:description",
-        content: "Đăng nhập bằng Google để ghi lại hành trình dự án cộng đồng cùng cả đội.",
+        content: "Đăng nhập bằng Google để ghi nhật ký chung cùng cả đội.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

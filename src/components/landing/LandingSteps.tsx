@@ -30,7 +30,7 @@ export function LandingSteps() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[0.9fr_1.1fr]">
         <img
           src={group}
-          alt="Các bạn tình nguyện viên ngồi cùng nhau trong một buổi workshop"
+          alt="Cả đội ngồi cùng nhau trong một buổi workshop"
           width={1200}
           height={912}
           loading="lazy"
