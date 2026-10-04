@@ -769,11 +769,9 @@ function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void 
           <img src={group} alt="" className="h-20 w-full object-cover" />
           <div className="bg-gradient-hero px-4 py-3 text-white">
             <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/85">
-              Báo cáo hành trình · Nét Mơ
+              Báo cáo hành trình · Tổ chức của bạn
             </p>
-            <p className="mt-0.5 font-display text-lg font-semibold leading-tight">
-              Season 2 — Chuyện của Mây
-            </p>
+            <p className="mt-0.5 font-display text-lg font-semibold leading-tight">Dự án mẫu</p>
           </div>
         </div>
         <div className="space-y-3 p-4">
@@ -849,11 +847,9 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-4 text-white">
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">
-            Nét Mơ
+            Tổ chức của bạn
           </p>
-          <p className="font-display text-xl font-semibold leading-tight">
-            Season 2 — Chuyện của Mây
-          </p>
+          <p className="font-display text-xl font-semibold leading-tight">Dự án mẫu</p>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
@@ -976,7 +972,7 @@ export function LandingDemo() {
               <span className="h-2.5 w-2.5 rounded-full bg-mint" />
             </div>
             <p className="min-w-0 flex-1 truncate text-xs font-semibold text-muted-foreground">
-              Season 2 — Chuyện của Mây
+              Dự án mẫu
             </p>
             <span className="hidden rounded-full border border-border bg-card px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground sm:block">
               {ROLE_META[role].label}

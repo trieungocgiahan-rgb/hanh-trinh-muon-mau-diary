@@ -77,7 +77,7 @@ export function LandingHero() {
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-[1fr_1.05fr] lg:gap-10">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            Nhật ký dự án cộng đồng · Nét Mơ
+            Nhật ký chung cho dự án, đội nhóm và công ty
           </p>
           <h1 className="mt-5 font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
             Hành trình
@@ -114,7 +114,7 @@ export function LandingHero() {
           <div className="surface absolute -bottom-4 left-0 w-[88%] overflow-hidden rounded-xl shadow-pop sm:-bottom-10 sm:-left-8 sm:w-80">
             <img
               src={group}
-              alt="Cả đội cùng nhau sau một buổi workshop cộng đồng"
+              alt="Cả đội cùng nhau sau một buổi workshop"
               width={1200}
               height={912}
               className="h-20 w-full object-cover"
@@ -122,7 +122,7 @@ export function LandingHero() {
             <div className="flex items-center gap-3 px-3.5 py-3">
               <span className="h-9 w-1.5 shrink-0 rounded-full bg-type-workshop" aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">Workshop kể chuyện</p>
+                <p className="truncate text-sm font-semibold">Workshop khởi động</p>
                 <p className="truncate text-xs text-muted-foreground">17/10 · 24 người</p>
               </div>
               <span className="shrink-0 rounded-full bg-mint px-2 py-0.5 text-[10px] font-semibold text-mint-foreground">

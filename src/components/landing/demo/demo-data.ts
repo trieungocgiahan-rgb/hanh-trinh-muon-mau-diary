@@ -31,13 +31,13 @@ export const SAMPLE_PHOTOS = [group, sunset, desk];
 export const SEED_ACTIVITIES: DemoActivity[] = [
   {
     id: "a1",
-    title: "Workshop kể chuyện cùng các em",
+    title: "Workshop khởi động dự án",
     day: 3,
     type: "workshop",
     participants: 24,
     likes: ["Linh", "Huy"],
     attendees: ["Linh", "Mai", "Huy"],
-    comments: [{ who: "Linh", text: "Các em kể hay quá, mình nghe mà xúc động." }],
+    comments: [{ who: "Linh", text: "Buổi này hay quá, mình học được nhiều thứ." }],
     photos: [group],
     voices: [],
   },
@@ -55,7 +55,7 @@ export const SEED_ACTIVITIES: DemoActivity[] = [
   },
   {
     id: "a3",
-    title: "Thăm điểm trường Hòa Bình",
+    title: "Khảo sát thực địa",
     day: 15,
     type: "site_visit",
     participants: 18,
@@ -67,7 +67,7 @@ export const SEED_ACTIVITIES: DemoActivity[] = [
   },
   {
     id: "a4",
-    title: "Ngày hội Muôn Màu",
+    title: "Sự kiện ra mắt",
     day: 22,
     type: "event",
     participants: 60,

@@ -21,7 +21,7 @@ export function LandingFooter() {
           </Link>
         </nav>
         <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Nét Mơ · Dự án cộng đồng
+          © {new Date().getFullYear()} Nhật Ký Hành Trình · Nhật ký chung cho đội nhóm
         </p>
       </div>
     </footer>

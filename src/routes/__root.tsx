@@ -86,13 +86,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Nhật ký hành trình của các dự án cộng đồng — ghi lại từng hoạt động, ảnh, ghi âm và xem trên lịch.",
+          "Nhật ký chung cho dự án, đội nhóm và công ty — ghi lại từng hoạt động, ảnh, ghi âm và xem trên lịch.",
       },
-      { name: "author", content: "Nét Mơ" },
+      { name: "author", content: "Nhật Ký Hành Trình" },
       { property: "og:title", content: "Nhật Ký Hành Trình" },
       {
         property: "og:description",
-        content: "Ghi lại hành trình của dự án cộng đồng cùng cả đội.",
+        content: "Nhật ký chung cho dự án, đội nhóm và công ty.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
