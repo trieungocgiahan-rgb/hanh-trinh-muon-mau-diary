@@ -99,7 +99,7 @@ export function LandingHero() {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-              <a href="#tinh-nang">Xem tính năng</a>
+              <a href="#dung-thu">Dùng thử ngay</a>
             </Button>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
