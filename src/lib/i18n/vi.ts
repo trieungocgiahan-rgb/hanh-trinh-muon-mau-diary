@@ -314,6 +314,10 @@ export const vi = {
   "settings.saved": "Đã lưu cài đặt dự án",
   "settings.saveFail": "Chưa lưu được",
   "settings.saveFailDesc": "Nếu lỗi lặp lại, có thể máy chủ chưa cập nhật phần cài đặt mới.",
+  "settings.uploadFail": "Không tải được ảnh bìa lên",
+  "settings.partialSaved": "Đã lưu tên và mô tả",
+  "settings.partialSavedDesc":
+    "Màu và ảnh bìa chưa lưu được vì máy chủ chưa cập nhật. Hãy yêu cầu áp dụng bản cập nhật cơ sở dữ liệu mới nhất rồi lưu lại.",
   "settings.eyebrow": "Quản trị",
   "settings.desc": "Làm cho nhật ký mang dấu ấn riêng của dự án này.",
   "settings.name": "Tên dự án *",
