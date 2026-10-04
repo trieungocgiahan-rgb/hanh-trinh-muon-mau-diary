@@ -290,7 +290,7 @@ main { max-width: 960px; margin: 0 auto; padding: 28px 20px 80px; }
 .tool[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--bg); }
 .tool svg { width: 16px; height: 16px; }
 .size-dot { display: inline-block; border-radius: 50%; background: currentColor; }
-.swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(26px, 32px)); gap: 6px; }
 .swatch {
   aspect-ratio: 1; border-radius: 50%; border: 2px solid var(--surface); cursor: pointer;
   box-shadow: 0 0 0 1px var(--line); padding: 0;
@@ -359,7 +359,7 @@ main { max-width: 960px; margin: 0 auto; padding: 28px 20px 80px; }
   .spark canvas { border-bottom: 0; border-right: 1px solid var(--line); height: 100%; }
   .spark.skeleton { grid-template-columns: 1fr; }
   .studio { grid-template-columns: 1fr; }
-  .tools { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .tools { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
 }
 @media (max-width: 480px) {
   main { padding-top: 20px; }
@@ -444,7 +444,7 @@ main { max-width: 960px; margin: 0 auto; padding: 28px 20px 80px; }
 
     <p class="privacy">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-      <span>Your drawings and notes stay in this browser. To write prompts, Inkling sends only the type of moment, your feelings and your optional one-line note.</span>
+      <span id="privacy-text">Your drawings and notes stay in this browser. Nothing you draw or write is sent anywhere.</span>
     </p>
   </section>
 
@@ -1034,8 +1034,7 @@ function go(next, opts = {}) {
   $("#stepper").hidden = i < 0;
   if (i >= 0) {
     $("#stepper-bar").replaceChildren(...FLOW.map((f, k) => el("span", { class: [k < i ? "done" : "", k === i ? "now" : "", f === "spark" ? "ai" : ""].join(" ") })));
-    const who = next === "spark" ? el("span", { class: "role role-ai", text: "AI" }) : el("span", { class: "role role-you", text: "You" });
-    $("#stepper-text").replaceChildren(el("span", { text: `Step ${i + 1} of 6` }), el("b", { text: FLOW_LABEL[next] }), who);
+    $("#stepper-text").replaceChildren(el("span", { text: `Step ${i + 1} of 6` }), el("b", { text: FLOW_LABEL[next] }));
   }
   const enter = ENTER[next]; if (enter) enter(opts);
   if (next === "draw") drawEnteredAt = Date.now();
@@ -1152,7 +1151,10 @@ function validate() {
 }
 
 /* ================= 3. SPARK ================= */
-const ai = { unavailable: false, ctl: null };
+/* Set to "/api/spark" once the Netlify function that calls an AI model is deployed.
+   While null, prompts come from the built-in library above. */
+const AI_ENDPOINT = null;
+const ai = { unavailable: !AI_ENDPOINT, ctl: null };
 
 function localSparks(avoidMarks) {
   const r = Math.random;
@@ -1176,7 +1178,7 @@ async function aiSparks() {
   ai.ctl = new AbortController();
   const timer = setTimeout(() => ai.ctl.abort(), 30000);
   try {
-    const res = await fetch("/api/spark", {
+    const res = await fetch(AI_ENDPOINT, {
       method: "POST", headers: { "content-type": "application/json" }, signal: ai.ctl.signal,
       body: JSON.stringify({
         moment: (MOMENTS.find(m => m.id === session.moment) || {}).title || "",
@@ -1187,7 +1189,7 @@ async function aiSparks() {
         avoid: session.shownTexts.slice(-9),
       }),
     });
-    if (res.status === 404 || res.status === 405 || res.status === 503) { ai.unavailable = true; return null; }
+    if ([404, 405, 501, 503].includes(res.status)) { ai.unavailable = true; return null; }
     if (!res.ok) return null;
     const data = await res.json();
     const sparks = Array.isArray(data.sparks) ? data.sparks.filter(s => s && MARK_IDS.includes(s.mark) && typeof s.text === "string" && s.text.trim()).slice(0, 3) : [];
@@ -1249,7 +1251,7 @@ const committed = document.createElement("canvas"); committed.width = W; committ
 const cctx = committed.getContext("2d");
 const scratch = document.createElement("canvas"); scratch.width = W; scratch.height = H;
 const sctx = scratch.getContext("2d");
-const brush = { tool: "pen", size: 12, color: "#1B1F2E" };
+const brush = { tool: "pen", size: 12, color: null };
 let current = null;
 
 function rebuild() {
@@ -1469,7 +1471,7 @@ function renderEntry() {
     fact("What you wanted", INTENT[e.intent] ? `${INTENT[e.intent].title}. You said: ${enough || "not answered"}.` : null),
     fact("Whose drawing", own),
     fact("Starting prompt", e.spark ? el("span", { class: "hand", style: "font-size:1.25rem", text: e.spark.text }) : null),
-    fact("Process", `${mins} min drawing · ${e.strokes} strokes · ${e.nudges} question${e.nudges === 1 ? "" : "s"} asked${e.rounds > 1 ? ` · went back ${e.rounds - 1}×` : ""}`),
+    fact("Process", `${mins} min drawing · ${e.strokes} stroke${e.strokes === 1 ? "" : "s"} · ${e.nudges} question${e.nudges === 1 ? "" : "s"} asked${e.rounds > 1 ? ` · went back ${e.rounds - 1}×` : ""}`),
   ].filter(Boolean));
   const dl = $("#entry-download");
   dl.href = e.image;
@@ -1506,6 +1508,7 @@ $("#theme-toggle").addEventListener("click", () => {
 });
 
 /* ================= boot ================= */
+if (AI_ENDPOINT) $("#privacy-text").textContent = "Your drawings and notes stay in this browser. To write prompts, Inkling sends only the type of moment, your feelings and your optional one-line note.";
 go("home", { keepScroll: true });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawHero); else drawHero();
 })();

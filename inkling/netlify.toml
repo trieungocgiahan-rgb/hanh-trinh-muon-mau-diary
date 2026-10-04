@@ -1,0 +1,4 @@
+# Inkling is a single static page: no build step.
+# Netlify Drop: drag this folder in. Git deploy: set "Base directory" to inkling.
+[build]
+  publish = "."
