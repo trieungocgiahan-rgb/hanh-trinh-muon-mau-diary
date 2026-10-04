@@ -6,9 +6,11 @@ import { useActivityDialog } from "@/hooks/use-activity-dialog";
 import { Button } from "@/components/ui/button";
 import { ActivityCard } from "@/components/activity/ActivityCard";
 import { PageHeader } from "@/components/PageHeader";
+import { SignedImage } from "@/components/activity/SignedMedia";
+import { useProjectBranding } from "@/hooks/use-project-branding";
 import { TypeDot } from "@/components/activity/TypeDot";
 import { ACTIVITY_TYPES, MONTH_NAMES, WEEKDAY_SHORT, typeMeta } from "@/lib/activity-constants";
-import { ChevronLeft, ChevronRight, Plus, Loader2, CalendarHeart } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Loader2, CalendarHeart, ImageIcon } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/lich")({
   head: () => ({ meta: [{ title: "Lịch hoạt động — Nhật Ký Hành Trình" }] }),
@@ -19,11 +21,16 @@ function ymd(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+function photoCountOf(a: ActivityWithExtras) {
+  return a.attachments.filter((x) => x.kind === "photo").length;
+}
+
 function CalendarPage() {
   const { current, canEdit, isAdmin, loading: pLoading } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
   const { openCreate, openDetail } = useActivityDialog();
   const [cursor, setCursor] = useState(() => new Date());
+  const { coverPath } = useProjectBranding(current?.id);
 
   const byDay = useMemo(() => {
     const map = new Map<string, ActivityWithExtras[]>();
@@ -72,43 +79,72 @@ function CalendarPage() {
   const monthItems = (activities ?? []).filter((a) => a.date.startsWith(monthPrefix));
   const monthPeople = monthItems.reduce((n, a) => n + (a.participant_count ?? 0), 0);
 
+  const monthSummary = `${monthItems.length} hoạt động trong ${MONTH_NAMES[cursor.getMonth()].toLowerCase()}${
+    monthPeople ? ` · ${monthPeople} lượt tham gia` : ""
+  }`;
+  const monthSwitcher = (
+    <div className="surface flex items-center gap-1 rounded-full p-1">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        aria-label="Tháng trước"
+        onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <span className="min-w-28 text-center font-display text-base font-semibold">
+        {MONTH_NAMES[cursor.getMonth()]} {cursor.getFullYear()}
+      </span>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        aria-label="Tháng sau"
+        onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
+      >
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+      <Button variant="secondary" size="sm" onClick={() => setCursor(new Date())}>
+        Hôm nay
+      </Button>
+    </div>
+  );
+
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow={current.org_name || "Lịch hành trình"}
-        title={current.name}
-        description={`${monthItems.length} hoạt động trong ${MONTH_NAMES[cursor.getMonth()].toLowerCase()}${
-          monthPeople ? ` · ${monthPeople} lượt tham gia` : ""
-        }`}
-        actions={
-          <div className="surface flex items-center gap-1 rounded-full p-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              aria-label="Tháng trước"
-              onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="min-w-28 text-center font-display text-base font-semibold">
-              {MONTH_NAMES[cursor.getMonth()]} {cursor.getFullYear()}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              aria-label="Tháng sau"
-              onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="secondary" size="sm" onClick={() => setCursor(new Date())}>
-              Hôm nay
-            </Button>
+      {coverPath ? (
+        <div className="space-y-4">
+          <div className="relative overflow-hidden rounded-2xl shadow-pop">
+            <SignedImage path={coverPath} alt="" className="h-44 w-full object-cover sm:h-60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/80">
+                {current.org_name || "Lịch hành trình"}
+              </p>
+              <h1 className="mt-1 text-balance font-display text-3xl font-semibold leading-tight sm:text-4xl">
+                {current.name}
+              </h1>
+              {current.description && (
+                <p className="mt-1 line-clamp-2 max-w-xl text-sm text-white/85">
+                  {current.description}
+                </p>
+              )}
+            </div>
           </div>
-        }
-      />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">{monthSummary}</p>
+            {monthSwitcher}
+          </div>
+        </div>
+      ) : (
+        <PageHeader
+          eyebrow={current.org_name || "Lịch hành trình"}
+          title={current.name}
+          description={current.description || monthSummary}
+          actions={monthSwitcher}
+        />
+      )}
 
       <div className="space-y-3">
         <ul className="flex flex-wrap gap-x-4 gap-y-1.5 px-1">
@@ -120,7 +156,7 @@ function CalendarPage() {
           ))}
         </ul>
 
-        <div className="surface overflow-hidden rounded-2xl">
+        <div key={monthPrefix} className="surface animate-pop-in overflow-hidden rounded-2xl">
           <div className="grid grid-cols-7 border-b border-border/70 bg-secondary/40 text-center">
             {WEEKDAY_SHORT.map((w, i) => (
               <div
@@ -185,13 +221,19 @@ function CalendarPage() {
                           type="button"
                           onClick={() => openDetail(a)}
                           title={a.title}
-                          className="block w-full truncate rounded-[5px] py-0.5 pl-2 pr-1 text-left text-xs font-medium text-foreground transition-colors hover:brightness-95"
+                          className="flex w-full items-center gap-1 rounded-[5px] py-0.5 pl-2 pr-1 text-left text-xs font-medium text-foreground transition-colors hover:brightness-95"
                           style={{
                             boxShadow: `inset 3px 0 0 ${tm.colorVar}`,
                             backgroundColor: `color-mix(in oklab, ${tm.colorVar} 14%, var(--card))`,
                           }}
                         >
-                          {a.title}
+                          <span className="min-w-0 flex-1 truncate">{a.title}</span>
+                          {photoCountOf(a) > 0 && (
+                            <span className="flex shrink-0 items-center gap-0.5 text-[10px] text-muted-foreground">
+                              <ImageIcon className="h-3 w-3" />
+                              {photoCountOf(a)}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -274,8 +316,8 @@ function CalendarPage() {
             </Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {(activities ?? []).slice(0, 6).map((a) => (
-              <ActivityCard key={a.id} activity={a} onClick={() => openDetail(a)} />
+            {(activities ?? []).slice(0, 6).map((a, i) => (
+              <ActivityCard key={a.id} activity={a} index={i} onClick={() => openDetail(a)} />
             ))}
           </div>
         </section>

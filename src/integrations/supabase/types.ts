@@ -289,6 +289,8 @@ export type Database = {
           invite_code: string
           name: string
           org_id: string
+          theme: string
+          cover_path: string | null
         }
         Insert: {
           created_at?: string
@@ -297,6 +299,8 @@ export type Database = {
           invite_code?: string
           name: string
           org_id: string
+          theme?: string
+          cover_path?: string | null
         }
         Update: {
           created_at?: string
@@ -305,6 +309,8 @@ export type Database = {
           invite_code?: string
           name?: string
           org_id?: string
+          theme?: string
+          cover_path?: string | null
         }
         Relationships: [
           {

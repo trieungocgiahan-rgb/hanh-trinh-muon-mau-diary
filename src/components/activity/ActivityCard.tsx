@@ -6,9 +6,11 @@ import { MapPin, Users, Paperclip, ImageIcon, Heart, MessageCircle, UserCheck } 
 export function ActivityCard({
   activity,
   onClick,
+  index = 0,
 }: {
   activity: ActivityWithExtras;
   onClick: () => void;
+  index?: number;
 }) {
   const tm = typeMeta(activity.type);
   const sm = statusMeta(activity.status);
@@ -20,7 +22,8 @@ export function ActivityCard({
     <button
       type="button"
       onClick={onClick}
-      className="surface surface-lift group flex w-full gap-4 rounded-2xl p-4 text-left"
+      className="surface surface-lift animate-fade-up group flex w-full gap-4 rounded-2xl p-4 text-left"
+      style={{ "--d": `${Math.min(index, 8) * 45}ms` } as React.CSSProperties}
     >
       <div
         className="flex h-16 w-14 shrink-0 flex-col items-center justify-center rounded-xl"

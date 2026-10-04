@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useProject } from "@/hooks/use-project";
 import { useAuth } from "@/hooks/use-auth";
 import { usePendingCount } from "@/hooks/use-pending-count";
+import { useProjectBranding, useApplyTheme } from "@/hooks/use-project-branding";
 import { useTheme, type Theme } from "@/hooks/use-theme";
 import { ROLE_LABELS } from "@/lib/activity-constants";
 import { ActivityDialogProvider, useActivityDialog } from "@/hooks/use-activity-dialog";
@@ -45,6 +46,7 @@ import {
   Sun,
   Moon,
   Laptop,
+  Settings,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -67,7 +69,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 function ShellInner({ children }: { children: ReactNode }) {
-  const { current, projects, setCurrentId, canEdit, pendingApproval, needsOnboarding } =
+  const { current, projects, setCurrentId, canEdit, isAdmin, pendingApproval, needsOnboarding } =
     useProject();
   const { openCreate } = useActivityDialog();
   const { user } = useAuth();
@@ -75,6 +77,8 @@ function ShellInner({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme();
   const [checking, setChecking] = useState(false);
   const [joinOpen, setJoinOpen] = useState(false);
+  const branding = useProjectBranding(current?.id);
+  useApplyTheme(branding.theme);
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "Tài khoản";
   const navigate = useNavigate();
@@ -205,7 +209,7 @@ function ShellInner({ children }: { children: ReactNode }) {
                   to={item.to}
                   className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_oklch(0.69_0.17_28/0.18),inset_0_1px_0_var(--hi)]"
+                      ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_20%,transparent),inset_0_1px_0_var(--hi)]"
                       : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                   }`}
                 >
@@ -267,6 +271,13 @@ function ShellInner({ children }: { children: ReactNode }) {
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/cai-dat">
+                      <Settings className="h-4 w-4" /> Cài đặt dự án
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => setJoinOpen(true)}>
                   <Plus className="h-4 w-4" /> Tham gia / tạo dự án khác
                 </DropdownMenuItem>
@@ -279,7 +290,9 @@ function ShellInner({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:py-10">{children}</main>
+      <main key={pathname} className="animate-page-in mx-auto max-w-6xl px-4 py-8 sm:py-10">
+        {children}
+      </main>
 
       {/* mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-border/50 bg-background/90 px-1 py-1.5 shadow-[0_-8px_24px_-16px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl md:hidden">
