@@ -31,17 +31,14 @@ export function LandingMoments() {
             Tìm theo khoảnh khắc, không chỉ theo ngày
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Xem theo lịch tháng, theo loại hoạt động, hay chỉ đơn giản là lần lượt lật lại
-            từng trang.
+            Xem theo lịch tháng, theo loại hoạt động, hay chỉ đơn giản là lần lượt lật lại từng
+            trang.
           </p>
         </div>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-3">
           {cards.map((c) => (
-            <div
-              key={c.title}
-               className="rounded-lg border border-border/60 bg-card/90 p-6 text-center shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-pop"
-            >
+            <div key={c.title} className="surface surface-lift rounded-xl p-6 text-center">
               <img
                 src={c.icon}
                 alt=""
@@ -56,7 +53,7 @@ export function LandingMoments() {
           ))}
         </div>
 
-        <div className="mt-14 overflow-hidden rounded-lg border border-border/60 bg-card shadow-pop sm:flex">
+        <div className="surface mt-14 overflow-hidden rounded-xl shadow-pop sm:flex">
           <img
             src={desk}
             alt="Bàn làm việc với ảnh in, sổ tay và giấy ghi chú"
@@ -65,15 +62,14 @@ export function LandingMoments() {
             loading="lazy"
             className="h-56 w-full object-cover sm:h-80 sm:w-1/2"
           />
-           <div className="flex flex-col justify-center gap-3 bg-gradient-paper p-8 sm:h-80 sm:w-1/2">
-
+          <div className="flex flex-col justify-center gap-3 p-8 sm:h-80 sm:w-1/2">
             <p className="font-hand text-2xl text-primary">Mỗi trang là một ngày</p>
             <h3 className="font-display text-2xl font-extrabold text-foreground">
               Viết nhanh, nhớ lâu
             </h3>
             <p className="text-sm text-muted-foreground">
-              Ghi âm một đoạn cảm xúc, kéo ảnh vào, chọn loại hoạt động — xong trong vài
-              phút, trước khi ký ức kịp nhòe đi.
+              Ghi âm một đoạn cảm xúc, kéo ảnh vào, chọn loại hoạt động — xong trong vài phút, trước
+              khi ký ức kịp nhòe đi.
             </p>
           </div>
         </div>

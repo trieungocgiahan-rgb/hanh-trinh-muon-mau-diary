@@ -15,17 +15,25 @@ function StatCard({
   label,
   value,
   gradient,
+  tone = "text-primary-foreground",
 }: {
   icon: React.ElementType;
   label: string;
   value: string | number;
   gradient: string;
+  tone?: string;
 }) {
   return (
-    <div className={`rounded-3xl p-5 text-primary-foreground shadow-soft ${gradient}`}>
-      <Icon className="mb-3 h-7 w-7 opacity-90" />
-      <div className="font-display text-3xl font-bold">{value}</div>
-      <div className="text-sm opacity-90">{label}</div>
+    <div
+      className={`grain relative overflow-hidden rounded-3xl p-5 shadow-pop ${tone} ${gradient}`}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-white/25 blur-2xl"
+      />
+      <Icon className="relative mb-3 h-7 w-7 opacity-90" />
+      <div className="relative font-display text-3xl font-bold tabular-nums">{value}</div>
+      <div className="relative text-sm opacity-90">{label}</div>
     </div>
   );
 }
@@ -69,24 +77,35 @@ function StatsPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard icon={CalendarRange} label="Tổng hoạt động" value={stats.total} gradient="bg-gradient-hero" />
-        <StatCard icon={Sparkles} label="Workshop" value={stats.workshops} gradient="bg-gradient-sun" />
+        <StatCard
+          icon={CalendarRange}
+          label="Tổng hoạt động"
+          value={stats.total}
+          gradient="bg-gradient-hero"
+        />
+        <StatCard
+          icon={Sparkles}
+          label="Workshop"
+          value={stats.workshops}
+          gradient="bg-gradient-sun"
+          tone="text-sunny-foreground"
+        />
         <StatCard
           icon={Users}
           label="Lượt tham gia"
           value={stats.participants}
-          gradient="bg-grape"
+          gradient="bg-gradient-grape"
         />
         <StatCard
           icon={CheckCircle2}
           label="Đã hoàn thành"
           value={stats.completed}
-          gradient="bg-[var(--type-site)]"
+          gradient="bg-gradient-mint"
         />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <div className="surface rounded-3xl p-5">
           <h2 className="mb-4 font-display text-lg font-semibold">Theo loại hoạt động</h2>
           <div className="space-y-3">
             {stats.byType.map((t) => (
@@ -108,7 +127,7 @@ function StatsPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <div className="surface rounded-3xl p-5">
           <h2 className="mb-4 font-display text-lg font-semibold">Theo trạng thái</h2>
           <div className="grid grid-cols-2 gap-3">
             {stats.byStatus.map((s) => (
@@ -121,7 +140,7 @@ function StatsPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
+      <div className="surface rounded-3xl p-5">
         <h2 className="mb-3 font-display text-lg font-semibold">Phân bố nhanh</h2>
         <div className="flex h-6 overflow-hidden rounded-full">
           {stats.byType

@@ -33,16 +33,14 @@ export function LandingTestimonials() {
           {quotes.map((q, i) => (
             <blockquote
               key={q.name}
-               className={`rounded-lg border border-border/60 bg-gradient-paper p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-pop ${
-                i === 1 ? "lg:mt-8" : ""
-              }`}
+              className={`surface surface-lift rounded-xl p-6 ${i === 1 ? "lg:mt-8" : ""}`}
             >
               <p className="font-display text-3xl leading-none text-primary" aria-hidden>
                 “
               </p>
               <p className="text-sm leading-relaxed text-foreground">{q.text}</p>
               <footer className="mt-4 flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-sun font-display text-sm font-bold text-sunny-foreground">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-sun font-display text-sm font-bold text-sunny-foreground shadow-soft">
                   {q.name.charAt(0)}
                 </span>
                 <div>
@@ -53,14 +51,14 @@ export function LandingTestimonials() {
             </blockquote>
           ))}
 
-          <div className="mx-auto w-44 rotate-2 rounded-md bg-card p-2 pb-5 shadow-pop lg:mt-4">
+          <div className="mx-auto w-44 rotate-2 rounded-md border border-border/50 bg-card p-2 pb-5 shadow-pop lg:mt-4">
             <img
               src={sunset}
               alt="Hoàng hôn cuối một ngày hoạt động của dự án"
               width={912}
               height={1104}
               loading="lazy"
-               className="h-40 w-full rounded-sm object-cover"
+              className="h-40 w-full rounded-sm object-cover"
             />
             <p className="mt-2 text-center font-hand text-base text-muted-foreground">
               cùng nhau, dù ở xa

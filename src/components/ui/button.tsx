@@ -9,15 +9,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-soft hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-pop",
+        default:
+          "bg-gradient-primary text-primary-foreground shadow-btn hover:-translate-y-0.5 hover:brightness-105",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+          "border border-border bg-card text-foreground shadow-[inset_0_1px_0_oklch(1_0_0/0.9),0_1px_2px_oklch(0.42_0.06_30/0.08)] hover:border-primary/35 hover:bg-secondary/70 hover:text-secondary-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground shadow-[inset_0_1px_0_oklch(1_0_0/0.7),0_1px_2px_oklch(0.42_0.06_30/0.1)] hover:bg-secondary/70",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-hero text-primary-foreground shadow-pop hover:-translate-y-0.5 hover:saturate-110",
-        sunny: "bg-sunny text-sunny-foreground shadow-soft hover:-translate-y-0.5 hover:brightness-105",
+        hero: "bg-gradient-hero text-primary-foreground shadow-btn hover:-translate-y-0.5 hover:brightness-105",
+        sunny:
+          "bg-gradient-sun text-sunny-foreground shadow-soft hover:-translate-y-0.5 hover:brightness-105",
       },
       size: {
         default: "h-9 px-4 py-2",

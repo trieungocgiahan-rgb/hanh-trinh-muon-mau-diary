@@ -4,6 +4,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useProject } from "@/hooks/use-project";
+import { useAuth } from "@/hooks/use-auth";
 import { ROLE_LABELS } from "@/lib/activity-constants";
 import { ActivityDialogProvider, useActivityDialog } from "@/hooks/use-activity-dialog";
 import { ActivityFormDialog } from "@/components/activity/ActivityFormDialog";
@@ -58,6 +59,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 function ShellInner({ children }: { children: ReactNode }) {
   const { current, projects, setCurrentId, canEdit, pendingApproval } = useProject();
   const { openCreate } = useActivityDialog();
+  const { user } = useAuth();
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "Tài khoản";
   const navigate = useNavigate();
   const qc = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -72,15 +76,15 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   if (pendingApproval) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-hero px-4 py-10">
-        <div className="w-full max-w-md animate-pop-in rounded-lg border border-border/70 bg-card p-8 text-center shadow-pop">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-soft">
+      <div className="grain relative flex min-h-screen items-center justify-center bg-gradient-hero px-4 py-10">
+        <div className="surface w-full max-w-md animate-pop-in rounded-2xl p-8 text-center shadow-pop">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-btn">
             <Hourglass className="h-8 w-8 text-foreground/80" />
           </div>
           <h1 className="font-display text-2xl font-bold text-foreground">Chờ duyệt</h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Tài khoản của bạn đã được tạo và đang chờ quản trị viên duyệt. Khi được chấp
-            nhận, bạn sẽ có thể xem và ghi lại hành trình cùng cả đội.
+            Tài khoản của bạn đã được tạo và đang chờ quản trị viên duyệt. Khi được chấp nhận, bạn
+            sẽ có thể xem và ghi lại hành trình cùng cả đội.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
             Hãy liên hệ quản trị viên nếu bạn cần được duyệt sớm.
@@ -93,18 +97,19 @@ function ShellInner({ children }: { children: ReactNode }) {
     );
   }
 
-
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/88 shadow-soft backdrop-blur-xl">
+    <div className="min-h-screen bg-gradient-to-b from-[oklch(0.965_0.03_55)] via-background to-background bg-[length:100%_520px] bg-no-repeat pb-20 md:pb-0">
+      <header className="sticky top-0 z-30 border-b border-border/50 bg-background/80 shadow-[inset_0_1px_0_oklch(1_0_0/0.8),0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <Link to="/lich" className="flex shrink-0 items-center gap-2">
             <img
               src={logoAsset.url}
               alt="Nhật Ký Hành Trình"
-               className="h-10 w-10 rounded-lg object-cover shadow-soft"
+              className="h-10 w-10 rounded-xl object-cover shadow-soft ring-2 ring-white/80"
             />
-            <span className="hidden font-display text-lg font-bold sm:block">Nhật Ký Hành Trình</span>
+            <span className="hidden font-display text-lg font-bold sm:block">
+              Nhật Ký Hành Trình
+            </span>
           </Link>
 
           {projects.length > 1 ? (
@@ -136,7 +141,9 @@ function ShellInner({ children }: { children: ReactNode }) {
                   key={item.to}
                   to={item.to}
                   className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
-                    active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    active
+                      ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_oklch(0.69_0.17_28/0.18),inset_0_1px_0_oklch(1_0_0/0.6)]"
+                      : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
@@ -148,22 +155,30 @@ function ShellInner({ children }: { children: ReactNode }) {
 
           <div className="ml-auto flex items-center gap-2 md:ml-2">
             {canEdit && (
-              <Button variant="hero" size="sm" className="hidden md:inline-flex" onClick={() => openCreate()}>
+              <Button
+                variant="hero"
+                size="sm"
+                className="hidden md:inline-flex"
+                onClick={() => openCreate()}
+              >
                 <Plus className="h-4 w-4" /> Ghi hoạt động
               </Button>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-1 px-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-grape text-sm font-semibold text-grape-foreground">
-                    {current?.role ? ROLE_LABELS[current.role].charAt(0) : "?"}
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-grape text-sm font-semibold text-grape-foreground shadow-btn ring-2 ring-white/80">
+                    {displayName.charAt(0).toUpperCase()}
                   </span>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuLabel>
-                  <div className="font-medium">{current?.name ?? "—"}</div>
+                  <div className="truncate font-medium">{displayName}</div>
+                  <div className="truncate text-xs font-normal text-muted-foreground">
+                    {current?.name ?? "—"}
+                  </div>
                   <div className="text-xs font-normal text-muted-foreground">
                     Vai trò: {current?.role ? ROLE_LABELS[current.role] : "—"}
                   </div>
@@ -181,7 +196,7 @@ function ShellInner({ children }: { children: ReactNode }) {
       <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
 
       {/* mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-border/70 bg-background/95 px-1 py-1.5 backdrop-blur-md md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-border/50 bg-background/90 px-1 py-1.5 shadow-[0_-8px_24px_-16px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl md:hidden">
         {NAV.map((item) => {
           const active = pathname === item.to;
           return (
@@ -189,7 +204,7 @@ function ShellInner({ children }: { children: ReactNode }) {
               key={item.to}
               to={item.to}
               className={`flex flex-1 flex-col items-center gap-0.5 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
-                active ? "text-primary" : "text-muted-foreground"
+                active ? "bg-primary/10 text-primary" : "text-muted-foreground"
               }`}
             >
               <item.icon className="h-5 w-5" />
@@ -206,7 +221,7 @@ function ShellInner({ children }: { children: ReactNode }) {
           onClick={() => openCreate()}
           size="icon"
           variant="hero"
-          className="fixed bottom-20 right-4 z-30 h-14 w-14 md:hidden"
+          className="fixed bottom-20 right-4 z-30 h-14 w-14 rounded-full md:hidden"
           aria-label="Ghi hoạt động"
         >
           <Plus className="h-6 w-6" />

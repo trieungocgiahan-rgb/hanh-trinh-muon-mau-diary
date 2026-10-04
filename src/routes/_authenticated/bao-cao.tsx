@@ -79,8 +79,10 @@ function ReportPage() {
             </Button>
           </div>
 
-          <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
-            <h2 className="mb-3 font-display text-sm font-semibold text-muted-foreground">Xem trước</h2>
+          <div className="surface rounded-3xl p-5">
+            <h2 className="mb-3 font-display text-sm font-semibold text-muted-foreground">
+              Xem trước
+            </h2>
             <pre className="max-h-[60vh] overflow-auto whitespace-pre-wrap rounded-2xl bg-muted/40 p-4 text-sm leading-relaxed">
               {markdown || "Chưa có hoạt động nào để xuất báo cáo."}
             </pre>

@@ -80,6 +80,7 @@
 
   --shadow-soft: var(--shadow-soft-val);
   --shadow-pop: var(--shadow-pop-val);
+  --shadow-btn: var(--shadow-btn-val);
 }
 
 :root {
@@ -133,14 +134,36 @@
   --blush: oklch(0.945 0.032 20);
   --peach: oklch(0.925 0.045 40);
 
-  --gradient-hero: linear-gradient(112deg, oklch(0.75 0.16 35), oklch(0.68 0.17 355) 58%, oklch(0.64 0.16 320));
-  --gradient-sun: linear-gradient(120deg, oklch(0.91 0.14 96), oklch(0.78 0.16 47));
+  --gradient-hero: linear-gradient(128deg, oklch(0.80 0.15 62) -8%, oklch(0.71 0.17 34) 28%, oklch(0.65 0.20 2) 62%, oklch(0.56 0.19 312) 108%);
+  --gradient-primary: linear-gradient(180deg, oklch(0.745 0.16 34), oklch(0.665 0.18 25));
+  --gradient-sun: linear-gradient(135deg, oklch(0.93 0.13 98), oklch(0.82 0.15 70) 55%, oklch(0.76 0.16 48));
   --gradient-cream: linear-gradient(180deg, oklch(0.99 0.012 82), oklch(0.965 0.03 45) 62%, oklch(0.95 0.035 18));
-  --gradient-blush: linear-gradient(128deg, oklch(0.97 0.026 24), oklch(0.945 0.045 55) 54%, oklch(0.95 0.035 340));
-  --gradient-paper: linear-gradient(145deg, oklch(1 0 0 / 90%), oklch(0.975 0.018 75 / 94%));
+  --gradient-blush: linear-gradient(170deg, oklch(0.985 0.012 80) 0%, oklch(0.955 0.035 30) 38%, oklch(0.94 0.05 350) 100%);
+  --gradient-paper: linear-gradient(160deg, oklch(1 0 0), oklch(0.985 0.014 72));
+  --gradient-grape: linear-gradient(150deg, oklch(0.70 0.17 320), oklch(0.56 0.19 296));
+  --gradient-mint: linear-gradient(150deg, oklch(0.78 0.12 170), oklch(0.62 0.12 185));
 
-  --shadow-soft-val: 0 10px 30px -16px oklch(0.46 0.09 34 / 0.26), 0 1px 2px oklch(0.46 0.05 34 / 0.08);
-  --shadow-pop-val: 0 24px 60px -26px oklch(0.48 0.14 22 / 0.38), 0 8px 18px -12px oklch(0.48 0.08 22 / 0.25);
+  /* nhiều lớp radial chồng nhau tạo nền ombre có chiều sâu */
+  --mesh-warm:
+    radial-gradient(56% 46% at 88% -4%, oklch(0.91 0.09 45 / 0.85), transparent 72%),
+    radial-gradient(46% 42% at -4% 22%, oklch(0.93 0.07 345 / 0.7), transparent 72%),
+    radial-gradient(42% 38% at 62% 104%, oklch(0.95 0.08 88 / 0.8), transparent 72%),
+    linear-gradient(180deg, oklch(0.99 0.012 82), oklch(0.965 0.025 55));
+
+  --shadow-soft-val:
+    inset 0 1px 0 oklch(1 0 0 / 0.75),
+    0 1px 2px oklch(0.42 0.06 30 / 0.07),
+    0 10px 24px -14px oklch(0.46 0.10 30 / 0.28);
+  --shadow-pop-val:
+    inset 0 1px 0 oklch(1 0 0 / 0.65),
+    0 2px 4px oklch(0.42 0.08 26 / 0.07),
+    0 14px 30px -12px oklch(0.50 0.14 26 / 0.30),
+    0 36px 70px -34px oklch(0.42 0.14 20 / 0.42);
+  --shadow-btn-val:
+    inset 0 1px 0 oklch(1 0 0 / 0.38),
+    inset 0 -1px 0 oklch(0.38 0.15 22 / 0.28),
+    0 1px 2px oklch(0.40 0.14 25 / 0.32),
+    0 10px 20px -8px oklch(0.60 0.19 26 / 0.55);
 
   --chart-1: oklch(0.69 0.17 28);
   --chart-2: oklch(0.62 0.18 305);
@@ -213,26 +236,66 @@
 }
 
 @layer utilities {
-  .bg-gradient-hero {
-    background-image: var(--gradient-hero);
-  }
-  .bg-gradient-sun {
-    background-image: var(--gradient-sun);
-  }
-  .bg-gradient-cream {
-    background-image: var(--gradient-cream);
-  }
-  .bg-gradient-blush {
-    background-image: var(--gradient-blush);
-  }
-  .bg-gradient-paper {
+  .bg-gradient-hero { background-image: var(--gradient-hero); }
+  .bg-gradient-primary { background-image: var(--gradient-primary); }
+  .bg-gradient-sun { background-image: var(--gradient-sun); }
+  .bg-gradient-cream { background-image: var(--gradient-cream); }
+  .bg-gradient-blush { background-image: var(--gradient-blush); }
+  .bg-gradient-paper { background-image: var(--gradient-paper); }
+  .bg-gradient-grape { background-image: var(--gradient-grape); }
+  .bg-gradient-mint { background-image: var(--gradient-mint); }
+  .bg-mesh-warm { background-image: var(--mesh-warm); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-pop { box-shadow: var(--shadow-pop); }
+  .shadow-btn { box-shadow: var(--shadow-btn); }
+
+  /* bề mặt dạng giấy: viền tóc, vệt sáng phía trên, bóng nhiều lớp */
+  .surface {
     background-image: var(--gradient-paper);
-  }
-  .shadow-soft {
+    border: 1px solid oklch(0.88 0.03 55 / 0.7);
     box-shadow: var(--shadow-soft);
   }
-  .shadow-pop {
+  .surface-lift {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s;
+  }
+  .surface-lift:hover {
+    transform: translateY(-3px);
     box-shadow: var(--shadow-pop);
+  }
+
+  /* chip ombre theo màu loại hoạt động: đặt --c ở style */
+  .bg-ombre {
+    background-image: linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--c), white 16%),
+      color-mix(in oklab, var(--c), black 14%)
+    );
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.3),
+      0 1px 2px color-mix(in oklab, var(--c), black 40% / 0.35);
+  }
+
+  .text-gradient {
+    background-image: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* hạt nhiễu nhẹ để mặt phẳng gradient bớt "kỹ thuật số" */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.16;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
 }
 

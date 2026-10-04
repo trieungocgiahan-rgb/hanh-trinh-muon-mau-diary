@@ -61,7 +61,7 @@ function ListPage() {
         <p className="text-sm text-muted-foreground">Tìm kiếm và lọc toàn bộ hoạt động</p>
       </div>
 
-      <div className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-soft">
+      <div className="space-y-3 surface rounded-2xl p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -116,16 +116,20 @@ function ListPage() {
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border bg-card/50 py-12 text-center">
+        <div className="rounded-3xl border border-dashed border-primary/30 bg-gradient-to-b from-card/70 to-secondary/40 py-12 text-center">
           <ListChecks className="mx-auto mb-3 h-10 w-10 text-primary/60" />
           <p className="font-display text-lg font-semibold">Không có kết quả</p>
-          <p className="mt-1 text-sm text-muted-foreground">Thử đổi từ khóa hoặc bộ lọc khác nhé.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Thử đổi từ khóa hoặc bộ lọc khác nhé.
+          </p>
         </div>
       ) : (
         <div className="space-y-6">
           {groups.map(([label, items]) => (
             <div key={label}>
-              <h2 className="mb-3 font-display text-base font-semibold text-muted-foreground">{label}</h2>
+              <h2 className="mb-3 font-display text-base font-semibold text-muted-foreground">
+                {label}
+              </h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 {items.map((a) => (
                   <ActivityCard key={a.id} activity={a} onClick={() => openDetail(a)} />

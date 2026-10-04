@@ -2,11 +2,7 @@ import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/hooks/use-auth";
 import { useProject } from "@/hooks/use-project";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,15 +10,7 @@ import { uploadMedia } from "@/lib/media";
 import type { ActivityWithExtras } from "@/hooks/use-activities";
 import type { EngagementData, PersonRef } from "@/hooks/use-engagement";
 import { toast } from "sonner";
-import {
-  Heart,
-  UserCheck,
-  Send,
-  Trash2,
-  ImagePlus,
-  Loader2,
-  MessageCircle,
-} from "lucide-react";
+import { Heart, UserCheck, Send, Trash2, ImagePlus, Loader2, MessageCircle } from "lucide-react";
 
 function initials(name: string) {
   return name
@@ -210,56 +198,58 @@ export function ActivityEngagement({
 
       {/* like + attendance */}
       <div className="flex flex-wrap items-center gap-2">
-        <Button
-          type="button"
-          variant={myLike ? "default" : "outline"}
-          size="sm"
-          disabled={!canEdit || busyLike}
-          onClick={toggleLike}
-          className={myLike ? "bg-rose-500 text-white hover:bg-rose-500/90" : ""}
-        >
-          <Heart
-            className={`h-4 w-4 transition-transform ${myLike ? "fill-current" : ""} ${
-              pop ? "scale-150" : "scale-100"
-            }`}
-          />
-          Thả tim
-        </Button>
+        {canEdit && (
+          <Button
+            type="button"
+            variant={myLike ? "default" : "outline"}
+            size="sm"
+            disabled={busyLike}
+            onClick={toggleLike}
+            className={myLike ? "bg-none bg-rose-500 text-white hover:bg-rose-500/90" : ""}
+          >
+            <Heart
+              className={`h-4 w-4 transition-transform ${myLike ? "fill-current" : ""} ${
+                pop ? "scale-150" : "scale-100"
+              }`}
+            />
+            Thả tim
+          </Button>
+        )}
         <Popover>
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
+              className="flex items-center gap-1 rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
             >
-              ❤️ {likes.length}
+              <Heart className="h-3.5 w-3.5 fill-primary/70 text-primary" /> {likes.length}
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-60 rounded-2xl">
-            <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-              Đã thả tim
-            </p>
+            <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Đã thả tim</p>
             <PeopleList people={likes} empty="Chưa có ai thả tim" />
           </PopoverContent>
         </Popover>
 
-        <Button
-          type="button"
-          variant={myAttend ? "default" : "outline"}
-          size="sm"
-          disabled={!canEdit || busyAttend}
-          onClick={toggleAttend}
-          className={myAttend ? "bg-mint text-mint-foreground hover:bg-mint/90" : ""}
-        >
-          <UserCheck className="h-4 w-4" />
-          {myAttend ? "Đã tham gia" : "Đánh dấu tham gia"}
-        </Button>
+        {canEdit && (
+          <Button
+            type="button"
+            variant={myAttend ? "default" : "outline"}
+            size="sm"
+            disabled={busyAttend}
+            onClick={toggleAttend}
+            className={myAttend ? "bg-none bg-mint text-mint-foreground hover:bg-mint/90" : ""}
+          >
+            <UserCheck className="h-4 w-4" />
+            {myAttend ? "Đã tham gia" : "Đánh dấu tham gia"}
+          </Button>
+        )}
         <Popover>
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
+              className="flex items-center gap-1 rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
             >
-              👥 {attendance.length} đã tham gia
+              <UserCheck className="h-3.5 w-3.5" /> {attendance.length} đã tham gia
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-60 rounded-2xl">
@@ -324,7 +314,11 @@ export function ActivityEngagement({
               disabled={posting || !commentText.trim()}
               className="rounded-full"
             >
-              {posting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {posting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
         )}
