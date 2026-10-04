@@ -15,9 +15,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/cai-dat")({
-  head: () => ({ meta: [{ title: "Cài đặt dự án — Nhật Ký Hành Trình" }] }),
+  head: () => ({ meta: [{ title: `Cài đặt dự án — ${BRAND}` }] }),
   component: SettingsPage,
 });
 

@@ -1,6 +1,6 @@
 # Nhật ký dự án
 
-Build a full-stack web app called "Nhật Ký Hành Trình" for logging the journey of community/social-impact projects. The entire UI must be in Vietnamese.
+Build a full-stack web app called "Together" (Vietnamese UI: a shared journal for teams, projects and companies) for logging the journey of projects. The entire UI must be in Vietnamese.
 
 ## PURPOSE
 

@@ -80,11 +80,11 @@ export function LandingHero() {
             Nhật ký chung cho dự án, đội nhóm và công ty
           </p>
           <h1 className="mt-5 font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
-            Hành trình
+            Cả đội
             <br />
-            <em className="text-gradient pr-1 font-medium">muôn màu</em>
+            <em className="text-gradient pr-1 font-medium">cùng nhau</em>
             <br />
-            của cả đội.
+            ghi lại hành trình.
           </h1>
           <p className="mt-6 max-w-md text-base leading-7 text-muted-foreground sm:text-lg">
             Ghi lại từng buổi workshop, chuyến đi, cuộc họp — kèm ảnh và giọng nói — rồi xem lại tất

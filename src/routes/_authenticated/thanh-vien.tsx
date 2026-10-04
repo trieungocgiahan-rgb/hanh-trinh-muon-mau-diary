@@ -27,9 +27,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Loader2, UserMinus, Info, Check, X, Link2, Share2, Copy, RefreshCw } from "lucide-react";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/thanh-vien")({
-  head: () => ({ meta: [{ title: "Thành viên — Nhật Ký Hành Trình" }] }),
+  head: () => ({ meta: [{ title: `Thành viên — ${BRAND}` }] }),
   component: MembersPage,
 });
 
@@ -100,10 +101,10 @@ function MembersPage() {
   async function shareInvite() {
     const url = window.location.origin;
     const codeLine = inviteCode ? ` Mã dự án: ${formatCode(inviteCode)}.` : "";
-    const text = `Mời bạn vào Nhật Ký Hành Trình của ${current?.name ?? "dự án"}. Đăng nhập bằng Google, chọn "Tham gia dự án có sẵn" rồi nhập mã.${codeLine}`;
+    const text = `Mời bạn vào ${BRAND} của ${current?.name ?? "dự án"}. Đăng nhập bằng Google, chọn "Tham gia dự án có sẵn" rồi nhập mã.${codeLine}`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: "Nhật Ký Hành Trình", text, url });
+        await navigator.share({ title: BRAND, text, url });
         return;
       }
       await navigator.clipboard.writeText(`${text} ${url}`);

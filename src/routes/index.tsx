@@ -9,9 +9,10 @@ import { LandingDemo } from "@/components/landing/LandingDemo";
 import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
+import { BRAND, TAGLINE_LONG } from "@/lib/brand";
 
 const SITE = "https://hanh-trinh-muon-mau-diary.lovable.app";
-const TITLE = "Nhật Ký Hành Trình — Nhật ký chung cho dự án, đội nhóm và công ty";
+const TITLE = `${BRAND} — ${TAGLINE_LONG}`;
 const DESC =
   "Nơi cả đội ghi lại từng hoạt động, ảnh và giọng nói của dự án — xem theo lịch, thả tim, bình luận và cùng nhau nhìn lại hành trình.";
 
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "Nhật Ký Hành Trình",
+          name: BRAND,
           url: SITE,
           description: DESC,
         }),
@@ -60,12 +61,10 @@ function LandingPage() {
           <Link to="/" className="flex items-center gap-2">
             <img
               src={logoAsset.url}
-              alt="Nhật Ký Hành Trình"
+              alt={BRAND}
               className="h-10 w-10 rounded-lg object-cover shadow-soft"
             />
-            <span className="font-display text-lg font-semibold text-foreground">
-              Nhật Ký Hành Trình
-            </span>
+            <span className="font-display text-lg font-semibold text-foreground">{BRAND}</span>
           </Link>
 
           <nav className="hidden items-center gap-1 text-sm font-medium text-muted-foreground sm:flex">

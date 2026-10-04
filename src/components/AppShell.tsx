@@ -49,6 +49,7 @@ import {
   Settings,
 } from "lucide-react";
 import { toast } from "sonner";
+import { BRAND } from "@/lib/brand";
 
 const NAV = [
   { to: "/lich", label: "Lịch", icon: CalendarDays },
@@ -108,7 +109,7 @@ function ShellInner({ children }: { children: ReactNode }) {
         <div className="mx-auto max-w-2xl animate-pop-in">
           <img
             src={logoAsset.url}
-            alt="Nhật Ký Hành Trình"
+            alt={BRAND}
             className="h-14 w-14 rounded-xl object-cover shadow-pop ring-4 ring-card"
           />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -171,12 +172,10 @@ function ShellInner({ children }: { children: ReactNode }) {
           <Link to="/lich" className="flex shrink-0 items-center gap-2">
             <img
               src={logoAsset.url}
-              alt="Nhật Ký Hành Trình"
+              alt={BRAND}
               className="h-10 w-10 rounded-xl object-cover shadow-soft ring-2 ring-card"
             />
-            <span className="hidden font-display text-lg font-semibold sm:block">
-              Nhật Ký Hành Trình
-            </span>
+            <span className="hidden font-display text-lg font-semibold sm:block">{BRAND}</span>
           </Link>
 
           {projects.length > 1 ? (

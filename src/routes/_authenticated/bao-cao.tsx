@@ -8,9 +8,10 @@ import { buildMarkdown, markdownToHtml, downloadFile } from "@/lib/report";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FileText, FileDown, Copy, Loader2, FileType2 } from "lucide-react";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/bao-cao")({
-  head: () => ({ meta: [{ title: "Xuất báo cáo — Nhật Ký Hành Trình" }] }),
+  head: () => ({ meta: [{ title: `Xuất báo cáo — ${BRAND}` }] }),
   component: ReportPage,
 });
 
