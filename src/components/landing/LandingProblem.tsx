@@ -19,6 +19,10 @@ export function LandingProblem() {
       <span aria-hidden className="orb-tang -right-24 top-10 h-72 w-72" />
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[0.85fr_1fr] lg:gap-20">
         <div className="relative order-2 lg:order-1">
+          {/* khối màu đặc phía sau quả cầu */}
+          <span aria-hidden className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-[58%] -translate-y-[46%] rounded-full bg-amber sm:h-80 sm:w-80" />
+          <span aria-hidden className="absolute left-1/2 top-1/2 h-24 w-24 translate-x-[70%] translate-y-[70%] rounded-full bg-azure" />
+          <span aria-hidden className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-[170%] -translate-y-[150%] rounded-full bg-tang" />
           <SlotImage
             src="/images/globe-connect.png"
             alt={t("problem.visualAlt")}

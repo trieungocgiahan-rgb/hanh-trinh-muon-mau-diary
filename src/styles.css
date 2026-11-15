@@ -36,6 +36,9 @@
   --color-amber: var(--amber);
   --color-amber-soft: var(--amber-soft);
   --color-amber-ink: var(--amber-ink);
+  --color-azure: var(--azure);
+  --color-azure-tint: var(--azure-tint);
+  --color-amber-tint: var(--amber-tint);
   --color-tang: var(--tang);
   --color-tang-soft: var(--tang-soft);
   --color-tang-ink: var(--tang-ink);
@@ -168,16 +171,19 @@
   /* chút xanh trời để hòa với hồng */
   --cool: oklch(0.9 0.05 232);
   --cool-ink: oklch(0.46 0.12 245);
-  --orb-cool: oklch(0.86 0.08 232 / 0.55);
+  --orb-cool: oklch(0.82 0.11 235 / 0.7);
   /* vàng và cam: điểm nhấn ấm để hồng đỡ chói */
-  --amber: oklch(0.85 0.15 88);
+  --azure: oklch(0.67 0.15 238);
+  --azure-tint: oklch(0.962 0.03 235);
+  --amber: oklch(0.87 0.16 92);
+  --amber-tint: oklch(0.975 0.045 95);
   --amber-soft: oklch(0.96 0.06 92);
   --amber-ink: oklch(0.45 0.09 75);
-  --tang: oklch(0.76 0.16 55);
+  --tang: oklch(0.75 0.17 52);
   --tang-soft: oklch(0.955 0.045 58);
   --tang-ink: oklch(0.47 0.13 45);
-  --orb-amber: oklch(0.9 0.1 90 / 0.55);
-  --orb-tang: oklch(0.84 0.1 58 / 0.5);
+  --orb-amber: oklch(0.9 0.13 92 / 0.7);
+  --orb-tang: oklch(0.82 0.13 55 / 0.6);
 
   --glass-bg: oklch(1 0 0 / 0.62);
   --glass-border: oklch(1 0 0 / 0.85);
@@ -264,10 +270,13 @@
   --cool: oklch(0.42 0.06 240);
   --cool-ink: oklch(0.86 0.07 232);
   --orb-cool: oklch(0.55 0.1 240 / 0.38);
-  --amber: oklch(0.82 0.14 88);
+  --azure: oklch(0.72 0.13 238);
+  --azure-tint: oklch(0.31 0.03 238);
+  --amber: oklch(0.84 0.15 90);
+  --amber-tint: oklch(0.315 0.03 88);
   --amber-soft: oklch(0.45 0.07 88);
   --amber-ink: oklch(0.9 0.1 92);
-  --tang: oklch(0.74 0.15 55);
+  --tang: oklch(0.74 0.16 52);
   --tang-soft: oklch(0.44 0.07 55);
   --tang-ink: oklch(0.88 0.08 58);
   --orb-amber: oklch(0.6 0.1 90 / 0.3);

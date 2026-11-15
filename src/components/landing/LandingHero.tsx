@@ -11,9 +11,9 @@ const BARS = [5, 11, 7, 15, 9, 17, 6, 12, 8, 14, 5, 10];
 
 // Ba mục nhật ký mẫu từ ba nơi khác nhau, nối vào cùng một sợi chỉ.
 const ENTRIES = [
-  { key: "e1", chip: "bg-cool text-cool-ink", dot: "bg-[var(--cool-ink)]" },
-  { key: "e2", chip: "bg-amber-soft text-amber-ink", dot: "bg-[var(--amber)]" },
-  { key: "e3", chip: "bg-tang-soft text-tang-ink", dot: "bg-[var(--tang)]" },
+  { key: "e1", chip: "bg-azure text-white", dot: "bg-azure" },
+  { key: "e2", chip: "bg-amber text-[oklch(0.3_0.06_80)]", dot: "bg-amber" },
+  { key: "e3", chip: "bg-tang text-[oklch(0.3_0.07_45)]", dot: "bg-tang" },
 ] as const;
 
 function Feed() {
@@ -27,6 +27,9 @@ function Feed() {
       </p>
 
       <div className="relative pl-9">
+        {/* hai lớp màu đặc phía sau, nghiêng nhẹ như giấy dán */}
+        <span aria-hidden className="absolute -right-3 top-10 h-[80%] w-[84%] rotate-[4deg] rounded-[2rem] bg-amber" />
+        <span aria-hidden className="absolute left-2 top-14 h-[72%] w-[80%] -rotate-[4deg] rounded-[2rem] bg-azure" />
         {/* sợi chỉ nối các mục, có hạt chạy dọc */}
         <span aria-hidden className="thread-v absolute bottom-3 left-[11px] top-3 w-[2px]" />
         <span
@@ -35,11 +38,11 @@ function Feed() {
           style={{ top: 12 }}
         />
 
-        <ul className="space-y-3">
+        <ul className="relative space-y-3">
           {ENTRIES.map((e, i) => (
             <li
               key={e.key}
-              className={`animate-arrive glass relative rounded-2xl p-4 transition-transform duration-200 hover:-translate-y-0.5 hover:rotate-[-0.4deg] ${e.key === "e3" ? "sm:pr-24" : ""}`}
+              className={`animate-arrive relative rounded-2xl border border-white/80 bg-card p-4 shadow-pop transition-transform duration-200 hover:-translate-y-0.5 hover:rotate-[-0.4deg] ${e.key === "e3" ? "sm:pr-24" : ""}`}
               style={{ "--d": `${250 + i * 220}ms` } as React.CSSProperties}
             >
               {/* nút nối trên sợi chỉ, nhấp nháy nhẹ */}
@@ -58,7 +61,7 @@ function Feed() {
               <p className="mt-2 text-sm font-medium text-foreground">{t(`feed.${e.key}.text` as Key)}</p>
               {e.key === "e1" && (
                 <div className="mt-3 flex gap-1.5" aria-hidden>
-                  {["bg-secondary", "bg-cool", "bg-amber-soft", "bg-tang-soft"].map((c, k) => (
+                  {["bg-primary/70", "bg-azure", "bg-amber", "bg-tang"].map((c, k) => (
                     <span key={k} className={`h-10 flex-1 rounded-lg ${c}`} />
                   ))}
                 </div>
@@ -104,7 +107,7 @@ export function LandingHero() {
           <h1 className="text-balance font-display text-[2.5rem] font-extrabold leading-[1.03] tracking-tight text-foreground sm:text-5xl lg:text-[3.6rem]">
             {t("hero.l1")}
             <br />
-            <span className="text-primary text-glow underline decoration-[var(--amber)] decoration-wavy decoration-[3px] underline-offset-[10px]">{t("hero.l2")}</span>
+            <span className="text-primary">{t("hero.l2")}</span>
           </h1>
           <p className="mt-6 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
             {t("hero.sub")}

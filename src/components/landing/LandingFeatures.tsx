@@ -29,7 +29,7 @@ function MiniMedia() {
   return (
     <div className="mt-6 flex items-end gap-1.5" aria-hidden>
       {[34, 54, 40, 62, 46].map((h, i) => (
-        <span key={i} className="flex-1 rounded-lg bg-secondary" style={{ height: h }} />
+        <span key={i} className={`flex-1 rounded-lg ${["bg-primary", "bg-azure", "bg-amber", "bg-tang", "bg-primary"][i]}`} style={{ height: h }} />
       ))}
       <span className="ml-2 flex h-8 items-center gap-[3px]">
         {[6, 14, 9, 18, 8, 13, 6].map((h, i) => (
@@ -45,15 +45,15 @@ type Tile = { icon: typeof Heart; title: Key; body: Key; span: string; tone: str
 export function LandingFeatures() {
   const { t } = useI18n();
   const tiles: Tile[] = [
-    { icon: CalendarPlus, title: "features.f1.title", body: "features.f1.body", tone: "bg-secondary text-secondary-foreground", span: "lg:col-span-3", extra: <MiniCalendar /> },
-    { icon: Images, title: "features.f2.title", body: "features.f2.body", tone: "bg-cool text-cool-ink", span: "lg:col-span-3", extra: <MiniMedia /> },
-    { icon: Heart, title: "features.f3.title", body: "features.f3.body", tone: "bg-amber-soft text-amber-ink", span: "lg:col-span-2" },
-    { icon: ShieldCheck, title: "features.f5.title", body: "features.f5.body", tone: "bg-tang-soft text-tang-ink", span: "lg:col-span-2" },
-    { icon: FileDown, title: "features.f4.title", body: "features.f4.body", tone: "bg-secondary text-secondary-foreground", span: "lg:col-span-2" },
-    { icon: Palette, title: "features.f6.title", body: "features.f6.body", tone: "bg-cool text-cool-ink", span: "lg:col-span-6" },
+    { icon: CalendarPlus, title: "features.f1.title", body: "features.f1.body", tone: "bg-primary text-primary-foreground", span: "lg:col-span-3", extra: <MiniCalendar /> },
+    { icon: Images, title: "features.f2.title", body: "features.f2.body", tone: "bg-azure text-white", span: "lg:col-span-3", extra: <MiniMedia /> },
+    { icon: Heart, title: "features.f3.title", body: "features.f3.body", tone: "bg-amber text-[oklch(0.3_0.06_80)]", span: "lg:col-span-2" },
+    { icon: ShieldCheck, title: "features.f5.title", body: "features.f5.body", tone: "bg-tang text-[oklch(0.3_0.07_45)]", span: "lg:col-span-2" },
+    { icon: FileDown, title: "features.f4.title", body: "features.f4.body", tone: "bg-primary text-primary-foreground", span: "lg:col-span-2" },
+    { icon: Palette, title: "features.f6.title", body: "features.f6.body", tone: "bg-azure text-white", span: "lg:col-span-6" },
   ];
   return (
-    <section id="tinh-nang" className="scroll-mt-24 bg-background py-16 sm:py-24">
+    <section id="tinh-nang" className="scroll-mt-24 bg-[var(--azure-tint)] py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-cool-ink">

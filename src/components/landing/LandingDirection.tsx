@@ -6,8 +6,8 @@ const nb = (s: string) => s.replace(/ (\S+)$/, "\u00A0$1");
 // Bản nháp: thay bằng kế hoạch thật của nhóm trong bộ chữ (direction.*).
 const MILESTONES: { badge: Key; title: Key; body: Key; tone: string; dot: string }[] = [
   { badge: "direction.m1.badge", title: "direction.m1.title", body: "direction.m1.body", tone: "bg-primary text-primary-foreground shadow-btn", dot: "bg-primary" },
-  { badge: "direction.m2.badge", title: "direction.m2.title", body: "direction.m2.body", tone: "bg-cool text-cool-ink", dot: "bg-[var(--cool-ink)]" },
-  { badge: "direction.m3.badge", title: "direction.m3.title", body: "direction.m3.body", tone: "bg-amber-soft text-amber-ink", dot: "bg-[var(--amber)]" },
+  { badge: "direction.m2.badge", title: "direction.m2.title", body: "direction.m2.body", tone: "bg-azure text-white", dot: "bg-azure" },
+  { badge: "direction.m3.badge", title: "direction.m3.title", body: "direction.m3.body", tone: "bg-amber text-[oklch(0.3_0.06_80)]", dot: "bg-amber" },
 ];
 
 function Milestone({ m }: { m: (typeof MILESTONES)[number] }) {
@@ -18,8 +18,8 @@ function Milestone({ m }: { m: (typeof MILESTONES)[number] }) {
       {/* nút nối trên sợi chỉ: sáng lên khi cuộn tới */}
       <span
         aria-hidden
-        className={`absolute left-0 top-1.5 h-3.5 w-3.5 rounded-full ring-4 ring-[var(--page-tint)] transition-all duration-500 ${
-          shown ? `${m.dot} scale-100 shadow-[0_0_14px_var(--glow)]` : "scale-75 bg-border"
+        className={`absolute left-0 top-1.5 h-4 w-4 rounded-full ring-4 ring-[var(--amber-tint)] transition-all duration-500 ${
+          shown ? `${m.dot} scale-100` : "scale-75 bg-border"
         }`}
       />
       <div className={`transition-all duration-500 ${shown ? "translate-x-0 opacity-100" : "translate-x-3 opacity-40"}`}>
@@ -34,7 +34,7 @@ function Milestone({ m }: { m: (typeof MILESTONES)[number] }) {
 export function LandingDirection() {
   const { t } = useI18n();
   return (
-    <section id="huong-di" className="relative scroll-mt-24 overflow-hidden bg-[var(--page-tint)] py-16 sm:py-24">
+    <section id="huong-di" className="relative scroll-mt-24 overflow-hidden bg-[var(--amber-tint)] py-16 sm:py-24">
       <span aria-hidden className="orb -right-24 top-0 h-80 w-80" />
       <span aria-hidden className="orb-amber -left-20 bottom-0 h-72 w-72" />
       <div className="relative mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
