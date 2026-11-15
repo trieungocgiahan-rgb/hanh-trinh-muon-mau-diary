@@ -1,96 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Camera, Mic } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DiaryFallback } from "@/components/illustrations/Fallbacks";
-import { SlotImage } from "@/components/illustrations/SlotImage";
-import { useI18n, type Key } from "@/lib/i18n";
+import { HeroDiary } from "./HeroDiary";
+import { useI18n } from "@/lib/i18n";
 
-const nb = (s: string) => s.replace(/ (\S+)$/, " $1");
-
-const BARS = [5, 11, 7, 15, 9, 17, 6, 12, 8, 14, 5, 10];
-
-// Ba mục nhật ký mẫu từ ba nơi khác nhau, nối vào cùng một sợi chỉ.
-const ENTRIES = [
-  { key: "e1", chip: "bg-azure text-white", dot: "bg-azure" },
-  { key: "e2", chip: "bg-amber text-[oklch(0.3_0.06_80)]", dot: "bg-amber" },
-  { key: "e3", chip: "bg-tang text-[oklch(0.3_0.07_45)]", dot: "bg-tang" },
-] as const;
-
-function Feed() {
-  const { t } = useI18n();
-  return (
-    <div className="relative mx-auto w-full max-w-md">
-      <p className="mb-4 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-        <span className="h-px flex-1 bg-border" />
-        {t("feed.sample")}
-        <span className="h-px flex-1 bg-border" />
-      </p>
-
-      <div className="relative pl-9">
-        {/* hai lớp màu đặc phía sau, nghiêng nhẹ như giấy dán */}
-        <span aria-hidden className="absolute -right-3 top-10 h-[80%] w-[84%] rotate-[4deg] rounded-[2rem] bg-amber" />
-        <span aria-hidden className="absolute left-2 top-14 h-[72%] w-[80%] -rotate-[4deg] rounded-[2rem] bg-azure" />
-        {/* sợi chỉ nối các mục, có hạt chạy dọc */}
-        <span aria-hidden className="thread-v absolute bottom-3 left-[11px] top-3 w-[2px]" />
-        <span
-          aria-hidden
-          className="animate-packet absolute left-[6px] h-[10px] w-[10px] rounded-full bg-primary shadow-[0_0_12px_var(--glow)]"
-          style={{ top: 12 }}
-        />
-
-        <ul className="relative space-y-3">
-          {ENTRIES.map((e, i) => (
-            <li
-              key={e.key}
-              className={`animate-arrive relative rounded-2xl border border-white/80 bg-card p-4 shadow-pop transition-transform duration-200 hover:-translate-y-0.5 hover:rotate-[-0.4deg] ${e.key === "e3" ? "sm:pr-24" : ""}`}
-              style={{ "--d": `${250 + i * 220}ms` } as React.CSSProperties}
-            >
-              {/* nút nối trên sợi chỉ, nhấp nháy nhẹ */}
-              <span aria-hidden className="absolute -left-[34px] top-5 flex h-3 w-3">
-                <span className={`animate-ping-soft absolute inline-flex h-full w-full rounded-full ${e.dot}`} style={{ animationDelay: `${i * 0.6}s` }} />
-                <span className={`relative inline-flex h-3 w-3 rounded-full ring-2 ring-card ${e.dot}`} />
-              </span>
-              <div className="flex items-center gap-2 text-xs">
-                <span className={`rounded-full px-2.5 py-0.5 font-semibold ${e.chip}`}>
-                  {t(`feed.${e.key}.city` as Key)}
-                </span>
-                <span className="text-muted-foreground">{t(`feed.${e.key}.time` as Key)}</span>
-                {e.key === "e1" && <Camera className="ml-auto h-4 w-4 text-primary-ink" aria-hidden />}
-                {e.key === "e2" && <Mic className="ml-auto h-4 w-4 text-primary-ink" aria-hidden />}
-              </div>
-              <p className="mt-2 text-sm font-medium text-foreground">{t(`feed.${e.key}.text` as Key)}</p>
-              {e.key === "e1" && (
-                <div className="mt-3 flex gap-1.5" aria-hidden>
-                  {["bg-primary/70", "bg-azure", "bg-amber", "bg-tang"].map((c, k) => (
-                    <span key={k} className={`h-10 flex-1 rounded-lg ${c}`} />
-                  ))}
-                </div>
-              )}
-              {e.key === "e2" && (
-                <div className="mt-3 flex h-6 items-center gap-[3px]" aria-hidden>
-                  {BARS.map((h, k) => (
-                    <span key={k} className="w-[3px] rounded-full bg-primary" style={{ height: h + 4 }} />
-                  ))}
-                  <span className="ml-2 text-xs text-muted-foreground">0:42</span>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* hình cuốn nhật ký thò ra phía dưới (ảnh thật nếu đã có) */}
-      <div className="pointer-events-none absolute -bottom-20 -right-2 w-28 sm:-right-6 sm:w-36">
-        <SlotImage
-          src="/images/diary-hero.png"
-          alt=""
-          fallback={<DiaryFallback className="w-full" />}
-          className="w-full object-contain drop-shadow-[0_18px_30px_var(--glow)]"
-        />
-      </div>
-    </div>
-  );
-}
 
 export function LandingHero() {
   const { t } = useI18n();
@@ -126,7 +39,7 @@ export function LandingHero() {
           <p className="mt-4 text-sm text-muted-foreground">{t("hero.note")}</p>
         </div>
 
-        <Feed />
+        <HeroDiary />
       </div>
     </section>
   );
