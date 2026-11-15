@@ -141,7 +141,7 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   if (pendingApproval) {
     return (
-      <div className="grain relative flex min-h-screen items-center justify-center bg-gradient-hero px-4 py-10">
+      <div className="relative flex min-h-screen items-center justify-center bg-[var(--page-tint)] px-4 py-10">
         <div className="absolute right-4 top-4">
           <LanguageToggle />
         </div>
@@ -207,16 +207,16 @@ function ShellInner({ children }: { children: ReactNode }) {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_20%,transparent),inset_0_1px_0_var(--hi)]"
-                      : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+                      ? "bg-secondary text-secondary-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
                   {t(item.label)}
                   {item.to === "/thanh-vien" && pendingCount > 0 && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-primary px-1.5 text-[10px] font-bold text-primary-foreground shadow-btn">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground shadow-btn">
                       {pendingCount}
                     </span>
                   )}

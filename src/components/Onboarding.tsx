@@ -98,7 +98,7 @@ export function OnboardingPanel({ onDone }: { onDone?: () => void }) {
           onClick={() => setMode("join")}
           className="surface surface-lift group flex flex-col rounded-2xl p-5 text-left"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-grape text-grape-foreground shadow-btn">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-secondary-foreground shadow-btn">
             <KeyRound className="h-5 w-5" />
           </span>
           <span className="mt-4 font-display text-xl font-semibold">{t("onb.joinTitle")}</span>
@@ -113,7 +113,7 @@ export function OnboardingPanel({ onDone }: { onDone?: () => void }) {
           onClick={() => setMode("create")}
           className="surface surface-lift group flex flex-col rounded-2xl p-5 text-left"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-btn">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-btn">
             <Sparkles className="h-5 w-5" />
           </span>
           <span className="mt-4 font-display text-xl font-semibold">{t("onb.createTitle")}</span>

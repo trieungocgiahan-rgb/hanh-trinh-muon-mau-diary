@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import group from "@/assets/landing-group.jpg";
+import desk from "@/assets/landing-desk.jpg";
 import { useI18n } from "@/lib/i18n";
 
 const steps = [
@@ -15,11 +15,11 @@ export function LandingSteps() {
   return (
     <section
       id="bat-dau"
-      className="scroll-mt-20 bg-gradient-to-b from-background to-[var(--page-tint)] py-20 sm:py-28"
+      className="scroll-mt-20 bg-background py-16 sm:py-24"
     >
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[0.9fr_1.1fr]">
         <img
-          src={group}
+          src={desk}
           alt={t("steps.alt")}
           width={1200}
           height={912}
@@ -28,10 +28,10 @@ export function LandingSteps() {
         />
 
         <div>
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
             {t("steps.eyebrow")}
           </p>
-          <h2 className="mt-3 text-balance font-display text-3xl font-semibold leading-tight sm:text-5xl">
+          <h2 className="mt-3 text-balance font-display text-3xl font-bold leading-tight sm:text-5xl">
             {t("steps.title1")}{" "}
             <span className="text-primary">{t("steps.title2")}</span>
           </h2>
@@ -39,7 +39,7 @@ export function LandingSteps() {
           <ol className="mt-8 divide-y divide-border border-y border-border">
             {steps.map((s) => (
               <li key={s.n} className="flex gap-5 py-5">
-                <span className="font-display text-4xl font-semibold leading-none text-primary/80">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground">
                   {s.n}
                 </span>
                 <div>

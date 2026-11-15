@@ -6,6 +6,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingDemo } from "@/components/landing/LandingDemo";
+import { LandingFeatures } from "@/components/landing/LandingFeatures";
 import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
@@ -95,6 +96,7 @@ function LandingPage() {
       <main>
         <LandingHero />
         <LandingDemo />
+        <LandingFeatures />
         <LandingSteps />
         <LandingCTA />
       </main>

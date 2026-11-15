@@ -171,7 +171,7 @@ export function ActivityFormDialog() {
   return (
     <Dialog open={createOpen} onOpenChange={(o) => (o ? setCreateOpen(true) : closeAll())}>
       <DialogContent className="max-h-[92vh] gap-0 overflow-hidden rounded-2xl p-0 max-sm:left-0 max-sm:top-0 max-sm:h-[100dvh] max-sm:max-h-none max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none sm:max-w-2xl">
-        <DialogHeader className="border-b bg-gradient-sun px-5 py-4 dark:bg-none dark:bg-secondary sm:px-6">
+        <DialogHeader className="border-b bg-secondary px-5 py-4 sm:px-6">
           <DialogTitle className="text-xl text-sunny-foreground dark:text-foreground">
             {editing ? t("form.titleEdit") : t("form.titleNew")}
           </DialogTitle>

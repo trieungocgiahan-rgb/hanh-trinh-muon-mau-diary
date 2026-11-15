@@ -19,29 +19,21 @@ function StatCard({
   icon: Icon,
   label,
   value,
-  gradient,
-  tone = "text-primary-foreground",
 }: {
   icon: React.ElementType;
   label: string;
   value: string | number;
-  gradient: string;
-  tone?: string;
 }) {
   const shown = useCountUp(typeof value === "number" ? value : 0);
   return (
-    <div
-      className={`grain relative overflow-hidden rounded-2xl p-5 shadow-pop dark:saturate-75 ${tone} ${gradient}`}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-white/25 blur-2xl"
-      />
-      <Icon className="relative mb-3 h-7 w-7 opacity-90" />
-      <div className="relative font-display text-4xl font-semibold tabular-nums">
+    <div className="surface rounded-xl p-5">
+      <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
+        <Icon className="h-5 w-5" />
+      </span>
+      <div className="font-display text-3xl font-bold tabular-nums">
         {typeof value === "number" ? shown : value}
       </div>
-      <div className="relative text-sm opacity-90">{label}</div>
+      <div className="mt-0.5 text-sm text-muted-foreground">{label}</div>
     </div>
   );
 }
@@ -97,26 +89,21 @@ function StatsPage() {
           icon={CalendarRange}
           label={t("stats.total")}
           value={stats.total}
-          gradient="bg-gradient-hero"
         />
         <StatCard
           icon={Sparkles}
           label={t("type.workshop")}
           value={stats.workshops}
-          gradient="bg-gradient-sun"
-          tone="text-sunny-foreground"
         />
         <StatCard
           icon={Users}
           label={t("stats.participants")}
           value={stats.participants}
-          gradient="bg-gradient-grape"
         />
         <StatCard
           icon={CheckCircle2}
           label={t("stats.completed")}
           value={stats.completed}
-          gradient="bg-gradient-mint"
         />
       </div>
 

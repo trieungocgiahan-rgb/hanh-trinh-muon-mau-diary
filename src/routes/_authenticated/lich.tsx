@@ -197,7 +197,7 @@ function CalendarPage() {
                     <span
                       className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold tabular-nums ${
                         isToday
-                          ? "bg-gradient-primary text-primary-foreground shadow-btn"
+                          ? "bg-primary text-primary-foreground shadow-btn"
                           : "text-foreground/80"
                       }`}
                     >

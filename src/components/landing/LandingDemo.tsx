@@ -25,6 +25,8 @@ import type { ActivityType } from "@/lib/activity-constants";
 import { PROJECT_THEMES, applyThemeVars, clearThemeVars } from "@/lib/project-themes";
 import { TypeDot } from "@/components/activity/TypeDot";
 import {
+  DEMO_ADD_EVENT,
+  DEMO_FREE_TABS,
   DEMO_TABS,
   ME,
   PERMISSIONS,
@@ -226,7 +228,7 @@ function CalendarPanel({
               >
                 <span
                   className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums ${
-                    isToday ? "bg-gradient-primary text-primary-foreground" : "text-foreground/70"
+                    isToday ? "bg-primary text-primary-foreground" : "text-foreground/70"
                   }`}
                 >
                   {d}
@@ -335,7 +337,7 @@ function VoiceClip({ seconds, index }: { seconds: number; index: number }) {
         type="button"
         onClick={() => setPlaying((p) => !p)}
         aria-label={playing ? t("voice.stop") : t("demo.listenAgain")}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-grape text-grape-foreground shadow-btn"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-btn"
       >
         {playing ? (
           <Pause className="h-4 w-4 fill-current" />
@@ -647,8 +649,8 @@ function EngagePanel({
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                     c.who === ME
-                      ? "bg-gradient-primary text-primary-foreground"
-                      : "bg-gradient-grape text-grape-foreground"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground"
                   }`}
                 >
                   {(c.who === ME ? t("demo.me") : c.who).charAt(0)}
@@ -896,6 +898,25 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
 
 /* ---------- khung chính ---------- */
 
+function LockedPanel({ hint }: { hint: Key }) {
+  const { t } = useI18n();
+  return (
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/40 px-6 py-12 text-center">
+      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+        <Lock className="h-5 w-5" aria-hidden />
+      </span>
+      <p className="mt-4 max-w-sm text-base font-medium text-foreground">{t(hint)}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{t("demo.locked")}</p>
+      <Button asChild size="lg" className="mt-5">
+        <Link to="/auth">
+          {t("demo.lockedBtn")}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
 export function LandingDemo() {
   const { t } = useI18n();
   const now = useMemo(() => new Date(), []);
@@ -950,30 +971,40 @@ export function LandingDemo() {
     mark("lich");
   }
 
+  // ô "Ghi thử" ở đầu trang: thêm hoạt động vào lịch mẫu rồi mở tab Lịch
+  useEffect(() => {
+    function onAdd(e: Event) {
+      const title = (e as CustomEvent<{ title?: string }>).detail?.title?.trim();
+      if (!title) return;
+      setTab("lich");
+      addActivity(now.getDate(), title.slice(0, 80), "workshop");
+    }
+    window.addEventListener(DEMO_ADD_EVENT, onAdd);
+    return () => window.removeEventListener(DEMO_ADD_EVENT, onAdd);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [now]);
+
   const current = DEMO_TABS.find((x) => x.key === tab)!;
+  const locked = !DEMO_FREE_TABS.includes(tab);
   const triedCount = tried.size;
+  const freeTotal = DEMO_FREE_TABS.length;
 
   return (
-    <section id="dung-thu" className="scroll-mt-20 bg-background py-20 sm:py-28">
+    <section id="dung-thu" className="scroll-mt-20 bg-background py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="max-w-2xl">
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
             {t("hero.tryNow")}
           </p>
-          <h2 className="mt-3 text-balance font-display text-3xl font-semibold leading-tight sm:text-5xl">
+          <h2 className="mt-3 text-balance font-display text-3xl font-bold leading-tight sm:text-5xl">
             {t("demo.title1")} <span className="text-primary">{t("demo.title2")}</span>
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">{t("demo.intro")}</p>
         </div>
 
-        <div className="surface mt-10 overflow-hidden rounded-3xl shadow-pop">
+        <div className="surface mt-10 overflow-hidden rounded-2xl shadow-pop">
           {/* thanh tiêu đề giả lập app */}
           <div className="flex items-center gap-3 border-b border-border bg-secondary/40 px-4 py-2.5">
-            <div className="flex gap-1.5" aria-hidden>
-              <span className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
-              <span className="h-2.5 w-2.5 rounded-full bg-sunny" />
-              <span className="h-2.5 w-2.5 rounded-full bg-mint" />
-            </div>
             <p className="min-w-0 flex-1 truncate text-xs font-semibold text-muted-foreground">
               {t("demo.sampleProject")}
             </p>
@@ -1004,8 +1035,8 @@ export function LandingDemo() {
                     onClick={() => setTab(tb.key)}
                     className={`flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors lg:w-full ${
                       on
-                        ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_20%,transparent)]"
-                        : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+                        ? "bg-secondary text-secondary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     }`}
                   >
                     <span
@@ -1020,6 +1051,9 @@ export function LandingDemo() {
                       {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
                     </span>
                     <span className="whitespace-nowrap">{t(tb.label)}</span>
+                    {!DEMO_FREE_TABS.includes(tb.key) && (
+                      <Lock className="ml-auto h-3 w-3 shrink-0 opacity-60" aria-hidden />
+                    )}
                   </button>
                 );
               })}
@@ -1027,8 +1061,11 @@ export function LandingDemo() {
 
             {/* nội dung */}
             <div className="min-w-0 p-4 sm:p-6">
-              <p className="mb-4 text-sm font-medium text-muted-foreground">{t(current.hint)}</p>
+              {!locked && (
+                <p className="mb-4 text-sm font-medium text-muted-foreground">{t(current.hint)}</p>
+              )}
               <div key={tab} className="animate-pop-in">
+                {locked && <LockedPanel hint={current.hint} />}
                 {tab === "lich" && (
                   <CalendarPanel
                     now={now}
@@ -1039,7 +1076,7 @@ export function LandingDemo() {
                     canWrite={canWrite}
                   />
                 )}
-                {tab === "media" && (
+                {tab === "media" && !locked && (
                   <MediaPanel
                     acts={acts}
                     selectedId={selectedId}
@@ -1059,7 +1096,7 @@ export function LandingDemo() {
                     onUse={() => mark("tuong-tac")}
                   />
                 )}
-                {tab === "vai-tro" && (
+                {tab === "vai-tro" && !locked && (
                   <RolesPanel
                     role={role}
                     setRole={(r) => {
@@ -1068,8 +1105,8 @@ export function LandingDemo() {
                     }}
                   />
                 )}
-                {tab === "bao-cao" && <ReportPanel acts={acts} onUse={() => mark("bao-cao")} />}
-                {tab === "mau" && (
+                {tab === "bao-cao" && !locked && <ReportPanel acts={acts} onUse={() => mark("bao-cao")} />}
+                {tab === "mau" && !locked && (
                   <ThemePanel
                     theme={theme}
                     setTheme={(k) => {
@@ -1083,13 +1120,13 @@ export function LandingDemo() {
           </div>
 
           {/* lời mời đăng nhập */}
-          <div className="flex flex-col items-start justify-between gap-3 border-t border-border bg-gradient-to-r from-secondary/60 to-accent/30 px-4 py-4 sm:flex-row sm:items-center sm:px-6">
+          <div className="flex flex-col items-start justify-between gap-3 border-t border-border bg-secondary/50 px-4 py-4 sm:flex-row sm:items-center sm:px-6">
             <div>
               <p className="font-display text-lg font-semibold leading-snug">
                 {triedCount === 0
                   ? t("demo.cta0")
-                  : triedCount < DEMO_TABS.length
-                    ? t("demo.ctaSome", { n: triedCount, total: DEMO_TABS.length })
+                  : triedCount < freeTotal
+                    ? t("demo.ctaSome", { n: triedCount, total: freeTotal })
                     : t("demo.ctaAll")}
               </p>
               <p className="mt-0.5 text-sm text-muted-foreground">{t("demo.ctaSub")}</p>

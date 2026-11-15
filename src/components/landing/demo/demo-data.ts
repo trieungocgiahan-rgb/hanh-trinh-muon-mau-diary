@@ -101,6 +101,11 @@ export const PERMISSIONS: { label: Key; roles: Role[] }[] = [
   { label: "demo.perm.admin", roles: ["admin"] },
 ];
 
+// Tab nào cho dùng thử miễn phí; các tab còn lại chỉ xem giới thiệu, mở khi đăng nhập.
+export const DEMO_FREE_TABS: DemoTab[] = ["lich", "tuong-tac"];
+// Sự kiện từ ô "Ghi thử" ở phần đầu trang để thêm hoạt động vào lịch mẫu.
+export const DEMO_ADD_EVENT = "together:demo-add";
+
 export const DEMO_TABS: { key: DemoTab; label: Key; hint: Key }[] = [
   { key: "lich", label: "demo.tab.lich.label", hint: "demo.tab.lich.hint" },
   { key: "media", label: "demo.tab.media.label", hint: "demo.tab.media.hint" },
