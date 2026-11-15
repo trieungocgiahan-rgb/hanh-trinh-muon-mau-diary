@@ -864,7 +864,6 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {PROJECT_THEMES.map((th) => {
           const on = theme === th.key;
-          const end = "h2" in th ? th.h2 : th.hue - 76;
           return (
             <button
               key={th.key}
@@ -880,7 +879,7 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
               <span
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-btn"
                 style={{
-                  backgroundImage: `linear-gradient(135deg, oklch(0.78 0.15 ${th.hue + 34}), oklch(0.62 0.19 ${end}))`,
+                  backgroundColor: `oklch(0.66 ${th.chroma} ${th.hue})`,
                 }}
               >
                 {on && <Check className="h-4 w-4" />}

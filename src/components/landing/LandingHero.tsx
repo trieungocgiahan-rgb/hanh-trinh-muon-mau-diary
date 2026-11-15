@@ -99,7 +99,6 @@ export function LandingHero() {
       <span aria-hidden className="orb -left-24 top-10 h-72 w-72" />
       <span aria-hidden className="orb-cool -right-24 top-20 h-96 w-96" />
       <span aria-hidden className="orb-amber bottom-0 right-1/4 h-72 w-72" />
-      <span aria-hidden className="orb-tang left-1/3 top-1/2 h-60 w-60" />
       <span aria-hidden className="orb bottom-0 right-1/3 h-72 w-72" />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
