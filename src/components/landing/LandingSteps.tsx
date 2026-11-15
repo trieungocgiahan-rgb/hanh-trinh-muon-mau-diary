@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import group from "@/assets/landing-group.jpg";
 import desk from "@/assets/landing-desk.jpg";
 import { useI18n } from "@/lib/i18n";
 
@@ -18,14 +19,28 @@ export function LandingSteps() {
       className="scroll-mt-20 bg-background py-16 sm:py-24"
     >
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[0.9fr_1.1fr]">
-        <img
-          src={desk}
-          alt={t("steps.alt")}
-          width={1200}
-          height={912}
-          loading="lazy"
-          className="aspect-[4/3] w-full rounded-2xl object-cover shadow-pop"
-        />
+        <div className="relative mx-auto w-full max-w-md py-6">
+          <img
+            src={desk}
+            alt={t("steps.alt")}
+            width={1008}
+            height={1008}
+            loading="lazy"
+            className="absolute -right-2 top-0 hidden w-2/5 rotate-6 rounded-md border-[6px] border-white object-cover shadow-pop sm:block"
+          />
+          <img
+            src={group}
+            alt={t("hero.photoAlt")}
+            width={1200}
+            height={912}
+            loading="lazy"
+            className="-rotate-2 rounded-md border-[10px] border-b-[34px] border-white object-cover shadow-pop"
+          />
+          <span
+            aria-hidden
+            className="absolute -top-1 left-8 h-6 w-20 -rotate-6 rounded-sm bg-[#ffd166]/80"
+          />
+        </div>
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">

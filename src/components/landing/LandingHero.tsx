@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { ArrowRight, Check, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import group from "@/assets/landing-group.jpg";
+import { AvatarStack } from "@/components/illustrations/People";
+import { TeamIllustration } from "@/components/illustrations/TeamIllustration";
 import { useI18n } from "@/lib/i18n";
 import { DEMO_ADD_EVENT } from "./demo/demo-data";
 
@@ -24,13 +24,13 @@ export function LandingHero() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-[var(--page-tint)] pb-16 pt-12 sm:pb-24 sm:pt-20">
+    <section className="relative overflow-hidden bg-[var(--page-tint)] pb-24 pt-10 sm:pb-32 sm:pt-16">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card px-3 py-1 text-xs font-medium text-primary">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
-            {t("brand.taglineLong")}
-          </p>
+          <div className="inline-flex items-center gap-3 rounded-full border border-primary/20 bg-card py-1.5 pl-2 pr-4 shadow-soft">
+            <AvatarStack className="h-7" />
+            <span className="text-xs font-medium text-foreground">{t("hero.avatars")}</span>
+          </div>
           <h1 className="mt-6 text-balance font-display text-[2.9rem] font-bold leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
             {t("hero.l1")}
             <br />
@@ -101,28 +101,17 @@ export function LandingHero() {
           </ul>
         </div>
 
-        <figure>
-          <img
-            src={group}
-            alt={t("hero.photoAlt")}
-            width={1200}
-            height={912}
-            className="aspect-[4/3] w-full rounded-2xl object-cover shadow-pop"
-          />
-          <figcaption className="mt-3 flex items-center justify-between gap-3 text-sm text-muted-foreground">
-            <span className="flex min-w-0 items-center gap-2">
-              <span className="h-4 w-1 shrink-0 rounded-full bg-type-workshop" aria-hidden />
-              <span className="truncate">
-                <span className="font-medium text-foreground">{t("hero.mockActivity")}</span> ·{" "}
-                {t("hero.mockMeta")}
-              </span>
-            </span>
-            <Link to="/auth" className="shrink-0 font-medium text-primary hover:underline">
-              {t("common.enterJournal")}
-            </Link>
-          </figcaption>
-        </figure>
+        <TeamIllustration className="mx-auto w-full max-w-[34rem] lg:max-w-none" />
       </div>
+      {/* viền lượn sóng nối sang phần dưới */}
+      <svg
+        viewBox="0 0 1440 48"
+        preserveAspectRatio="none"
+        className="absolute inset-x-0 bottom-[-1px] h-8 w-full sm:h-12"
+        aria-hidden
+      >
+        <path d="M0 48 V22 C180 -6 360 -6 540 18 C760 46 960 40 1160 14 C1280 0 1380 6 1440 20 V48Z" style={{ fill: "var(--background)" }} />
+      </svg>
     </section>
   );
 }

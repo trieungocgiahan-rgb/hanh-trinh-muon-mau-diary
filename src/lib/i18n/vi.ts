@@ -500,6 +500,7 @@ export const vi = {
   "features.f4.body": "Một bản PDF có ảnh, sẵn sàng gửi cho người cần xem.",
   "demo.locked": "Tính năng này dùng được sau khi đăng nhập.",
   "demo.lockedBtn": "Đăng nhập để dùng",
+  "hero.avatars": "Cả đội cùng ghi, cùng nhớ",
 } as const;
 
 export type Key = keyof typeof vi;

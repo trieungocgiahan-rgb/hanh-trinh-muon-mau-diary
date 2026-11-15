@@ -504,4 +504,5 @@ export const en: Record<Key, string> = {
   "features.f4.body": "A PDF with photos, ready to send to whoever needs it.",
   "demo.locked": "This feature is available after you sign in.",
   "demo.lockedBtn": "Sign in to use it",
+  "hero.avatars": "The whole team logs and remembers together",
 };
