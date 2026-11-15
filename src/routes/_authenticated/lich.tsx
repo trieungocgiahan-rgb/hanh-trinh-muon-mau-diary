@@ -28,7 +28,7 @@ function photoCountOf(a: ActivityWithExtras) {
 }
 
 function CalendarPage() {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const { current, canEdit, isAdmin, loading: pLoading } = useProject();
   const { data: activities, isLoading } = useActivities(current?.id);
   const { openCreate, openDetail } = useActivityDialog();
@@ -84,7 +84,7 @@ function CalendarPage() {
   const monthSummary =
     t(monthItems.length === 1 ? "lich.summary.one" : "lich.summary.other", {
       n: monthItems.length,
-      month: lang === "vi" ? monthName.toLowerCase() : monthName,
+      month: monthName,
     }) + (monthPeople ? t("lich.people", { n: monthPeople }) : "");
   const monthSwitcher = (
     <div className="surface flex items-center gap-1 rounded-full p-1">

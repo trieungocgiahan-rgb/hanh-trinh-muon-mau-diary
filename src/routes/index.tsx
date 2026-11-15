@@ -9,12 +9,10 @@ import { LandingDemo } from "@/components/landing/LandingDemo";
 import { LandingFeatures } from "@/components/landing/LandingFeatures";
 import { LandingProblem } from "@/components/landing/LandingProblem";
 import { LandingDirection } from "@/components/landing/LandingDirection";
-import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { BRAND } from "@/lib/brand";
 import { useI18n, tNow } from "@/lib/i18n";
-import { LanguageToggle } from "@/components/LanguageToggle";
 
 const SITE = "https://toghether.contextuary.app";
 
@@ -90,7 +88,6 @@ function LandingPage() {
           </nav>
 
           <div className="glass flex items-center gap-1.5 rounded-full p-1.5">
-            <LanguageToggle />
             <ThemeToggle />
             <Button asChild size="sm" className="rounded-full">
               <Link to="/auth">{t("common.signIn")}</Link>
@@ -105,7 +102,6 @@ function LandingPage() {
         <LandingDemo />
         <LandingFeatures />
         <LandingDirection />
-        <LandingSteps />
         <LandingCTA />
       </main>
 

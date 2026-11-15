@@ -15,7 +15,6 @@ import { ActivityDetailSheet } from "@/components/activity/ActivityDetailSheet";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { OnboardingPanel } from "@/components/Onboarding";
-import { LanguageToggle } from "@/components/LanguageToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,7 +50,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { BRAND } from "@/lib/brand";
-import { useI18n, type Lang } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 
 const NAV = [
   { to: "/lich", label: "nav.calendar", icon: CalendarDays },
@@ -72,7 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 function ShellInner({ children }: { children: ReactNode }) {
-  const { t, lang, setLang } = useI18n();
+  const { t } = useI18n();
   const { current, projects, setCurrentId, canEdit, isAdmin, pendingApproval, needsOnboarding } =
     useProject();
   const { openCreate } = useActivityDialog();
@@ -109,9 +108,6 @@ function ShellInner({ children }: { children: ReactNode }) {
   if (needsOnboarding) {
     return (
       <div className="relative min-h-screen bg-background px-4 py-10 sm:py-16">
-        <div className="absolute right-4 top-4">
-          <LanguageToggle />
-        </div>
         <div className="mx-auto max-w-2xl animate-pop-in">
           <BrandMark className="h-12 w-12" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -142,9 +138,6 @@ function ShellInner({ children }: { children: ReactNode }) {
   if (pendingApproval) {
     return (
       <div className="relative flex min-h-screen items-center justify-center bg-[var(--page-tint)] px-4 py-10">
-        <div className="absolute right-4 top-4">
-          <LanguageToggle />
-        </div>
         <div className="surface w-full max-w-md animate-pop-in rounded-2xl p-8 text-center shadow-pop">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-btn">
             <Hourglass className="h-8 w-8 text-foreground/80" />
@@ -257,14 +250,6 @@ function ShellInner({ children }: { children: ReactNode }) {
                     })}
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                  {t("lang.switch")}
-                </DropdownMenuLabel>
-                <DropdownMenuRadioGroup value={lang} onValueChange={(v) => setLang(v as Lang)}>
-                  <DropdownMenuRadioItem value="vi">{t("lang.vi")}</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="en">{t("lang.en")}</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
                   {t("themeMode.appearance")}

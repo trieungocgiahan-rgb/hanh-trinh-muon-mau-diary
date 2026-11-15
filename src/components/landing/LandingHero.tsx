@@ -1,129 +1,121 @@
-import { useState } from "react";
-import { ArrowRight, Check, Play } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, Camera, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DiaryFallback } from "@/components/illustrations/Fallbacks";
 import { SlotImage } from "@/components/illustrations/SlotImage";
 import { useI18n } from "@/lib/i18n";
-import { DEMO_ADD_EVENT } from "./demo/demo-data";
 
 const nb = (s: string) => s.replace(/ (\S+)$/, " $1");
-const CHIPS = ["hero.chip1", "hero.chip2", "hero.chip3"] as const;
-const CHECKS = ["hero.check1", "hero.check2", "hero.check3"] as const;
+
+const BARS = [5, 11, 7, 15, 9, 17, 6, 12, 8, 14, 5, 10];
+
+// Ba mục nhật ký mẫu từ ba nơi khác nhau, cùng đổ về một trang.
+function Feed() {
+  const { t } = useI18n();
+  return (
+    <div className="relative mx-auto w-full max-w-md">
+      <p className="mb-3 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+        <span className="h-px flex-1 bg-border" />
+        {t("feed.sample")}
+        <span className="h-px flex-1 bg-border" />
+      </p>
+
+      <ul className="space-y-3">
+        <li className="glass rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="rounded-full bg-cool px-2.5 py-0.5 font-semibold text-cool-ink">
+              {t("feed.e1.city")}
+            </span>
+            <span className="text-muted-foreground">{t("feed.e1.time")}</span>
+            <Camera className="ml-auto h-4 w-4 text-primary-ink" aria-hidden />
+          </div>
+          <p className="mt-2 text-sm font-medium text-foreground">{t("feed.e1.text")}</p>
+          <div className="mt-3 flex gap-1.5" aria-hidden>
+            {[0, 1, 2, 3].map((i) => (
+              <span
+                key={i}
+                className="h-10 flex-1 rounded-lg bg-secondary"
+                style={{ opacity: 1 - i * 0.18 }}
+              />
+            ))}
+          </div>
+        </li>
+
+        <li className="glass ml-6 rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="rounded-full bg-cool px-2.5 py-0.5 font-semibold text-cool-ink">
+              {t("feed.e2.city")}
+            </span>
+            <span className="text-muted-foreground">{t("feed.e2.time")}</span>
+            <Mic className="ml-auto h-4 w-4 text-primary-ink" aria-hidden />
+          </div>
+          <p className="mt-2 text-sm font-medium text-foreground">{t("feed.e2.text")}</p>
+          <div className="mt-3 flex h-6 items-center gap-[3px]" aria-hidden>
+            {BARS.map((h, i) => (
+              <span key={i} className="w-[3px] rounded-full bg-primary" style={{ height: h + 4 }} />
+            ))}
+            <span className="ml-2 text-xs text-muted-foreground">0:42</span>
+          </div>
+        </li>
+
+        <li className="glass glow-pink mr-6 rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="rounded-full bg-cool px-2.5 py-0.5 font-semibold text-cool-ink">
+              {t("feed.e3.city")}
+            </span>
+            <span className="text-muted-foreground">{t("feed.e3.time")}</span>
+          </div>
+          <p className="mt-2 text-sm font-medium text-foreground">{t("feed.e3.text")}</p>
+        </li>
+      </ul>
+
+      {/* hình cuốn nhật ký thò ra phía dưới (ảnh thật nếu đã có) */}
+      <div className="pointer-events-none absolute -bottom-16 -right-2 w-32 sm:-right-8 sm:w-40">
+        <SlotImage
+          src="/images/diary-hero.png"
+          alt=""
+          fallback={<DiaryFallback className="w-full" />}
+          className="w-full object-contain drop-shadow-[0_18px_30px_var(--glow)]"
+        />
+      </div>
+    </div>
+  );
+}
 
 export function LandingHero() {
   const { t } = useI18n();
-  const [title, setTitle] = useState("");
-
-  // Ghi thử: chuyển xuống phần dùng thử và thêm hoạt động vào lịch mẫu
-  function tryLog(value: string) {
-    const v = value.trim();
-    if (!v) return;
-    window.dispatchEvent(new CustomEvent(DEMO_ADD_EVENT, { detail: { title: v } }));
-    document.getElementById("dung-thu")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setTitle("");
-  }
-
   return (
     <section className="relative overflow-hidden bg-[var(--page-tint)] pb-24 pt-28 sm:pb-32 sm:pt-36">
-      {/* quầng sáng hồng */}
       <span aria-hidden className="orb -left-24 top-10 h-72 w-72" />
-      <span aria-hidden className="orb -right-20 top-24 h-96 w-96" />
-      <span aria-hidden className="orb bottom-0 left-1/3 h-64 w-64" />
+      <span aria-hidden className="orb-cool -right-24 top-20 h-96 w-96" />
+      <span aria-hidden className="orb bottom-0 right-1/3 h-72 w-72" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
         <div>
-          <p className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold text-primary-ink">
-            <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_var(--glow)]" aria-hidden />
-            {t("brand.taglineLong")}
-          </p>
-          <h1 className="mt-6 text-balance font-display text-[2.9rem] font-extrabold leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-[4.4rem]">
+          <h1 className="text-balance font-display text-[2.8rem] font-extrabold leading-[1.03] tracking-tight text-foreground sm:text-5xl lg:text-[3.6rem]">
             {t("hero.l1")}
             <br />
             <span className="text-primary text-glow">{nb(t("hero.l2"))}</span>
-            {t("hero.l3") && (
-              <>
-                <br />
-                {t("hero.l3")}
-              </>
-            )}
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+          <p className="mt-6 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
             {t("hero.sub")}
           </p>
 
-          <form
-            className="glass mt-8 flex max-w-xl items-center gap-2 rounded-full p-2 pl-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              tryLog(title);
-            }}
-          >
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={80}
-              placeholder={t("hero.inputPh")}
-              aria-label={t("hero.inputPh")}
-              className="min-w-0 flex-1 bg-transparent py-2 text-base text-foreground outline-none placeholder:text-muted-foreground"
-            />
-            <Button type="submit" size="lg" className="shrink-0 px-6">
-              {t("hero.inputBtn")}
-              <ArrowRight className="h-4 w-4" />
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button asChild size="lg" className="w-full sm:w-auto">
+              <Link to="/auth">
+                {t("hero.primary")}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
-          </form>
-
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>{t("hero.try")}</span>
-            {CHIPS.map((k) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => tryLog(t(k))}
-                className="glass rounded-full px-3 py-1 text-foreground transition-colors hover:text-primary-ink"
-              >
-                {t(k)}
-              </button>
-            ))}
+            <Button asChild variant="outline" size="lg" className="glass w-full border-0 sm:w-auto">
+              <a href="#dung-thu">{t("hero.secondary")}</a>
+            </Button>
           </div>
-
-          <a
-            href="#dung-thu"
-            className="mt-7 inline-flex items-center gap-3 text-sm font-semibold text-foreground hover:text-primary-ink"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-btn">
-              <Play className="h-4 w-4 fill-current" />
-            </span>
-            {t("hero.sampleLink")}
-          </a>
+          <p className="mt-4 text-sm text-muted-foreground">{t("hero.note")}</p>
         </div>
 
-        {/* hình chính + thẻ kính */}
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          <SlotImage
-            src="/images/diary-hero.png"
-            alt={t("hero.visualAlt")}
-            fallback={<DiaryFallback className="mx-auto w-full max-w-[26rem]" />}
-            className="mx-auto w-full max-w-[28rem] object-contain drop-shadow-[0_24px_40px_var(--glow)]"
-          />
-          <div className="glass absolute -left-2 top-6 hidden items-center gap-3 rounded-2xl px-4 py-3 sm:flex lg:-left-8">
-            <span className="h-9 w-1.5 rounded-full bg-primary" aria-hidden />
-            <div>
-              <p className="text-sm font-semibold">{t("hero.mockActivity")}</p>
-              <p className="text-xs text-muted-foreground">{t("hero.mockMeta")}</p>
-            </div>
-            <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold text-secondary-foreground">
-              {t("status.completed")}
-            </span>
-          </div>
-          <ul className="glass mx-auto mt-4 flex flex-wrap justify-center gap-x-5 gap-y-1 rounded-2xl px-5 py-3 text-sm text-muted-foreground lg:absolute lg:-bottom-2 lg:left-1/2 lg:mt-0 lg:-translate-x-1/2 lg:flex-nowrap">
-            {CHECKS.map((k) => (
-              <li key={k} className="flex items-center gap-1.5 whitespace-nowrap">
-                <Check className="h-4 w-4 text-primary" aria-hidden />
-                {t(k)}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Feed />
       </div>
     </section>
   );

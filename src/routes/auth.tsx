@@ -9,7 +9,6 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 import { BRAND } from "@/lib/brand";
 import { useI18n, tNow } from "@/lib/i18n";
-import { LanguageToggle } from "@/components/LanguageToggle";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -52,7 +51,6 @@ function AuthPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10">
       <div className="absolute right-4 top-4 flex items-center gap-1.5">
-        <LanguageToggle />
         <ThemeToggle />
       </div>
       <div className="surface relative w-full max-w-md animate-pop-in rounded-2xl p-7 text-center shadow-pop sm:p-9">

@@ -25,7 +25,6 @@ import type { ActivityType } from "@/lib/activity-constants";
 import { PROJECT_THEMES, applyThemeVars, clearThemeVars } from "@/lib/project-themes";
 import { TypeDot } from "@/components/activity/TypeDot";
 import {
-  DEMO_ADD_EVENT,
   DEMO_FREE_TABS,
   DEMO_TABS,
   ME,
@@ -982,19 +981,6 @@ export function LandingDemo() {
     setSelectedId(id);
     mark("lich");
   }
-
-  // ô "Ghi thử" ở đầu trang: thêm hoạt động vào lịch mẫu rồi mở tab Lịch
-  useEffect(() => {
-    function onAdd(e: Event) {
-      const title = (e as CustomEvent<{ title?: string }>).detail?.title?.trim();
-      if (!title) return;
-      setTab("lich");
-      addActivity(now.getDate(), title.slice(0, 80), "workshop");
-    }
-    window.addEventListener(DEMO_ADD_EVENT, onAdd);
-    return () => window.removeEventListener(DEMO_ADD_EVENT, onAdd);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [now]);
 
   const current = DEMO_TABS.find((x) => x.key === tab)!;
   const locked = !DEMO_FREE_TABS.includes(tab);
