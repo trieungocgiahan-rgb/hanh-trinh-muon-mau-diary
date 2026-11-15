@@ -2,7 +2,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import logoAsset from "@/assets/logo.png.asset.json";
+import { BrandMark } from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingDemo } from "@/components/landing/LandingDemo";
@@ -60,14 +60,10 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
-      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 shadow-[0_1px_0_var(--hi)_inset,0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
           <Link to="/" className="flex items-center gap-2">
-            <img
-              src={logoAsset.url}
-              alt={BRAND}
-              className="h-10 w-10 rounded-lg object-cover shadow-soft"
-            />
+            <BrandMark className="h-9 w-9" />
             <span className="font-display text-lg font-semibold text-foreground">{BRAND}</span>
           </Link>
 

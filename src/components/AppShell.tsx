@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import logoAsset from "@/assets/logo.png.asset.json";
+import { BrandMark } from "@/components/BrandMark";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -108,16 +108,12 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   if (needsOnboarding) {
     return (
-      <div className="grain relative min-h-screen bg-mesh-warm px-4 py-10 sm:py-16">
+      <div className="relative min-h-screen bg-background px-4 py-10 sm:py-16">
         <div className="absolute right-4 top-4">
           <LanguageToggle />
         </div>
         <div className="mx-auto max-w-2xl animate-pop-in">
-          <img
-            src={logoAsset.url}
-            alt={BRAND}
-            className="h-14 w-14 rounded-xl object-cover shadow-pop ring-4 ring-card"
-          />
+          <BrandMark className="h-12 w-12" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
             {t("shell.welcome")}
           </p>
@@ -175,15 +171,11 @@ function ShellInner({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--page-tint)] via-background to-background bg-[length:100%_520px] bg-no-repeat pb-20 md:pb-0">
-      <header className="sticky top-0 z-30 border-b border-border/50 bg-background/80 shadow-[inset_0_1px_0_var(--hi),0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <Link to="/lich" className="flex shrink-0 items-center gap-2">
-            <img
-              src={logoAsset.url}
-              alt={BRAND}
-              className="h-10 w-10 rounded-xl object-cover shadow-soft ring-2 ring-card"
-            />
+            <BrandMark className="h-9 w-9" />
             <span className="hidden font-display text-lg font-semibold sm:block">{BRAND}</span>
           </Link>
 

@@ -5,27 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold cursor-pointer transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:translate-y-px",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium cursor-pointer transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:translate-y-px",
   {
     variants: {
       variant: {
         default:
-          "bg-gradient-primary text-primary-foreground shadow-btn hover:brightness-105",
+          "bg-primary text-primary-foreground shadow-btn hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-border bg-card text-foreground shadow-[inset_0_1px_0_var(--hi),0_1px_2px_oklch(0.42_0.06_30/0.08)] hover:border-primary/35 hover:bg-secondary/70 hover:text-secondary-foreground",
+          "border border-input bg-card text-foreground hover:bg-accent",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-[inset_0_1px_0_var(--hi),0_1px_2px_oklch(0.42_0.06_30/0.1)] hover:bg-secondary/70",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/70",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-hero text-primary-foreground shadow-btn hover:brightness-105",
+        hero: "bg-primary text-primary-foreground shadow-btn hover:bg-primary/90",
         sunny:
-          "bg-gradient-sun text-sunny-foreground shadow-soft hover:brightness-105",
+          "bg-sunny text-sunny-foreground hover:bg-sunny/80",
       },
       size: {
         default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-full px-3 text-xs",
-        lg: "h-11 rounded-full px-8 text-base",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-11 rounded-lg px-6 text-base",
         icon: "h-9 w-9",
       },
     },
