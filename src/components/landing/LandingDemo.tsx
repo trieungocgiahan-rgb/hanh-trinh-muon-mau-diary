@@ -791,7 +791,7 @@ function ReportPanel({ acts, onUse }: { acts: DemoActivity[]; onUse: () => void 
               [hearts, t("demo.r.hearts")],
             ].map(([v, l]) => (
               <div key={l as string} className="rounded-lg border border-black/10 py-2">
-                <p className="text-gradient font-display text-xl font-semibold tabular-nums">{v}</p>
+                <p className="text-primary font-display text-xl font-semibold tabular-nums">{v}</p>
                 <p className="text-[9px] text-black/55">{l}</p>
               </div>
             ))}
