@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingDemo } from "@/components/landing/LandingDemo";
 import { LandingFeatures } from "@/components/landing/LandingFeatures";
+import { LandingProblem } from "@/components/landing/LandingProblem";
+import { LandingDirection } from "@/components/landing/LandingDirection";
 import { LandingSteps } from "@/components/landing/LandingSteps";
 import { LandingCTA } from "@/components/landing/LandingCTA";
 import { LandingFooter } from "@/components/landing/LandingFooter";
@@ -15,6 +17,13 @@ import { useI18n, tNow } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
 
 const SITE = "https://toghether.contextuary.app";
+
+const NAV = [
+  { href: "#tinh-nang", label: "landing.nav.features" },
+  { href: "#dung-thu", label: "landing.nav.demo" },
+  { href: "#huong-di", label: "landing.nav.direction" },
+  { href: "#bat-dau", label: "landing.nav.start" },
+] as const;
 
 export const Route = createFileRoute("/")({
   head: () => {
@@ -61,32 +70,29 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link to="/" className="flex items-center gap-2">
-            <BrandMark className="h-9 w-9" />
-            <span className="font-display text-lg font-semibold text-foreground">{BRAND}</span>
+      <header className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-5">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+          <Link to="/" className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
+            <BrandMark className="h-9 w-9 rounded-full" />
+            <span className="font-display text-base font-bold text-foreground">{BRAND}</span>
           </Link>
 
-          <nav className="hidden items-center gap-1 text-sm font-medium text-muted-foreground sm:flex">
-            <a
-              href="#dung-thu"
-              className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
-            >
-              {t("landing.nav.demo")}
-            </a>
-            <a
-              href="#bat-dau"
-              className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary"
-            >
-              {t("landing.nav.start")}
-            </a>
+          <nav className="glass hidden items-center gap-1 rounded-full p-1.5 text-sm font-medium text-muted-foreground md:flex">
+            {NAV.map((n) => (
+              <a
+                key={n.href}
+                href={n.href}
+                className="rounded-full px-4 py-2 transition-colors hover:bg-secondary hover:text-primary-ink"
+              >
+                {t(n.label)}
+              </a>
+            ))}
           </nav>
 
-          <div className="flex items-center gap-1.5">
+          <div className="glass flex items-center gap-1.5 rounded-full p-1.5">
             <LanguageToggle />
             <ThemeToggle />
-            <Button asChild variant="hero" size="sm">
+            <Button asChild size="sm" className="rounded-full">
               <Link to="/auth">{t("common.signIn")}</Link>
             </Button>
           </div>
@@ -95,8 +101,10 @@ function LandingPage() {
 
       <main>
         <LandingHero />
+        <LandingProblem />
         <LandingDemo />
         <LandingFeatures />
+        <LandingDirection />
         <LandingSteps />
         <LandingCTA />
       </main>

@@ -898,21 +898,33 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
 
 /* ---------- khung chính ---------- */
 
-function LockedPanel({ hint }: { hint: Key }) {
+// Tab chưa mở: vẫn cho xem giao diện thật (làm mờ, không bấm được) kèm lời mời đăng nhập.
+function LockedPreview({ hint, children }: { hint: Key; children: React.ReactNode }) {
   const { t } = useI18n();
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/40 px-6 py-12 text-center">
-      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
-        <Lock className="h-5 w-5" aria-hidden />
-      </span>
-      <p className="mt-4 max-w-sm text-base font-medium text-foreground">{t(hint)}</p>
-      <p className="mt-1 text-sm text-muted-foreground">{t("demo.locked")}</p>
-      <Button asChild size="lg" className="mt-5">
-        <Link to="/auth">
-          {t("demo.lockedBtn")}
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </Button>
+    <div className="relative">
+      <div
+        aria-hidden
+        {...({ inert: "" } as object)}
+        className="pointer-events-none max-h-[26rem] select-none overflow-hidden opacity-70 blur-[3px]"
+      >
+        {children}
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <div className="glass glow-pink max-w-sm rounded-3xl p-6 text-center">
+          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-btn">
+            <Lock className="h-5 w-5" aria-hidden />
+          </span>
+          <p className="mt-3 text-base font-semibold text-foreground">{t(hint)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("demo.locked")}</p>
+          <Button asChild size="lg" className="mt-4">
+            <Link to="/auth">
+              {t("demo.lockedBtn")}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -989,20 +1001,75 @@ export function LandingDemo() {
   const triedCount = tried.size;
   const freeTotal = DEMO_FREE_TABS.length;
 
+  const panel = (
+    <>
+                {tab === "lich" && (
+                  <CalendarPanel
+                    now={now}
+                    acts={acts}
+                    selectedId={selectedId}
+                    select={selectActivity}
+                    add={addActivity}
+                    canWrite={canWrite}
+                  />
+                )}
+                {tab === "media" && (
+                  <MediaPanel
+                    acts={acts}
+                    selectedId={selectedId}
+                    select={setSelectedId}
+                    update={update}
+                    canWrite={canWrite}
+                    onUse={() => mark("media")}
+                  />
+                )}
+                {tab === "tuong-tac" && (
+                  <EngagePanel
+                    acts={acts}
+                    selectedId={selectedId}
+                    select={setSelectedId}
+                    update={update}
+                    canWrite={canWrite}
+                    onUse={() => mark("tuong-tac")}
+                  />
+                )}
+                {tab === "vai-tro" && (
+                  <RolesPanel
+                    role={role}
+                    setRole={(r) => {
+                      setRole(r);
+                      mark("vai-tro");
+                    }}
+                  />
+                )}
+                {tab === "bao-cao" && <ReportPanel acts={acts} onUse={() => mark("bao-cao")} />}
+                {tab === "mau" && (
+                  <ThemePanel
+                    theme={theme}
+                    setTheme={(k) => {
+                      setThemeKey(k);
+                      mark("mau");
+                    }}
+                  />
+                )}
+    </>
+  );
+
   return (
-    <section id="dung-thu" className="scroll-mt-20 bg-background py-16 sm:py-24">
-      <div className="mx-auto max-w-6xl px-5">
+    <section id="dung-thu" className="relative scroll-mt-24 overflow-hidden bg-[var(--page-tint)] py-16 sm:py-24">
+      <span aria-hidden className="orb -left-24 top-20 h-72 w-72" />
+      <div className="relative mx-auto max-w-6xl px-5">
         <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary-ink">
             {t("hero.tryNow")}
           </p>
-          <h2 className="mt-3 text-balance font-display text-3xl font-bold leading-tight sm:text-5xl">
+          <h2 className="mt-3 text-balance font-display text-3xl font-extrabold leading-tight sm:text-5xl">
             {t("demo.title1")} <span className="text-primary">{t("demo.title2")}</span>
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">{t("demo.intro")}</p>
         </div>
 
-        <div className="surface mt-10 overflow-hidden rounded-2xl shadow-pop">
+        <div className="glass mt-10 overflow-hidden rounded-[1.75rem]">
           {/* thanh tiêu đề giả lập app */}
           <div className="flex items-center gap-3 border-b border-border bg-secondary/40 px-4 py-2.5">
             <p className="min-w-0 flex-1 truncate text-xs font-semibold text-muted-foreground">
@@ -1065,56 +1132,7 @@ export function LandingDemo() {
                 <p className="mb-4 text-sm font-medium text-muted-foreground">{t(current.hint)}</p>
               )}
               <div key={tab} className="animate-pop-in">
-                {locked && <LockedPanel hint={current.hint} />}
-                {tab === "lich" && (
-                  <CalendarPanel
-                    now={now}
-                    acts={acts}
-                    selectedId={selectedId}
-                    select={selectActivity}
-                    add={addActivity}
-                    canWrite={canWrite}
-                  />
-                )}
-                {tab === "media" && !locked && (
-                  <MediaPanel
-                    acts={acts}
-                    selectedId={selectedId}
-                    select={setSelectedId}
-                    update={update}
-                    canWrite={canWrite}
-                    onUse={() => mark("media")}
-                  />
-                )}
-                {tab === "tuong-tac" && (
-                  <EngagePanel
-                    acts={acts}
-                    selectedId={selectedId}
-                    select={setSelectedId}
-                    update={update}
-                    canWrite={canWrite}
-                    onUse={() => mark("tuong-tac")}
-                  />
-                )}
-                {tab === "vai-tro" && !locked && (
-                  <RolesPanel
-                    role={role}
-                    setRole={(r) => {
-                      setRole(r);
-                      mark("vai-tro");
-                    }}
-                  />
-                )}
-                {tab === "bao-cao" && !locked && <ReportPanel acts={acts} onUse={() => mark("bao-cao")} />}
-                {tab === "mau" && !locked && (
-                  <ThemePanel
-                    theme={theme}
-                    setTheme={(k) => {
-                      setThemeKey(k);
-                      mark("mau");
-                    }}
-                  />
-                )}
+                {locked ? <LockedPreview hint={current.hint}>{panel}</LockedPreview> : panel}
               </div>
             </div>
           </div>

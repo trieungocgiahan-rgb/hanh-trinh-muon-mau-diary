@@ -30,6 +30,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -84,59 +85,59 @@
 }
 
 :root {
-  --radius: 0.5rem;
-  --h: 8; /* góc màu chủ đạo (hồng ấm), mỗi dự án một giá trị */
-  --pc: 0.18; /* độ đậm màu chủ đạo, mỗi dự án một giá trị */
-  --hm: var(--h); /* giữ lại cho tương thích, không còn dùng gradient */
+  --radius: 0.75rem;
+  --h: 357; /* góc màu chủ đạo: hồng neon #FF2D95; mỗi dự án một giá trị */
+  --pc: 0.25; /* độ đậm màu chủ đạo, mỗi dự án một giá trị */
+  --hm: var(--h);
   --h2: var(--h);
 
-  /* nền giấy trung tính ấm, chữ mực đậm, một màu thương hiệu duy nhất */
-  --background: oklch(0.987 0.009 25);
-  --foreground: oklch(0.26 0.025 25);
+  /* hồng - trắng: nền trắng, chữ xám than ngả hồng, một màu neon duy nhất */
+  --background: oklch(0.995 0.004 350);
+  --foreground: oklch(0.27 0.03 350);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.26 0.025 25);
+  --card-foreground: oklch(0.27 0.03 350);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.26 0.025 25);
+  --popover-foreground: oklch(0.27 0.03 350);
 
-  --primary: oklch(0.65 var(--pc) var(--h));
-  --primary-foreground: oklch(0.99 0.005 45);
+  --primary: oklch(0.66 var(--pc) var(--h));
+  --primary-ink: oklch(0.54 calc(var(--pc) * 0.92) var(--h)); /* hồng đậm hơn cho chữ nhỏ */
+  --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.945 0.04 var(--h));
-  --secondary-foreground: oklch(0.42 0.14 var(--h));
+  --secondary: oklch(0.962 0.03 var(--h));
+  --secondary-foreground: oklch(0.46 0.2 var(--h));
 
-  --muted: oklch(0.963 0.006 40);
-  --muted-foreground: oklch(0.5 0.02 40);
+  --muted: oklch(0.972 0.006 350);
+  --muted-foreground: oklch(0.5 0.025 350);
 
-  --accent: oklch(0.953 0.007 40);
-  --accent-foreground: oklch(0.26 0.025 25);
+  --accent: oklch(0.966 0.014 350);
+  --accent-foreground: oklch(0.27 0.03 350);
 
-  --destructive: oklch(0.56 0.18 25);
-  --destructive-foreground: oklch(0.99 0.004 85);
+  --destructive: oklch(0.56 0.2 27);
+  --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.905 0.01 40);
-  --input: oklch(0.88 0.012 40);
-  --ring: oklch(0.65 var(--pc) var(--h));
+  --border: oklch(0.92 0.012 350);
+  --input: oklch(0.89 0.016 350);
+  --ring: oklch(0.66 var(--pc) var(--h));
 
-  --mint: oklch(0.92 0.06 165);
-  --mint-foreground: oklch(0.38 0.06 165);
-  --sunny: oklch(0.94 0.09 92);
-  --sunny-foreground: oklch(0.4 0.07 70);
-  --grape: oklch(0.93 0.05 300);
-  --grape-foreground: oklch(0.4 0.08 300);
+  --mint: oklch(0.93 0.05 165);
+  --mint-foreground: oklch(0.38 0.07 165);
+  --sunny: oklch(0.95 0.07 92);
+  --sunny-foreground: oklch(0.4 0.08 70);
+  --grape: oklch(0.945 0.03 330);
+  --grape-foreground: oklch(0.42 0.1 330);
 
-  --type-workshop: oklch(0.6 0.12 45);   /* đất nung */
-  --type-team: oklch(0.56 0.11 250);     /* xanh dương */
-  --type-partner: oklch(0.54 0.11 320);  /* mận */
-  --type-site: oklch(0.58 0.09 160);     /* xanh lá */
-  --type-event: oklch(0.7 0.12 80);      /* hổ phách */
-  --type-other: oklch(0.58 0.02 85);     /* xám ấm */
+  --type-workshop: oklch(0.64 0.17 40);
+  --type-team: oklch(0.58 0.13 250);
+  --type-partner: oklch(0.58 0.15 320);
+  --type-site: oklch(0.6 0.11 160);
+  --type-event: oklch(0.72 0.14 82);
+  --type-other: oklch(0.6 0.02 350);
 
-  --cream: oklch(0.975 0.007 40);
-  --blush: oklch(0.955 0.025 var(--h));
-  --peach: oklch(0.94 0.012 85);
+  --cream: oklch(0.985 0.008 350);
+  --blush: oklch(0.962 0.03 var(--h));
+  --peach: oklch(0.955 0.02 350);
 
-  /* "gradient" đã được làm phẳng: giữ tên biến để các lớp tiện ích cũ vẫn chạy */
   --gradient-hero: linear-gradient(var(--primary), var(--primary));
   --gradient-primary: linear-gradient(var(--primary), var(--primary));
   --gradient-sun: linear-gradient(var(--sunny), var(--sunny));
@@ -148,66 +149,78 @@
   --gradient-text: linear-gradient(var(--primary), var(--primary));
   --gradient-grape: linear-gradient(var(--grape), var(--grape));
   --gradient-mint: linear-gradient(var(--mint), var(--mint));
-  --page-tint: oklch(0.962 0.034 var(--h));
+  --page-tint: oklch(0.972 0.022 var(--h));
   --hi: transparent;
-  --stripe: oklch(0.93 0.006 85 / 0.6);
-  --surface-border: oklch(0.9 0.01 40);
+  --stripe: oklch(0.94 0.01 350 / 0.6);
+  --surface-border: oklch(0.92 0.014 350);
   --grain-opacity: 0;
   --mesh-warm: linear-gradient(var(--background), var(--background));
 
-  --shadow-soft-val: 0 1px 2px oklch(0.25 0.01 85 / 0.06);
+  /* kính mờ và hào quang hồng */
+  --glass-bg: oklch(1 0 0 / 0.62);
+  --glass-border: oklch(1 0 0 / 0.85);
+  --glass-shadow: 0 10px 40px -14px oklch(0.65 0.18 357 / 0.35), inset 0 1px 0 oklch(1 0 0 / 0.9);
+  --glow: oklch(0.7 calc(var(--pc) * 0.72) var(--h) / 0.5);
+  --orb: oklch(0.82 calc(var(--pc) * 0.5) var(--h) / 0.55);
+
+  --shadow-soft-val:
+    0 1px 2px oklch(0.3 0.03 350 / 0.06),
+    0 8px 24px -14px oklch(0.45 0.1 350 / 0.16);
   --shadow-pop-val:
-    0 1px 2px oklch(0.25 0.01 85 / 0.05),
-    0 6px 16px -6px oklch(0.25 0.01 85 / 0.14);
-  --shadow-btn-val: 0 1px 1px oklch(0.25 0.02 var(--h) / 0.18);
+    0 2px 4px oklch(0.3 0.03 350 / 0.05),
+    0 24px 50px -22px oklch(0.65 0.18 357 / 0.38);
+  --shadow-btn-val:
+    inset 0 1px 0 oklch(1 0 0 / 0.35),
+    0 8px 22px -8px var(--glow);
 
-  --chart-1: oklch(0.65 var(--pc) var(--h));
-  --chart-2: oklch(0.56 0.11 250);
-  --chart-3: oklch(0.58 0.09 160);
-  --chart-4: oklch(0.7 0.12 80);
-  --chart-5: oklch(0.54 0.11 320);
+  --chart-1: oklch(0.66 var(--pc) var(--h));
+  --chart-2: oklch(0.58 0.13 250);
+  --chart-3: oklch(0.6 0.11 160);
+  --chart-4: oklch(0.72 0.14 82);
+  --chart-5: oklch(0.58 0.15 320);
 
-  --sidebar: oklch(0.99 0.004 85);
-  --sidebar-foreground: oklch(0.26 0.025 25);
-  --sidebar-primary: oklch(0.65 var(--pc) var(--h));
-  --sidebar-primary-foreground: oklch(0.99 0.004 85);
-  --sidebar-accent: oklch(0.953 0.007 40);
-  --sidebar-accent-foreground: oklch(0.26 0.025 25);
-  --sidebar-border: oklch(0.905 0.01 40);
-  --sidebar-ring: oklch(0.65 var(--pc) var(--h));
+  --sidebar: oklch(0.99 0.006 350);
+  --sidebar-foreground: oklch(0.27 0.03 350);
+  --sidebar-primary: oklch(0.66 var(--pc) var(--h));
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.966 0.014 350);
+  --sidebar-accent-foreground: oklch(0.27 0.03 350);
+  --sidebar-border: oklch(0.92 0.012 350);
+  --sidebar-ring: oklch(0.66 var(--pc) var(--h));
 }
 
 .dark {
-  /* Tối dịu: nền mận nhạt (không đen, không nâu), hạ độ sáng vừa mắt; màu hồng nhấn nổi lên. */
-  --background: oklch(0.3 0.035 320);
-  --foreground: oklch(0.94 0.028 320);
-  --card: oklch(0.355 0.031 320);
-  --card-foreground: oklch(0.94 0.028 320);
-  --popover: oklch(0.375 0.034 320);
-  --popover-foreground: oklch(0.94 0.028 320);
-  --primary: oklch(0.76 calc(var(--pc) * 0.85) var(--h));
+  /* Tối dịu: xám than trung tính ngả hồng (không nâu, không tím), hồng neon phát sáng. */
+  --background: oklch(0.285 0.012 350);
+  --foreground: oklch(0.96 0.01 350);
+  --card: oklch(0.33 0.013 350);
+  --card-foreground: oklch(0.96 0.01 350);
+  --popover: oklch(0.35 0.014 350);
+  --popover-foreground: oklch(0.96 0.01 350);
+  --primary: oklch(0.72 calc(var(--pc) * 0.95) var(--h));
+  --primary-ink: oklch(0.8 calc(var(--pc) * 0.7) var(--h));
   --primary-foreground: oklch(0.2 0.04 var(--h));
-  --secondary: oklch(0.43 0.06 335);
-  --secondary-foreground: oklch(0.93 0.015 var(--h));
-  --muted: oklch(0.38 0.028 320);
-  --muted-foreground: oklch(0.78 0.034 320);
-  --accent: oklch(0.4 0.034 320);
-  --accent-foreground: oklch(0.94 0.028 320);
-  --destructive: oklch(0.68 0.16 25);
-  --destructive-foreground: oklch(0.98 0.01 25);
-  --border: oklch(1 0 0 / 13%);
-  --input: oklch(1 0 0 / 18%);
-  --ring: oklch(0.76 calc(var(--pc) * 0.85) var(--h));
-  --mint: oklch(0.42 0.045 165);
+  --secondary: oklch(0.38 0.06 var(--h));
+  --secondary-foreground: oklch(0.93 0.05 var(--h));
+  --muted: oklch(0.355 0.012 350);
+  --muted-foreground: oklch(0.78 0.02 350);
+  --accent: oklch(0.375 0.015 350);
+  --accent-foreground: oklch(0.96 0.01 350);
+  --destructive: oklch(0.68 0.17 27);
+  --destructive-foreground: oklch(0.98 0.01 27);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 17%);
+  --ring: oklch(0.72 calc(var(--pc) * 0.95) var(--h));
+  --mint: oklch(0.42 0.05 165);
   --mint-foreground: oklch(0.92 0.04 165);
   --sunny: oklch(0.46 0.07 90);
   --sunny-foreground: oklch(0.94 0.07 90);
-  --grape: oklch(0.42 0.04 300);
-  --grape-foreground: oklch(0.92 0.03 300);
+  --grape: oklch(0.42 0.06 330);
+  --grape-foreground: oklch(0.93 0.04 330);
 
-  --cream: oklch(0.33 0.028 320);
-  --blush: oklch(0.37 0.04 330);
-  --peach: oklch(0.38 0.028 320);
+  --cream: oklch(0.3 0.012 350);
+  --blush: oklch(0.36 0.05 var(--h));
+  --peach: oklch(0.36 0.014 350);
 
   --gradient-hero: linear-gradient(var(--primary), var(--primary));
   --gradient-primary: linear-gradient(var(--primary), var(--primary));
@@ -219,40 +232,48 @@
   --gradient-text: linear-gradient(var(--primary), var(--primary));
   --paper-a: var(--card);
   --paper-b: var(--card);
-  --page-tint: oklch(0.355 0.05 325);
+  --page-tint: oklch(0.325 0.03 var(--h));
   --hi: transparent;
   --stripe: oklch(1 0 0 / 0.05);
-  --surface-border: oklch(1 0 0 / 0.12);
+  --surface-border: oklch(1 0 0 / 0.11);
   --grain-opacity: 0;
   --mesh-warm: linear-gradient(var(--background), var(--background));
 
-  --type-workshop: oklch(0.7 0.11 45);
-  --type-team: oklch(0.7 0.1 250);
-  --type-partner: oklch(0.7 0.1 320);
-  --type-site: oklch(0.72 0.09 160);
-  --type-event: oklch(0.8 0.11 85);
-  --type-other: oklch(0.7 0.03 320);
+  --glass-bg: oklch(1 0 0 / 0.07);
+  --glass-border: oklch(1 0 0 / 0.16);
+  --glass-shadow: 0 10px 40px -14px oklch(0 0 0 / 0.5), inset 0 1px 0 oklch(1 0 0 / 0.12);
+  --glow: oklch(0.72 calc(var(--pc) * 0.72) var(--h) / 0.55);
+  --orb: oklch(0.58 calc(var(--pc) * 0.6) var(--h) / 0.4);
 
-  --chart-1: oklch(0.76 calc(var(--pc) * 0.85) var(--h));
-  --chart-2: oklch(0.7 0.1 250);
-  --chart-3: oklch(0.72 0.09 160);
-  --chart-4: oklch(0.8 0.11 85);
-  --chart-5: oklch(0.7 0.1 320);
+  --type-workshop: oklch(0.72 0.14 40);
+  --type-team: oklch(0.72 0.11 250);
+  --type-partner: oklch(0.72 0.12 320);
+  --type-site: oklch(0.74 0.1 160);
+  --type-event: oklch(0.82 0.12 85);
+  --type-other: oklch(0.72 0.03 350);
 
-  --shadow-soft-val: 0 1px 2px oklch(0.1 0.01 25 / 0.3);
+  --chart-1: oklch(0.72 calc(var(--pc) * 0.95) var(--h));
+  --chart-2: oklch(0.72 0.11 250);
+  --chart-3: oklch(0.74 0.1 160);
+  --chart-4: oklch(0.82 0.12 85);
+  --chart-5: oklch(0.72 0.12 320);
+
+  --shadow-soft-val: 0 1px 2px oklch(0 0 0 / 0.3);
   --shadow-pop-val:
-    0 1px 2px oklch(0.1 0.01 25 / 0.25),
-    0 8px 20px -8px oklch(0.1 0.01 25 / 0.45);
-  --shadow-btn-val: 0 1px 1px oklch(0.1 0.01 25 / 0.35);
+    0 1px 2px oklch(0 0 0 / 0.25),
+    0 20px 44px -20px oklch(0 0 0 / 0.55);
+  --shadow-btn-val:
+    inset 0 1px 0 oklch(1 0 0 / 0.25),
+    0 8px 22px -8px var(--glow);
 
-  --sidebar: oklch(0.335 0.028 320);
-  --sidebar-foreground: oklch(0.94 0.028 320);
-  --sidebar-primary: oklch(0.76 calc(var(--pc) * 0.85) var(--h));
+  --sidebar: oklch(0.31 0.012 350);
+  --sidebar-foreground: oklch(0.96 0.01 350);
+  --sidebar-primary: oklch(0.72 calc(var(--pc) * 0.95) var(--h));
   --sidebar-primary-foreground: oklch(0.2 0.04 var(--h));
-  --sidebar-accent: oklch(0.4 0.034 320);
-  --sidebar-accent-foreground: oklch(0.94 0.028 320);
-  --sidebar-border: oklch(1 0 0 / 13%);
-  --sidebar-ring: oklch(0.76 calc(var(--pc) * 0.85) var(--h));
+  --sidebar-accent: oklch(0.375 0.015 350);
+  --sidebar-accent-foreground: oklch(0.96 0.01 350);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.72 calc(var(--pc) * 0.95) var(--h));
 }
 
 .dark img {
@@ -274,7 +295,7 @@
 
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
 }
 
@@ -311,6 +332,28 @@
     background-color: var(--c);
     background-image: none;
     box-shadow: none;
+  }
+
+  /* kính mờ: nền trong, viền sáng, làm mờ phía sau */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    -webkit-backdrop-filter: blur(18px) saturate(1.5);
+    backdrop-filter: blur(18px) saturate(1.5);
+  }
+  .glow-pink {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary) 40%, transparent), 0 10px 36px -8px var(--glow);
+  }
+  .text-glow {
+    text-shadow: 0 0 28px var(--glow);
+  }
+  /* quầng sáng hồng làm mờ phía sau nội dung */
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, var(--orb), transparent);
+    pointer-events: none;
   }
 
   /* chữ nhấn: một màu thương hiệu, không còn chuyển sắc */

@@ -2,7 +2,7 @@
 // Chú ý: `key` đã lưu trong CSDL (ràng buộc CHECK) nên giữ nguyên; chỉ đổi màu hiển thị.
 // "coral" là mặc định cũ, nay là hồng tươi.
 export const PROJECT_THEMES = [
-  { key: "coral", hue: 8, chroma: 0.18 },
+  { key: "coral", hue: 357, chroma: 0.25 },
   { key: "sunset", hue: 55, chroma: 0.15 },
   { key: "forest", hue: 155, chroma: 0.12 },
   { key: "ocean", hue: 265, chroma: 0.17 },
@@ -12,7 +12,7 @@ export const PROJECT_THEMES = [
 
 export type ProjectThemeKey = (typeof PROJECT_THEMES)[number]["key"];
 
-export const DEFAULT_HUE = 8;
+export const DEFAULT_HUE = 357;
 export const HUE_STORAGE_KEY = "nkht-hue";
 
 type ThemeDef = { key: string; hue: number; chroma: number };
