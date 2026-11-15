@@ -957,11 +957,11 @@ export function LandingDemo() {
     <section id="dung-thu" className="scroll-mt-20 bg-background py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-5">
         <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          <p className="text-sm font-medium text-muted-foreground">
             {t("hero.tryNow")}
           </p>
           <h2 className="mt-3 text-balance font-display text-3xl font-semibold leading-tight sm:text-5xl">
-            {t("demo.title1")} <em className="text-gradient font-medium">{t("demo.title2")}</em>
+            {t("demo.title1")} <span className="text-primary">{t("demo.title2")}</span>
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">{t("demo.intro")}</p>
         </div>

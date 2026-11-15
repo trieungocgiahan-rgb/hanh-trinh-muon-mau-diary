@@ -28,12 +28,12 @@ export function LandingSteps() {
         />
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          <p className="text-sm font-medium text-muted-foreground">
             {t("steps.eyebrow")}
           </p>
           <h2 className="mt-3 text-balance font-display text-3xl font-semibold leading-tight sm:text-5xl">
             {t("steps.title1")}{" "}
-            <em className="text-gradient font-medium">{t("steps.title2")}</em>
+            <span className="text-primary">{t("steps.title2")}</span>
           </h2>
 
           <ol className="mt-8 divide-y divide-border border-y border-border">

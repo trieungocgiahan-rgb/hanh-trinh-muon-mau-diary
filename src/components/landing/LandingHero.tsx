@@ -84,16 +84,16 @@ function CalendarPreview() {
 export function LandingHero() {
   const { t } = useI18n();
   return (
-    <section className="grain relative overflow-hidden bg-mesh-warm pb-20 pt-12 sm:pb-28 sm:pt-20">
+    <section className="relative overflow-hidden bg-mesh-warm pb-20 pt-12 sm:pb-28 sm:pt-20">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-[1fr_1.05fr] lg:gap-10">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          <p className="text-sm font-medium text-muted-foreground">
             {t("brand.taglineLong")}
           </p>
-          <h1 className="mt-5 font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
+          <h1 className="mt-5 font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-[3.25rem] lg:text-[3.75rem]">
             {t("hero.l1")}
             <br />
-            <em className="text-gradient pr-1 font-medium">{t("hero.l2")}</em>
+            <span className="text-primary">{t("hero.l2")}</span>
             {t("hero.l3") && (
               <>
                 <br />
