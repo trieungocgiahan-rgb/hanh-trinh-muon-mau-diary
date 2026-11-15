@@ -13,7 +13,7 @@ import { BRAND } from "@/lib/brand";
 import { useI18n, tNow } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
 
-const SITE = "https://hanh-trinh-muon-mau-diary.lovable.app";
+const SITE = "https://toghether.contextuary.app";
 
 export const Route = createFileRoute("/")({
   head: () => {
