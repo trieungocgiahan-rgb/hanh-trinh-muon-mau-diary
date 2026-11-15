@@ -1,5 +1,6 @@
 import { GlobeFallback } from "@/components/illustrations/Fallbacks";
 import { SlotImage } from "@/components/illustrations/SlotImage";
+import { Reveal } from "@/components/Reveal";
 import { useI18n } from "@/lib/i18n";
 
 const nb = (s: string) => s.replace(/ (\S+)$/, " $1");
@@ -15,6 +16,7 @@ export function LandingProblem() {
   return (
     <section id="van-de" className="relative scroll-mt-24 overflow-hidden bg-background py-16 sm:py-24">
       <span aria-hidden className="orb-cool -left-32 bottom-0 h-80 w-80" />
+      <span aria-hidden className="orb-tang -right-24 top-10 h-72 w-72" />
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[0.85fr_1fr] lg:gap-20">
         <div className="relative order-2 lg:order-1">
           <SlotImage
@@ -26,7 +28,7 @@ export function LandingProblem() {
         </div>
 
         <div className="order-1 lg:order-2">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary-ink">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-tang-ink">
             {t("problem.eyebrow")}
           </p>
           <h2 className="mt-3 font-display text-4xl font-extrabold leading-tight sm:text-5xl">
@@ -34,11 +36,11 @@ export function LandingProblem() {
           </h2>
 
           <div className="mt-8 space-y-6">
-            {POINTS.map((p) => (
-              <div key={p.title}>
+            {POINTS.map((p, i) => (
+              <Reveal key={p.title} delay={i * 120}>
                 <h3 className="font-display text-lg font-bold">{t(p.title)}</h3>
                 <p className="mt-1 max-w-lg leading-7 text-muted-foreground">{t(p.body)}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
 

@@ -17,6 +17,8 @@ export function LandingCTA() {
     <section id="bat-dau" className="scroll-mt-24 px-5 pb-16 sm:pb-24">
       <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-primary px-6 py-12 text-primary-foreground shadow-[0_30px_80px_-30px_var(--glow)] sm:px-12 sm:py-16">
         <span aria-hidden className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-white/20 blur-3xl" />
+        <span aria-hidden className="absolute -bottom-10 left-10 h-40 w-40 rounded-full bg-[var(--amber)] opacity-40 blur-2xl" />
+        <span aria-hidden className="absolute right-1/3 top-6 h-24 w-24 rounded-full bg-[var(--cool)] opacity-40 blur-2xl" />
         <div className="relative grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-16">
           <div>
             <h2 className="font-display text-4xl font-extrabold leading-tight sm:text-5xl">
