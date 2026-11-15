@@ -25,6 +25,7 @@ import type { ActivityType } from "@/lib/activity-constants";
 import { PROJECT_THEMES, applyThemeVars, clearThemeVars } from "@/lib/project-themes";
 import { TypeDot } from "@/components/activity/TypeDot";
 import {
+  DEMO_FREE_TABS,
   DEMO_TABS,
   ME,
   PERMISSIONS,
@@ -226,7 +227,7 @@ function CalendarPanel({
               >
                 <span
                   className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums ${
-                    isToday ? "bg-gradient-primary text-primary-foreground" : "text-foreground/70"
+                    isToday ? "bg-primary text-primary-foreground" : "text-foreground/70"
                   }`}
                 >
                   {d}
@@ -335,7 +336,7 @@ function VoiceClip({ seconds, index }: { seconds: number; index: number }) {
         type="button"
         onClick={() => setPlaying((p) => !p)}
         aria-label={playing ? t("voice.stop") : t("demo.listenAgain")}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-grape text-grape-foreground shadow-btn"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-btn"
       >
         {playing ? (
           <Pause className="h-4 w-4 fill-current" />
@@ -647,8 +648,8 @@ function EngagePanel({
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                     c.who === ME
-                      ? "bg-gradient-primary text-primary-foreground"
-                      : "bg-gradient-grape text-grape-foreground"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground"
                   }`}
                 >
                   {(c.who === ME ? t("demo.me") : c.who).charAt(0)}
@@ -863,7 +864,6 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {PROJECT_THEMES.map((th) => {
           const on = theme === th.key;
-          const end = "h2" in th ? th.h2 : th.hue - 76;
           return (
             <button
               key={th.key}
@@ -879,7 +879,7 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
               <span
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-btn"
                 style={{
-                  backgroundImage: `linear-gradient(135deg, oklch(0.78 0.15 ${th.hue + 34}), oklch(0.62 0.19 ${end}))`,
+                  backgroundColor: `oklch(0.66 ${th.chroma} ${th.hue})`,
                 }}
               >
                 {on && <Check className="h-4 w-4" />}
@@ -895,6 +895,37 @@ function ThemePanel({ theme, setTheme }: { theme: string; setTheme: (k: string) 
 }
 
 /* ---------- khung chính ---------- */
+
+// Tab chưa mở: vẫn cho xem giao diện thật (làm mờ, không bấm được) kèm lời mời đăng nhập.
+function LockedPreview({ hint, children }: { hint: Key; children: React.ReactNode }) {
+  const { t } = useI18n();
+  return (
+    <div className="relative">
+      <div
+        aria-hidden
+        {...({ inert: "" } as object)}
+        className="pointer-events-none max-h-[26rem] select-none overflow-hidden opacity-70 blur-[3px]"
+      >
+        {children}
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <div className="glass glow-pink max-w-sm rounded-3xl p-6 text-center">
+          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-btn">
+            <Lock className="h-5 w-5" aria-hidden />
+          </span>
+          <p className="mt-3 text-base font-semibold text-foreground">{t(hint)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("demo.locked")}</p>
+          <Button asChild size="lg" className="mt-4">
+            <Link to="/auth">
+              {t("demo.lockedBtn")}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function LandingDemo() {
   const { t } = useI18n();
@@ -951,84 +982,12 @@ export function LandingDemo() {
   }
 
   const current = DEMO_TABS.find((x) => x.key === tab)!;
+  const locked = !DEMO_FREE_TABS.includes(tab);
   const triedCount = tried.size;
+  const freeTotal = DEMO_FREE_TABS.length;
 
-  return (
-    <section id="dung-thu" className="scroll-mt-20 bg-background py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-5">
-        <div className="max-w-2xl">
-          <p className="text-sm font-medium text-muted-foreground">
-            {t("hero.tryNow")}
-          </p>
-          <h2 className="mt-3 text-balance font-display text-3xl font-semibold leading-tight sm:text-5xl">
-            {t("demo.title1")} <span className="text-primary">{t("demo.title2")}</span>
-          </h2>
-          <p className="mt-3 max-w-xl text-muted-foreground">{t("demo.intro")}</p>
-        </div>
-
-        <div className="surface mt-10 overflow-hidden rounded-3xl shadow-pop">
-          {/* thanh tiêu đề giả lập app */}
-          <div className="flex items-center gap-3 border-b border-border bg-secondary/40 px-4 py-2.5">
-            <div className="flex gap-1.5" aria-hidden>
-              <span className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
-              <span className="h-2.5 w-2.5 rounded-full bg-sunny" />
-              <span className="h-2.5 w-2.5 rounded-full bg-mint" />
-            </div>
-            <p className="min-w-0 flex-1 truncate text-xs font-semibold text-muted-foreground">
-              {t("demo.sampleProject")}
-            </p>
-            <span className="hidden rounded-full border border-border bg-card px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground sm:block">
-              {t(ROLE_META[role].label)}
-            </span>
-            <span className="rounded-full bg-sunny px-2.5 py-0.5 text-[10px] font-semibold text-sunny-foreground">
-              {t("demo.sample")}
-            </span>
-          </div>
-
-          <div className="grid lg:grid-cols-[15rem_1fr]">
-            {/* thanh chọn tính năng */}
-            <div
-              role="tablist"
-              aria-label={t("demo.tabsLabel")}
-              className="flex gap-2 overflow-x-auto border-b border-border p-3 lg:flex-col lg:gap-1 lg:border-b-0 lg:border-r lg:p-4"
-            >
-              {DEMO_TABS.map((tb, i) => {
-                const on = tab === tb.key;
-                const done = tried.has(tb.key);
-                return (
-                  <button
-                    key={tb.key}
-                    type="button"
-                    role="tab"
-                    aria-selected={on}
-                    onClick={() => setTab(tb.key)}
-                    className={`flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors lg:w-full ${
-                      on
-                        ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_20%,transparent)]"
-                        : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
-                    }`}
-                  >
-                    <span
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
-                        done
-                          ? "bg-mint text-mint-foreground"
-                          : on
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted"
-                      }`}
-                    >
-                      {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
-                    </span>
-                    <span className="whitespace-nowrap">{t(tb.label)}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* nội dung */}
-            <div className="min-w-0 p-4 sm:p-6">
-              <p className="mb-4 text-sm font-medium text-muted-foreground">{t(current.hint)}</p>
-              <div key={tab} className="animate-pop-in">
+  const panel = (
+    <>
                 {tab === "lich" && (
                   <CalendarPanel
                     now={now}
@@ -1078,18 +1037,99 @@ export function LandingDemo() {
                     }}
                   />
                 )}
+    </>
+  );
+
+  return (
+    <section id="dung-thu" className="relative scroll-mt-24 overflow-hidden bg-[var(--page-tint)] py-16 sm:py-24">
+      <span aria-hidden className="orb -left-24 top-20 h-72 w-72" />
+      <div className="relative mx-auto max-w-6xl px-5">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary-ink">
+            {t("hero.tryNow")}
+          </p>
+          <h2 className="mt-3 text-balance font-display text-3xl font-extrabold leading-tight sm:text-5xl">
+            {t("demo.title1")} <span className="text-primary">{t("demo.title2")}</span>
+          </h2>
+          <p className="mt-3 max-w-xl text-muted-foreground">{t("demo.intro")}</p>
+        </div>
+
+        <div className="glass mt-10 overflow-hidden rounded-[1.75rem]">
+          {/* thanh tiêu đề giả lập app */}
+          <div className="flex items-center gap-3 border-b border-border bg-secondary/40 px-4 py-2.5">
+            <p className="min-w-0 flex-1 truncate text-xs font-semibold text-muted-foreground">
+              {t("demo.sampleProject")}
+            </p>
+            <span className="hidden rounded-full border border-border bg-card px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground sm:block">
+              {t(ROLE_META[role].label)}
+            </span>
+            <span className="rounded-full bg-sunny px-2.5 py-0.5 text-[10px] font-semibold text-sunny-foreground">
+              {t("demo.sample")}
+            </span>
+          </div>
+
+          <div className="grid lg:grid-cols-[15rem_1fr]">
+            {/* thanh chọn tính năng */}
+            <div
+              role="tablist"
+              aria-label={t("demo.tabsLabel")}
+              className="flex gap-2 overflow-x-auto border-b border-border p-3 lg:flex-col lg:gap-1 lg:border-b-0 lg:border-r lg:p-4"
+            >
+              {DEMO_TABS.map((tb, i) => {
+                const on = tab === tb.key;
+                const done = tried.has(tb.key);
+                return (
+                  <button
+                    key={tb.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={on}
+                    onClick={() => setTab(tb.key)}
+                    className={`flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors lg:w-full ${
+                      on
+                        ? "bg-secondary text-secondary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                        done
+                          ? "bg-mint text-mint-foreground"
+                          : on
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
+                      }`}
+                    >
+                      {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
+                    </span>
+                    <span className="whitespace-nowrap">{t(tb.label)}</span>
+                    {!DEMO_FREE_TABS.includes(tb.key) && (
+                      <Lock className="ml-auto h-3 w-3 shrink-0 opacity-60" aria-hidden />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* nội dung */}
+            <div className="min-w-0 p-4 sm:p-6">
+              {!locked && (
+                <p className="mb-4 text-sm font-medium text-muted-foreground">{t(current.hint)}</p>
+              )}
+              <div key={tab} className="animate-pop-in">
+                {locked ? <LockedPreview hint={current.hint}>{panel}</LockedPreview> : panel}
               </div>
             </div>
           </div>
 
           {/* lời mời đăng nhập */}
-          <div className="flex flex-col items-start justify-between gap-3 border-t border-border bg-gradient-to-r from-secondary/60 to-accent/30 px-4 py-4 sm:flex-row sm:items-center sm:px-6">
+          <div className="flex flex-col items-start justify-between gap-3 border-t border-border bg-secondary/50 px-4 py-4 sm:flex-row sm:items-center sm:px-6">
             <div>
               <p className="font-display text-lg font-semibold leading-snug">
                 {triedCount === 0
                   ? t("demo.cta0")
-                  : triedCount < DEMO_TABS.length
-                    ? t("demo.ctaSome", { n: triedCount, total: DEMO_TABS.length })
+                  : triedCount < freeTotal
+                    ? t("demo.ctaSome", { n: triedCount, total: freeTotal })
                     : t("demo.ctaAll")}
               </p>
               <p className="mt-0.5 text-sm text-muted-foreground">{t("demo.ctaSub")}</p>

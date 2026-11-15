@@ -202,7 +202,7 @@ function SettingsPage() {
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white shadow-btn"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, oklch(0.78 0.15 ${th.hue + 34}), oklch(0.62 0.19 ${"h2" in th ? th.h2 : th.hue - 76}))`,
+                    backgroundColor: `oklch(0.66 ${th.chroma} ${th.hue})`,
                   }}
                 >
                   {selected && <Check className="h-4 w-4" />}

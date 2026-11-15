@@ -18,7 +18,7 @@ import { ProjectProvider } from "@/hooks/use-project";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BRAND } from "@/lib/brand";
-import { useI18n, useLang } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 
 function NotFoundComponent() {
   const { t } = useI18n();
@@ -87,13 +87,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Nhật ký chung cho dự án, đội nhóm và công ty — ghi lại từng hoạt động, ảnh, ghi âm và xem trên lịch.",
+          "Together is a shared journal for teams in different places. Log activities with photos and voice notes, see them on one calendar, and export reports.",
       },
       { name: "author", content: BRAND },
       { property: "og:title", content: BRAND },
       {
         property: "og:description",
-        content: "Nhật ký chung cho dự án, đội nhóm và công ty.",
+        content: "A shared journal for teams in different places.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -116,9 +116,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap",
       },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
     ],
   }),
   shellComponent: RootShell,
@@ -129,7 +129,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="vi" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
@@ -145,17 +145,6 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-  const lang = useLang();
-  const langMounted = useRef(false);
-
-  // Đổi ngôn ngữ thì làm mới tiêu đề tab (các trang tính tiêu đề lúc điều hướng)
-  useEffect(() => {
-    if (!langMounted.current) {
-      langMounted.current = true;
-      return;
-    }
-    router.invalidate();
-  }, [lang, router]);
   const lastUserId = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {

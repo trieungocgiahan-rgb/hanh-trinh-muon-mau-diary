@@ -1,20 +1,21 @@
-// Màu chủ đạo của từng dự án. `hue` là góc màu chính; `hm` và `h2` là hai điểm màu
-// còn lại của dải gradient (bỏ trống thì tự suy ra từ `hue`, đúng dải san hô ban đầu).
+// Màu chủ đạo của từng dự án: `hue` là góc màu, `chroma` là độ đậm trong oklch.
+// Chú ý: `key` đã lưu trong CSDL (ràng buộc CHECK) nên giữ nguyên; chỉ đổi màu hiển thị.
+// "coral" là mặc định cũ, nay là hồng tươi.
 export const PROJECT_THEMES = [
-  { key: "coral", hue: 28 },
-  { key: "sunset", hue: 58 },
-  { key: "forest", hue: 155, hm: 175, h2: 215 },
-  { key: "ocean", hue: 235, hm: 255, h2: 295 },
-  { key: "grape", hue: 305, hm: 330, h2: 360 },
-  { key: "rose", hue: 355 },
+  { key: "coral", hue: 357, chroma: 0.25 },
+  { key: "sunset", hue: 55, chroma: 0.15 },
+  { key: "forest", hue: 155, chroma: 0.12 },
+  { key: "ocean", hue: 265, chroma: 0.17 },
+  { key: "grape", hue: 310, chroma: 0.17 },
+  { key: "rose", hue: 30, chroma: 0.17 },
 ] as const;
 
 export type ProjectThemeKey = (typeof PROJECT_THEMES)[number]["key"];
 
-export const DEFAULT_HUE = 28;
+export const DEFAULT_HUE = 357;
 export const HUE_STORAGE_KEY = "nkht-hue";
 
-type ThemeDef = { key: string; hue: number; hm?: number; h2?: number };
+type ThemeDef = { key: string; hue: number; chroma: number };
 
 function findTheme(key: string | null | undefined): ThemeDef {
   return (PROJECT_THEMES as readonly ThemeDef[]).find((t) => t.key === key) ?? PROJECT_THEMES[0];
@@ -29,13 +30,10 @@ export function applyThemeVars(key: string | null | undefined, persist = true) {
   const t = findTheme(key);
   const root = document.documentElement;
   root.style.setProperty("--h", String(t.hue));
-  if (t.hm !== undefined) root.style.setProperty("--hm", String(t.hm));
-  else root.style.removeProperty("--hm");
-  if (t.h2 !== undefined) root.style.setProperty("--h2", String(t.h2));
-  else root.style.removeProperty("--h2");
+  root.style.setProperty("--pc", String(t.chroma));
   if (!persist) return;
   try {
-    localStorage.setItem(HUE_STORAGE_KEY, `${t.hue},${t.hm ?? ""},${t.h2 ?? ""}`);
+    localStorage.setItem(HUE_STORAGE_KEY, `${t.hue},${t.chroma}`);
   } catch {
     /* bỏ qua */
   }
@@ -44,6 +42,5 @@ export function applyThemeVars(key: string | null | undefined, persist = true) {
 export function clearThemeVars() {
   const root = document.documentElement;
   root.style.removeProperty("--h");
-  root.style.removeProperty("--hm");
-  root.style.removeProperty("--h2");
+  root.style.removeProperty("--pc");
 }

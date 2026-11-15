@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import logoAsset from "@/assets/logo.png.asset.json";
+import { BrandMark } from "@/components/BrandMark";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +15,6 @@ import { ActivityDetailSheet } from "@/components/activity/ActivityDetailSheet";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { OnboardingPanel } from "@/components/Onboarding";
-import { LanguageToggle } from "@/components/LanguageToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,7 +50,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { BRAND } from "@/lib/brand";
-import { useI18n, type Lang } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 
 const NAV = [
   { to: "/lich", label: "nav.calendar", icon: CalendarDays },
@@ -72,7 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 function ShellInner({ children }: { children: ReactNode }) {
-  const { t, lang, setLang } = useI18n();
+  const { t } = useI18n();
   const { current, projects, setCurrentId, canEdit, isAdmin, pendingApproval, needsOnboarding } =
     useProject();
   const { openCreate } = useActivityDialog();
@@ -108,16 +107,9 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   if (needsOnboarding) {
     return (
-      <div className="grain relative min-h-screen bg-mesh-warm px-4 py-10 sm:py-16">
-        <div className="absolute right-4 top-4">
-          <LanguageToggle />
-        </div>
+      <div className="relative min-h-screen bg-background px-4 py-10 sm:py-16">
         <div className="mx-auto max-w-2xl animate-pop-in">
-          <img
-            src={logoAsset.url}
-            alt={BRAND}
-            className="h-14 w-14 rounded-xl object-cover shadow-pop ring-4 ring-card"
-          />
+          <BrandMark className="h-12 w-12" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
             {t("shell.welcome")}
           </p>
@@ -145,10 +137,7 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   if (pendingApproval) {
     return (
-      <div className="grain relative flex min-h-screen items-center justify-center bg-gradient-hero px-4 py-10">
-        <div className="absolute right-4 top-4">
-          <LanguageToggle />
-        </div>
+      <div className="relative flex min-h-screen items-center justify-center bg-[var(--page-tint)] px-4 py-10">
         <div className="surface w-full max-w-md animate-pop-in rounded-2xl p-8 text-center shadow-pop">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-sun shadow-btn">
             <Hourglass className="h-8 w-8 text-foreground/80" />
@@ -175,15 +164,11 @@ function ShellInner({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--page-tint)] via-background to-background bg-[length:100%_520px] bg-no-repeat pb-20 md:pb-0">
-      <header className="sticky top-0 z-30 border-b border-border/50 bg-background/80 shadow-[inset_0_1px_0_var(--hi),0_8px_24px_-18px_oklch(0.46_0.1_30/0.35)] backdrop-blur-xl">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <Link to="/lich" className="flex shrink-0 items-center gap-2">
-            <img
-              src={logoAsset.url}
-              alt={BRAND}
-              className="h-10 w-10 rounded-xl object-cover shadow-soft ring-2 ring-card"
-            />
+            <BrandMark className="h-9 w-9" />
             <span className="hidden font-display text-lg font-semibold sm:block">{BRAND}</span>
           </Link>
 
@@ -215,16 +200,16 @@ function ShellInner({ children }: { children: ReactNode }) {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_20%,transparent),inset_0_1px_0_var(--hi)]"
-                      : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+                      ? "bg-secondary text-secondary-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
                   {t(item.label)}
                   {item.to === "/thanh-vien" && pendingCount > 0 && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-primary px-1.5 text-[10px] font-bold text-primary-foreground shadow-btn">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground shadow-btn">
                       {pendingCount}
                     </span>
                   )}
@@ -265,14 +250,6 @@ function ShellInner({ children }: { children: ReactNode }) {
                     })}
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                  {t("lang.switch")}
-                </DropdownMenuLabel>
-                <DropdownMenuRadioGroup value={lang} onValueChange={(v) => setLang(v as Lang)}>
-                  <DropdownMenuRadioItem value="vi">{t("lang.vi")}</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="en">{t("lang.en")}</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
                   {t("themeMode.appearance")}

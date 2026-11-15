@@ -6,10 +6,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import logoAsset from "@/assets/logo.png.asset.json";
+import { BrandMark } from "@/components/BrandMark";
 import { BRAND } from "@/lib/brand";
 import { useI18n, tNow } from "@/lib/i18n";
-import { LanguageToggle } from "@/components/LanguageToggle";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -52,16 +51,11 @@ function AuthPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10">
       <div className="absolute right-4 top-4 flex items-center gap-1.5">
-        <LanguageToggle />
         <ThemeToggle />
       </div>
       <div className="surface relative w-full max-w-md animate-pop-in rounded-2xl p-7 text-center shadow-pop sm:p-9">
-        <img
-          src={logoAsset.url}
-          alt={BRAND}
-          className="mx-auto mb-5 h-16 w-16 rounded-xl object-cover shadow-pop ring-4 ring-card"
-        />
-        <p className="font-display text-lg font-medium italic text-primary">{t("auth.welcomeBack")}</p>
+        <BrandMark className="mx-auto mb-5 h-14 w-14" />
+        <p className="text-sm font-medium text-primary">{t("auth.welcomeBack")}</p>
         <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground">
           {BRAND}
         </h1>

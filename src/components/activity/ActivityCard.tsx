@@ -13,7 +13,7 @@ export function ActivityCard({
   onClick: () => void;
   index?: number;
 }) {
-  const { t, lang, locale } = useI18n();
+  const { t, locale } = useI18n();
   const tm = typeMeta(activity.type);
   const sm = statusMeta(activity.status);
   const photoCount = activity.attachments.filter((a) => a.kind === "photo").length;
@@ -39,10 +39,7 @@ export function ActivityCard({
         </span>
         <span className="mt-1 text-[10px] font-semibold uppercase tracking-wide">
           {t("card.monthShort", {
-            n:
-              lang === "vi"
-                ? date.getMonth() + 1
-                : new Intl.DateTimeFormat(locale, { month: "short" }).format(date),
+            n: new Intl.DateTimeFormat(locale, { month: "short" }).format(date),
           })}
         </span>
       </div>

@@ -27,7 +27,7 @@ export interface DemoActivity {
   attendees: string[];
   comments: DemoComment[];
   photos: string[];
-  voices: number[]; // thời lượng (giây) của từng đoạn ghi âm
+  voices: number[]; // duration in seconds of each voice note
 }
 
 export const SAMPLE_PHOTOS = [group, sunset, desk];
@@ -35,46 +35,46 @@ export const SAMPLE_PHOTOS = [group, sunset, desk];
 export const SEED_ACTIVITIES: DemoActivity[] = [
   {
     id: "a1",
-    title: "Workshop khởi động dự án",
+    title: "Project kick-off workshop",
     titleKey: "demo.seed.a1",
     day: 3,
     type: "workshop",
     participants: 24,
-    likes: ["Linh", "Huy"],
-    attendees: ["Linh", "Mai", "Huy"],
+    likes: ["Linh", "Dana"],
+    attendees: ["Linh", "Joseph", "Dana"],
     comments: [{ who: "Linh", textKey: "demo.seed.c1" }],
     photos: [group],
     voices: [],
   },
   {
     id: "a2",
-    title: "Họp đội ngũ tuần 2",
+    title: "Team meeting, week 2",
     titleKey: "demo.seed.a2",
     day: 8,
     type: "team_meeting",
     participants: 9,
-    likes: ["Mai"],
-    attendees: ["Mai"],
+    likes: ["Joseph"],
+    attendees: ["Joseph"],
     comments: [],
     photos: [],
     voices: [],
   },
   {
     id: "a3",
-    title: "Khảo sát thực địa",
+    title: "Field survey",
     titleKey: "demo.seed.a3",
     day: 15,
     type: "site_visit",
     participants: 18,
-    likes: ["Huy"],
-    attendees: ["Huy", "Linh"],
+    likes: ["Dana"],
+    attendees: ["Dana", "Linh"],
     comments: [],
     photos: [sunset],
     voices: [34],
   },
   {
     id: "a4",
-    title: "Sự kiện ra mắt",
+    title: "Launch event",
     titleKey: "demo.seed.a4",
     day: 22,
     type: "event",
@@ -100,6 +100,9 @@ export const PERMISSIONS: { label: Key; roles: Role[] }[] = [
   { label: "demo.perm.editOthers", roles: ["admin"] },
   { label: "demo.perm.admin", roles: ["admin"] },
 ];
+
+// Tab nào cho dùng thử miễn phí; các tab còn lại chỉ xem giới thiệu, mở khi đăng nhập.
+export const DEMO_FREE_TABS: DemoTab[] = ["lich", "tuong-tac"];
 
 export const DEMO_TABS: { key: DemoTab; label: Key; hint: Key }[] = [
   { key: "lich", label: "demo.tab.lich.label", hint: "demo.tab.lich.hint" },
