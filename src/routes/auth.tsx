@@ -50,7 +50,7 @@ function AuthPage() {
   }
 
   return (
-    <div className="grain relative flex min-h-screen items-center justify-center overflow-hidden bg-mesh-warm px-4 py-10">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10">
       <div className="absolute right-4 top-4 flex items-center gap-1.5">
         <LanguageToggle />
         <ThemeToggle />

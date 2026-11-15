@@ -7,12 +7,12 @@ export function LandingCTA() {
   const { t } = useI18n();
   return (
     <section className="px-5 pb-20 sm:pb-28">
-      <div className="grain relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-hero px-6 py-16 text-center shadow-pop sm:py-20">
+      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-2xl bg-gradient-hero px-6 py-16 text-left sm:px-12 shadow-pop sm:py-20">
         <div className="relative">
           <h2 className="font-display text-3xl font-semibold leading-tight text-primary-foreground sm:text-5xl">
-            {t("cta.title1")} <em className="font-medium">{t("cta.title2")}</em>
+            {t("cta.title1")} {t("cta.title2")}
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-primary-foreground/85">
+          <p className="mt-4 max-w-md text-primary-foreground/85">
             {t("cta.sub")}
           </p>
           <Button
