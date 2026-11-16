@@ -31,7 +31,7 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/lich" });
+    if (!loading && session) navigate({ to: "/danh-sach" });
   }, [session, loading, navigate]);
 
   async function handleGoogle() {
@@ -45,7 +45,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/lich" });
+    navigate({ to: "/danh-sach" });
   }
 
   return (

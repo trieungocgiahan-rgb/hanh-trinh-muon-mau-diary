@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import type { ActivityRow, AttachmentRow } from "@/lib/activity-constants";
 
 export interface ActivityWithExtras extends ActivityRow {
@@ -8,11 +9,14 @@ export interface ActivityWithExtras extends ActivityRow {
   like_count: number;
   comment_count: number;
   attendance_count: number;
+  liked_by_me: boolean;
 }
 
 export function useActivities(projectId: string | undefined) {
+  const { user } = useAuth();
+  const myId = user?.id;
   return useQuery({
-    queryKey: ["activities", projectId],
+    queryKey: ["activities", projectId, myId],
     enabled: !!projectId,
     queryFn: async (): Promise<ActivityWithExtras[]> => {
       const { data: activities, error } = await supabase
@@ -31,7 +35,7 @@ export function useActivities(projectId: string | undefined) {
         await Promise.all([
           supabase.from("attachments").select("*").in("activity_id", ids),
           supabase.from("profiles").select("id, full_name").in("id", authorIds),
-          supabase.from("activity_likes").select("activity_id").in("activity_id", ids),
+          supabase.from("activity_likes").select("activity_id, user_id").in("activity_id", ids),
           supabase.from("activity_comments").select("activity_id").in("activity_id", ids),
           supabase.from("activity_attendance").select("activity_id").in("activity_id", ids),
         ]);
@@ -50,6 +54,7 @@ export function useActivities(projectId: string | undefined) {
         return m;
       };
       const likeMap = countBy(likes);
+      const myLikes = new Set((likes ?? []).filter((l) => l.user_id === myId).map((l) => l.activity_id));
       const commentMap = countBy(comments);
       const attendMap = countBy(attend);
 
@@ -60,6 +65,7 @@ export function useActivities(projectId: string | undefined) {
         like_count: likeMap.get(r.id) ?? 0,
         comment_count: commentMap.get(r.id) ?? 0,
         attendance_count: attendMap.get(r.id) ?? 0,
+        liked_by_me: myLikes.has(r.id),
       }));
     },
   });

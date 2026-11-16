@@ -559,3 +559,18 @@ html {
   animation: rise var(--dur, 5s) ease-out infinite;
   animation-delay: var(--d, 0s);
 }
+
+/* trái tim bật lên khi bấm đúp ảnh hoặc thả tim */
+@keyframes like-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  60% { opacity: 1; transform: translate(-50%, -50%) scale(0.95); }
+  100% { opacity: 0; transform: translate(-50%, -62%) scale(1); }
+}
+.animate-like-pop { animation: like-pop 0.85s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes like-pop-sm {
+  0% { transform: scale(0.6); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.animate-like-pop-sm { animation: like-pop-sm 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
