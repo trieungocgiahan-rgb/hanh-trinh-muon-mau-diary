@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { Camera, CalendarDays, Heart, MapPin, MessageCircle, Mic, Sparkles } from "lucide-react";
 import { SlotImage } from "@/components/illustrations/SlotImage";
 import { useI18n } from "@/lib/i18n";
@@ -70,6 +70,7 @@ function Float({
   rot = 0,
   dur = 5,
   delay = 0,
+  z = 40,
   children,
 }: {
   className: string;
@@ -78,12 +79,13 @@ function Float({
   rot?: number;
   dur?: number;
   delay?: number;
+  z?: number;
   children: ReactNode;
 }) {
   return (
     <div
       className={`absolute ${className}`}
-      style={{ ...style }}
+      style={{ ...style, transform: `translateZ(${z}px)`, transformStyle: "preserve-3d" }}
     >
       <div
         className="animate-float-y"
@@ -106,12 +108,83 @@ const PARTICLES: { x: number; y: number; rot: number; dur: number; d: number; ki
   { x: -50, y: -130, rot: -10, dur: 5, d: 2.8, kind: "dot", c: "text-azure" },
 ];
 
+// Nghiêng 3D theo con trỏ (máy tính) hoặc đung đưa nhẹ (màn cảm ứng). Mỗi lớp có độ sâu riêng.
+function useTilt(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const section = (el.closest("section") as HTMLElement | null) ?? el;
+    const touch = window.matchMedia("(hover: none)").matches;
+    let tx = 0;
+    let ty = 0;
+    let cx = 0;
+    let cy = 0;
+    let raf = 0;
+    let running = false;
+    const t0 = performance.now();
+
+    function tick(now: number) {
+      if (touch) {
+        const t = (now - t0) / 1000;
+        tx = Math.sin(t * 0.5) * 0.7;
+        ty = Math.cos(t * 0.37) * 0.4;
+      }
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      el!.style.setProperty("--px", cx.toFixed(4));
+      el!.style.setProperty("--py", cy.toFixed(4));
+      if (touch || Math.abs(tx - cx) > 0.002 || Math.abs(ty - cy) > 0.002) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        running = false;
+      }
+    }
+    function start() {
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(tick);
+      }
+    }
+    function move(e: PointerEvent) {
+      const r = section.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      start();
+    }
+    function leave() {
+      tx = 0;
+      ty = 0;
+      start();
+    }
+    if (touch) start();
+    else {
+      section.addEventListener("pointermove", move);
+      section.addEventListener("pointerleave", leave);
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      section.removeEventListener("pointermove", move);
+      section.removeEventListener("pointerleave", leave);
+    };
+  }, [ref]);
+}
+
 export function HeroDiary() {
   const { t } = useI18n();
+  const tiltRef = useRef<HTMLDivElement>(null);
+  useTilt(tiltRef);
   return (
-    <div className="relative mx-auto aspect-[5/4.4] w-full max-w-[34rem]">
+    <div ref={tiltRef} className="relative mx-auto aspect-[5/4.4] w-full max-w-[34rem] [perspective:1100px]">
+      <div
+        className="absolute inset-0 will-change-transform"
+        style={{
+          transformStyle: "preserve-3d",
+          transform: "rotateY(calc(var(--px, 0) * 9deg)) rotateX(calc(var(--py, 0) * -7deg))",
+        }}
+      >
       {/* cuốn nhật ký mở */}
-      <div className="absolute inset-x-[2%] bottom-[2%]">
+      <div className="absolute inset-x-[2%] bottom-[2%]" style={{ transform: "translateZ(0px)" }}>
         <SlotImage
           src="/images/diary-open.png"
           alt={t("hero.visualAlt")}
@@ -121,7 +194,7 @@ export function HeroDiary() {
       </div>
 
       {/* hạt bay lên từ giữa sách */}
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[52%]">
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[52%]" style={{ transform: "translateZ(70px)", transformStyle: "preserve-3d" }}>
         {PARTICLES.map((p, i) => (
           <span
             key={i}
@@ -136,7 +209,7 @@ export function HeroDiary() {
       </div>
 
       {/* đồ vật bay quanh */}
-      <Float className="left-[2%] top-[5%]" rot={-8} amp={9} dur={5.5} delay={0.2}>
+      <Float z={60} className="left-[2%] top-[5%]" rot={-8} amp={9} dur={5.5} delay={0.2}>
         <div className="w-24 rounded-md bg-white p-1.5 pb-5 shadow-pop">
           <div className="relative h-16 overflow-hidden rounded-sm bg-azure">
             <span className="absolute right-2 top-2 h-4 w-4 rounded-full bg-amber" />
@@ -145,7 +218,7 @@ export function HeroDiary() {
         </div>
       </Float>
 
-      <Float className="right-[0%] top-[1%]" rot={4} amp={8} dur={6} delay={1}>
+      <Float z={90} className="right-[0%] top-[1%]" rot={4} amp={8} dur={6} delay={1}>
         <div className="flex items-center gap-2 rounded-full bg-card px-3 py-2 shadow-pop">
           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <Mic className="h-3.5 w-3.5" />
@@ -159,13 +232,13 @@ export function HeroDiary() {
         </div>
       </Float>
 
-      <Float className="left-[43%] top-[-3%]" amp={12} dur={4.6} delay={0.6}>
+      <Float z={110} className="left-[43%] top-[-3%]" amp={12} dur={4.6} delay={0.6}>
         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-btn">
           <Heart className="h-6 w-6 fill-current" />
         </span>
       </Float>
 
-      <Float className="right-[6%] top-[37%]" rot={-4} amp={8} dur={5.2} delay={1.6}>
+      <Float z={50} className="right-[6%] top-[37%]" rot={-4} amp={8} dur={5.2} delay={1.6}>
         <span className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm bg-card px-3.5 py-2.5 shadow-pop">
           <MessageCircle className="h-4 w-4 text-azure" />
           <span className="flex gap-1">
@@ -176,7 +249,7 @@ export function HeroDiary() {
         </span>
       </Float>
 
-      <Float className="right-[0%] top-[17%]" rot={6} amp={9} dur={5.8} delay={0.9}>
+      <Float z={75} className="right-[0%] top-[17%]" rot={6} amp={9} dur={5.8} delay={0.9}>
         <div className="w-20 overflow-hidden rounded-xl bg-card text-center shadow-pop">
           <div className="flex items-center justify-center gap-1 bg-primary py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
             <CalendarDays className="h-3 w-3" /> Nov
@@ -185,29 +258,30 @@ export function HeroDiary() {
         </div>
       </Float>
 
-      <Float className="left-[25%] top-[23%]" amp={7} dur={4.4} delay={2}>
+      <Float z={45} className="left-[25%] top-[23%]" amp={7} dur={4.4} delay={2}>
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-tang text-[oklch(0.3_0.07_45)] shadow-pop">
           <MapPin className="h-5 w-5" />
         </span>
       </Float>
 
-      <Float className="right-[24%] top-[24%] max-sm:hidden" amp={8} dur={5} delay={1.3}>
+      <Float z={65} className="right-[24%] top-[24%] max-sm:hidden" amp={8} dur={5} delay={1.3}>
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-azure text-white shadow-pop">
           <Camera className="h-5 w-5" />
         </span>
       </Float>
 
-      <Float className="left-[40%] top-[16%]" rot={-5} amp={7} dur={5.6} delay={0.4}>
+      <Float z={85} className="left-[40%] top-[16%]" rot={-5} amp={7} dur={5.6} delay={0.4}>
         <div className="w-28 rounded-sm bg-amber px-3 py-2.5 text-[oklch(0.3_0.06_80)] shadow-pop">
           <p className="text-xs font-bold leading-4">{t("hero.float.sticky")}</p>
         </div>
       </Float>
 
-      <Float className="left-[3%] top-[34%]" rot={3} amp={7} dur={6.2} delay={2.4}>
+      <Float z={40} className="left-[3%] top-[34%]" rot={3} amp={7} dur={6.2} delay={2.4}>
         <span className="rounded-full bg-azure px-3 py-1.5 text-xs font-semibold text-white shadow-pop">
           {t("hero.float.city")}
         </span>
       </Float>
+      </div>
     </div>
   );
 }
