@@ -1,9 +1,7 @@
-import type { CSSProperties, ReactNode } from "react";
-import { Camera, CalendarDays, Heart, MapPin, MessageCircle, Mic, Sparkles } from "lucide-react";
+import { useEffect, useRef, type CSSProperties } from "react";
+import { Heart, Sparkles } from "lucide-react";
 import { SlotImage } from "@/components/illustrations/SlotImage";
 import { useI18n } from "@/lib/i18n";
-
-const WAVE = [5, 11, 7, 15, 9, 17, 6, 12, 8, 14, 5, 10];
 
 // Cuốn nhật ký đang mở, vẽ bằng SVG. Nếu có ảnh /images/diary-open.png thì dùng ảnh đó.
 function OpenDiary({ className }: { className?: string }) {
@@ -63,38 +61,6 @@ function OpenDiary({ className }: { className?: string }) {
   );
 }
 
-function Float({
-  className,
-  style,
-  amp = 10,
-  rot = 0,
-  dur = 5,
-  delay = 0,
-  children,
-}: {
-  className: string;
-  style?: CSSProperties;
-  amp?: number;
-  rot?: number;
-  dur?: number;
-  delay?: number;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      className={`absolute ${className}`}
-      style={{ ...style }}
-    >
-      <div
-        className="animate-float-y"
-        style={{ "--amp": `${amp}px`, "--r": `${rot}deg`, "--dur": `${dur}s`, "--d": `${delay}s` } as CSSProperties}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
-
 // Hạt nhỏ bay lên từ giữa cuốn sách
 const PARTICLES: { x: number; y: number; rot: number; dur: number; d: number; kind: "heart" | "spark" | "dot"; c: string }[] = [
   { x: -90, y: -170, rot: -20, dur: 5.2, d: 0, kind: "heart", c: "text-primary" },
@@ -106,108 +72,120 @@ const PARTICLES: { x: number; y: number; rot: number; dur: number; d: number; ki
   { x: -50, y: -130, rot: -10, dur: 5, d: 2.8, kind: "dot", c: "text-azure" },
 ];
 
+// Nghiêng 3D theo con trỏ (máy tính) hoặc đung đưa nhẹ (màn cảm ứng). Mỗi lớp có độ sâu riêng.
+function useTilt(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const section = (el.closest("section") as HTMLElement | null) ?? el;
+    const touch = window.matchMedia("(hover: none)").matches;
+    let tx = 0;
+    let ty = 0;
+    let cx = 0;
+    let cy = 0;
+    let raf = 0;
+    let running = false;
+    const t0 = performance.now();
+
+    function tick(now: number) {
+      if (touch) {
+        const t = (now - t0) / 1000;
+        tx = Math.sin(t * 0.5) * 0.7;
+        ty = Math.cos(t * 0.37) * 0.4;
+      }
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      el!.style.setProperty("--px", cx.toFixed(4));
+      el!.style.setProperty("--py", cy.toFixed(4));
+      if (touch || Math.abs(tx - cx) > 0.002 || Math.abs(ty - cy) > 0.002) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        running = false;
+      }
+    }
+    function start() {
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(tick);
+      }
+    }
+    function move(e: PointerEvent) {
+      const r = section.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      start();
+    }
+    function leave() {
+      tx = 0;
+      ty = 0;
+      start();
+    }
+    if (touch) start();
+    else {
+      section.addEventListener("pointermove", move);
+      section.addEventListener("pointerleave", leave);
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      section.removeEventListener("pointermove", move);
+      section.removeEventListener("pointerleave", leave);
+    };
+  }, [ref]);
+}
+
 export function HeroDiary() {
   const { t } = useI18n();
+  const tiltRef = useRef<HTMLDivElement>(null);
+  useTilt(tiltRef);
   return (
-    <div className="relative mx-auto aspect-[5/4.4] w-full max-w-[34rem]">
-      {/* cuốn nhật ký mở */}
-      <div className="absolute inset-x-[2%] bottom-[2%]">
-        <SlotImage
-          src="/images/diary-open.png"
-          alt={t("hero.visualAlt")}
-          fallback={<OpenDiary className="w-full drop-shadow-[0_24px_30px_var(--glow)]" />}
-          className="w-full object-contain drop-shadow-[0_24px_30px_var(--glow)]"
-        />
-      </div>
+    <div ref={tiltRef} className="relative z-0 mx-auto aspect-[3/2] w-full max-w-[40rem] [perspective:1200px] lg:max-w-none">
+      <div
+        className="absolute inset-0 will-change-transform"
+        style={{
+          transformStyle: "preserve-3d",
+          transform: "rotateY(calc(var(--px, 0) * 8deg)) rotateX(calc(var(--py, 0) * -6deg))",
+        }}
+      >
+        {/* quầng sáng lớn hòa vào nền: rộng, mờ dần ra ngoài, không có mép */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ transform: "translateZ(-80px)" }}>
+          <span className="animate-glow absolute left-1/2 top-[48%] h-[130%] w-[130%] rounded-full [background:radial-gradient(closest-side,var(--halo-core),var(--halo-mid)_38%,var(--halo-edge)_66%,transparent)]" />
+          <span className="animate-glow absolute left-[48%] top-[50%] h-[86%] w-[86%] rounded-full [background:radial-gradient(closest-side,oklch(1_0.05_92/0.95),oklch(0.97_0.08_60/0.55)_55%,transparent)]" style={{ animationDelay: "1.4s" }} />
+        </div>
 
-      {/* hạt bay lên từ giữa sách */}
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[52%]">
-        {PARTICLES.map((p, i) => (
-          <span
-            key={i}
-            className={`animate-rise absolute left-0 top-0 ${p.c}`}
-            style={{ "--x": `${p.x}px`, "--y": `${p.y}px`, "--rot": `${p.rot}deg`, "--dur": `${p.dur}s`, "--d": `${p.d}s` } as CSSProperties}
-          >
-            {p.kind === "heart" && <Heart className="h-5 w-5 fill-current" />}
-            {p.kind === "spark" && <Sparkles className="h-5 w-5" />}
-            {p.kind === "dot" && <span className="block h-3 w-3 rounded-full bg-current" />}
-          </span>
-        ))}
-      </div>
 
-      {/* đồ vật bay quanh */}
-      <Float className="left-[2%] top-[5%]" rot={-8} amp={9} dur={5.5} delay={0.2}>
-        <div className="w-24 rounded-md bg-white p-1.5 pb-5 shadow-pop">
-          <div className="relative h-16 overflow-hidden rounded-sm bg-azure">
-            <span className="absolute right-2 top-2 h-4 w-4 rounded-full bg-amber" />
-            <span className="absolute -bottom-1 left-1 h-9 w-14 rounded-t-full bg-[oklch(0.72_0.14_160)]" />
+        {/* tia sáng quay chậm */}
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[120%] w-[120%]" style={{ transform: "translateZ(-50px) translate(-50%, -50%)" }}>
+          <span className="animate-spin-slow absolute inset-0 rounded-full opacity-70 [background:conic-gradient(from_0deg,transparent_0deg,oklch(0.96_0.1_88/0.55)_12deg,transparent_30deg,transparent_95deg,oklch(0.9_0.14_10/0.5)_108deg,transparent_128deg,transparent_200deg,oklch(0.95_0.1_70/0.45)_214deg,transparent_236deg,transparent_290deg,oklch(0.9_0.12_350/0.4)_300deg,transparent_320deg)] [mask-image:radial-gradient(closest-side,transparent_14%,#000_40%,transparent_90%)]" />
+        </div>
+
+        {/* ảnh chính: cuốn nhật ký bay, các trang tung ra, đồ vật tỏa quanh */}
+        <div className="absolute inset-0" style={{ transform: "translateZ(30px)" }}>
+          <div className="animate-float-y absolute inset-0" style={{ "--amp": "10px", "--r": "0deg", "--dur": "7s" } as CSSProperties}>
+            <SlotImage
+              src="/images/diary-open.webp"
+              alt={t("hero.visualAlt")}
+              fallback={<OpenDiary className="mx-auto mt-[8%] w-[82%] drop-shadow-[0_20px_24px_rgba(60,20,40,0.14)]" />}
+              className="h-full w-full object-contain drop-shadow-[0_18px_26px_rgba(255,45,149,0.2)]"
+            />
           </div>
         </div>
-      </Float>
 
-      <Float className="right-[0%] top-[1%]" rot={4} amp={8} dur={6} delay={1}>
-        <div className="flex items-center gap-2 rounded-full bg-card px-3 py-2 shadow-pop">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <Mic className="h-3.5 w-3.5" />
-          </span>
-          <span className="flex h-5 items-center gap-[2px]">
-            {WAVE.map((h, i) => (
-              <span key={i} className="w-[2px] rounded-full bg-primary" style={{ height: h }} />
-            ))}
-          </span>
-          <span className="text-xs font-semibold text-muted-foreground">0:42</span>
+        {/* hạt bay lên từ giữa sách */}
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[50%]" style={{ transform: "translateZ(90px)", transformStyle: "preserve-3d" }}>
+          {PARTICLES.map((p, i) => (
+            <span
+              key={i}
+              className={`animate-rise absolute left-0 top-0 ${p.c}`}
+              style={{ "--x": `${p.x * 1.4}px`, "--y": `${p.y * 1.1}px`, "--rot": `${p.rot}deg`, "--dur": `${p.dur}s`, "--d": `${p.d}s` } as CSSProperties}
+            >
+              {p.kind === "heart" && <Heart className="h-5 w-5 fill-current" />}
+              {p.kind === "spark" && <Sparkles className="h-5 w-5" />}
+              {p.kind === "dot" && <span className="block h-3 w-3 rounded-full bg-current" />}
+            </span>
+          ))}
         </div>
-      </Float>
-
-      <Float className="left-[43%] top-[-3%]" amp={12} dur={4.6} delay={0.6}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-btn">
-          <Heart className="h-6 w-6 fill-current" />
-        </span>
-      </Float>
-
-      <Float className="right-[6%] top-[37%]" rot={-4} amp={8} dur={5.2} delay={1.6}>
-        <span className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm bg-card px-3.5 py-2.5 shadow-pop">
-          <MessageCircle className="h-4 w-4 text-azure" />
-          <span className="flex gap-1">
-            <i className="h-1.5 w-1.5 rounded-full bg-primary" />
-            <i className="h-1.5 w-1.5 rounded-full bg-primary/60" />
-            <i className="h-1.5 w-1.5 rounded-full bg-primary/30" />
-          </span>
-        </span>
-      </Float>
-
-      <Float className="right-[0%] top-[17%]" rot={6} amp={9} dur={5.8} delay={0.9}>
-        <div className="w-20 overflow-hidden rounded-xl bg-card text-center shadow-pop">
-          <div className="flex items-center justify-center gap-1 bg-primary py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
-            <CalendarDays className="h-3 w-3" /> Nov
-          </div>
-          <div className="py-1.5 font-display text-2xl font-extrabold leading-none">15</div>
-        </div>
-      </Float>
-
-      <Float className="left-[25%] top-[23%]" amp={7} dur={4.4} delay={2}>
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-tang text-[oklch(0.3_0.07_45)] shadow-pop">
-          <MapPin className="h-5 w-5" />
-        </span>
-      </Float>
-
-      <Float className="right-[24%] top-[24%] max-sm:hidden" amp={8} dur={5} delay={1.3}>
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-azure text-white shadow-pop">
-          <Camera className="h-5 w-5" />
-        </span>
-      </Float>
-
-      <Float className="left-[40%] top-[16%]" rot={-5} amp={7} dur={5.6} delay={0.4}>
-        <div className="w-28 rounded-sm bg-amber px-3 py-2.5 text-[oklch(0.3_0.06_80)] shadow-pop">
-          <p className="text-xs font-bold leading-4">{t("hero.float.sticky")}</p>
-        </div>
-      </Float>
-
-      <Float className="left-[3%] top-[34%]" rot={3} amp={7} dur={6.2} delay={2.4}>
-        <span className="rounded-full bg-azure px-3 py-1.5 text-xs font-semibold text-white shadow-pop">
-          {t("hero.float.city")}
-        </span>
-      </Float>
+      </div>
     </div>
   );
 }

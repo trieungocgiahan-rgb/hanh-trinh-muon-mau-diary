@@ -1042,19 +1042,15 @@ export function LandingDemo() {
 
   return (
     <section id="dung-thu" className="relative scroll-mt-24 overflow-hidden bg-[var(--page-tint)] py-16 sm:py-24">
-      <span aria-hidden className="orb -left-24 top-20 h-72 w-72" />
       <div className="relative mx-auto max-w-6xl px-5">
         <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary-ink">
-            {t("hero.tryNow")}
-          </p>
-          <h2 className="mt-3 text-balance font-display text-3xl font-extrabold leading-tight sm:text-5xl">
-            {t("demo.title1")} <span className="text-primary">{t("demo.title2")}</span>
+                    <h2 className="mt-3 text-balance font-display text-4xl font-semibold leading-tight sm:text-5xl">
+            {t("demo.title1")} <em className="font-medium italic text-primary">{t("demo.title2")}</em>
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">{t("demo.intro")}</p>
         </div>
 
-        <div className="glass mt-10 overflow-hidden rounded-[1.75rem]">
+        <div className="mt-10 overflow-hidden rounded-2xl border border-border bg-card shadow-pop">
           {/* thanh tiêu đề giả lập app */}
           <div className="flex items-center gap-3 border-b border-border bg-secondary/40 px-4 py-2.5">
             <p className="min-w-0 flex-1 truncate text-xs font-semibold text-muted-foreground">

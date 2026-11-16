@@ -15,11 +15,9 @@ export function PageHeader({
     <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
       <div className="min-w-0">
         {eyebrow && (
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-            {eyebrow}
-          </p>
+          <p className="text-sm font-medium text-muted-foreground">{eyebrow}</p>
         )}
-        <h1 className="mt-1.5 text-balance font-display text-3xl font-semibold leading-tight sm:text-4xl">
+        <h1 className="mt-1 text-balance font-display text-3xl font-semibold leading-tight sm:text-[2.4rem]">
           {title}
         </h1>
         {description && <p className="mt-1.5 text-sm text-muted-foreground">{description}</p>}

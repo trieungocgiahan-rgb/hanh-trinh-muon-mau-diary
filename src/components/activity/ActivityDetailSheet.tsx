@@ -52,7 +52,7 @@ function formatDate(d: string, locale: string) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <h4 className="mb-1.5 font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {title}
       </h4>
       <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{children}</div>
@@ -223,7 +223,7 @@ export function ActivityDetailSheet() {
 
             {audios.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h4 className="font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t("detail.voice")}
                 </h4>
                 {audios.map((x) => (
@@ -237,7 +237,7 @@ export function ActivityDetailSheet() {
 
             {videos.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h4 className="font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Video
                 </h4>
                 {videos.map((x) => (
@@ -251,7 +251,7 @@ export function ActivityDetailSheet() {
 
             {(docs.length > 0 || links.length > 0) && (
               <div className="space-y-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h4 className="font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t("detail.docs")}
                 </h4>
                 {docs.map((x) => (

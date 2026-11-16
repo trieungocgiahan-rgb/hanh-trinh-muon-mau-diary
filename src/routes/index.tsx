@@ -63,7 +63,7 @@ function LandingPage() {
   const { session, loading } = useAuth();
 
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/lich", replace: true });
+    if (!loading && session) navigate({ to: "/danh-sach", replace: true });
   }, [session, loading, navigate]);
 
   return (

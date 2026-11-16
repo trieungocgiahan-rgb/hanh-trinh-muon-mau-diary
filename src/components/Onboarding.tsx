@@ -87,7 +87,7 @@ export function OnboardingPanel({ onDone }: { onDone?: () => void }) {
       description: t("onb.createdDesc"),
     });
     onDone?.();
-    navigate({ to: "/lich" });
+    navigate({ to: "/danh-sach" });
   }
 
   if (mode === "choose") {
