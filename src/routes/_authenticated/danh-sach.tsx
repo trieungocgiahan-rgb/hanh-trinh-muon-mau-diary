@@ -172,7 +172,7 @@ function JournalPage() {
           ) : (
             groups.map(([label, items]) => (
               <section key={label} className="space-y-5">
-                <h2 className="pt-1 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                <h2 className="pt-1 font-sans text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   {label}
                 </h2>
                 {items.map((a) => (
@@ -188,7 +188,7 @@ function JournalPage() {
       <aside className="hidden space-y-5 pt-3 xl:block">
         <div className="sticky top-3 space-y-5">
           <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            <h2 className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               {t("feed.thisMonth")}
             </h2>
             <dl className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -206,7 +206,7 @@ function JournalPage() {
           </section>
 
           <section className="rounded-2xl border border-border bg-card p-4">
-            <h2 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            <h2 className="flex items-center gap-1.5 font-sans text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               <CalendarClock className="h-3.5 w-3.5" /> {t("feed.upcoming")}
             </h2>
             {upcoming.length === 0 ? (

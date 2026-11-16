@@ -199,11 +199,11 @@ function ShellInner({ children }: { children: ReactNode }) {
         to={item.to}
         className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors ${
           active
-            ? "bg-secondary text-secondary-foreground"
+            ? "bg-accent font-semibold text-foreground"
             : "text-muted-foreground hover:bg-accent hover:text-foreground"
         }`}
       >
-        <item.icon className="h-[18px] w-[18px]" />
+        <item.icon className={`h-[18px] w-[18px] ${active ? "text-primary" : ""}`} />
         {t(item.label)}
         {item.to === "/thanh-vien" && pendingCount > 0 && (
           <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
@@ -315,7 +315,7 @@ function ShellInner({ children }: { children: ReactNode }) {
               to="/cai-dat"
               className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors ${
                 pathname === "/cai-dat"
-                  ? "bg-secondary text-secondary-foreground"
+                  ? "bg-accent font-semibold text-foreground"
                   : "text-muted-foreground hover:bg-accent hover:text-foreground"
               }`}
             >

@@ -115,8 +115,8 @@ export function HeroDiary() {
         <SlotImage
           src="/images/diary-open.png"
           alt={t("hero.visualAlt")}
-          fallback={<OpenDiary className="w-full drop-shadow-[0_24px_30px_var(--glow)]" />}
-          className="w-full object-contain drop-shadow-[0_24px_30px_var(--glow)]"
+          fallback={<OpenDiary className="w-full drop-shadow-[0_20px_24px_rgba(60,20,40,0.14)]" />}
+          className="w-full object-contain drop-shadow-[0_20px_24px_rgba(60,20,40,0.14)]"
         />
       </div>
 
