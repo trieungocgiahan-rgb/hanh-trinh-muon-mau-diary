@@ -255,7 +255,7 @@ export function HeroDiary() {
         {/* quầng sáng lớn hòa vào nền: rộng, mờ dần ra ngoài, không có mép */}
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{ transform: "translateZ(-80px)" }}>
           <span className="animate-glow absolute left-1/2 top-[48%] h-[130%] w-[130%] rounded-full [background:radial-gradient(closest-side,var(--halo-core),var(--halo-mid)_38%,var(--halo-edge)_66%,transparent)]" />
-          <span className="animate-glow absolute left-[48%] top-[50%] h-[86%] w-[86%] rounded-full [background:radial-gradient(closest-side,oklch(0.97_0.1_88/0.95),oklch(0.9_0.13_40/0.5)_55%,transparent)]" style={{ animationDelay: "1.4s" }} />
+          <span className="animate-glow absolute left-[48%] top-[50%] h-[86%] w-[86%] rounded-full [background:radial-gradient(closest-side,oklch(1_0.05_92/0.95),oklch(0.97_0.08_60/0.55)_55%,transparent)]" style={{ animationDelay: "1.4s" }} />
         </div>
 
 
@@ -271,7 +271,7 @@ export function HeroDiary() {
               src="/images/diary-open.webp"
               alt={t("hero.visualAlt")}
               fallback={<OpenDiary className="mx-auto mt-[8%] w-[82%] drop-shadow-[0_20px_24px_rgba(60,20,40,0.14)]" />}
-              className="h-full w-full object-contain drop-shadow-[0_22px_28px_rgba(120,20,70,0.22)]"
+              className="h-full w-full object-contain drop-shadow-[0_18px_26px_rgba(255,45,149,0.2)]"
             />
           </div>
         </div>
