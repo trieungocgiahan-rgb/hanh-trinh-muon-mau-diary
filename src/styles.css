@@ -675,3 +675,12 @@ html {
   100% { transform: scale(1); }
 }
 .animate-like-pop-sm { animation: like-pop-sm 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ánh sáng phát ra từ cuốn nhật ký */
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.96); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
+}
+.animate-glow { animation: glow-breathe 5s ease-in-out infinite; }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 40s linear infinite; }
