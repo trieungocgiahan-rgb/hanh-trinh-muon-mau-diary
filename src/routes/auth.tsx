@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { BrandMark } from "@/components/BrandMark";
+import { Wordmark } from "@/components/BrandMark";
 import { BRAND } from "@/lib/brand";
 import { useI18n, tNow } from "@/lib/i18n";
 
@@ -54,11 +54,10 @@ function AuthPage() {
         <ThemeToggle />
       </div>
       <div className="surface relative w-full max-w-md animate-pop-in rounded-2xl p-7 text-center shadow-pop sm:p-9">
-        <BrandMark className="mx-auto mb-5 h-14 w-14" />
-        <p className="text-sm font-medium text-primary">{t("auth.welcomeBack")}</p>
-        <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-foreground">
-          {BRAND}
+        <h1 className="flex justify-center">
+          <Wordmark className="text-5xl text-foreground" />
         </h1>
+        <p className="mt-3 text-sm font-medium text-primary">{t("auth.welcomeBack")}</p>
         <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
           {t("auth.intro")}
         </p>

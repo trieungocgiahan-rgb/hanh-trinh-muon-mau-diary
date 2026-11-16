@@ -2,7 +2,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { BrandMark } from "@/components/BrandMark";
+import { Wordmark } from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingDemo } from "@/components/landing/LandingDemo";
@@ -70,9 +70,8 @@ function LandingPage() {
     <div className="min-h-screen overflow-x-hidden bg-background">
       <header className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-5">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-          <Link to="/" className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
-            <BrandMark className="h-9 w-9 rounded-full" />
-            <span className="font-display text-base font-bold text-foreground">{BRAND}</span>
+          <Link to="/" className="glass flex items-center rounded-full px-3 py-2">
+            <Wordmark className="px-2 text-[1.55rem] text-foreground" />
           </Link>
 
           <nav className="glass hidden items-center gap-1 rounded-full p-1.5 text-sm font-medium text-muted-foreground md:flex">
