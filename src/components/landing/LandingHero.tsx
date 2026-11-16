@@ -12,7 +12,7 @@ export function LandingHero() {
       {/* nền chuyển sắc nhẹ về phía cuốn sách + dải sáng quét ngang */}
       <span aria-hidden className="pointer-events-none absolute inset-0 [background:radial-gradient(60%_80%_at_74%_46%,var(--hero-wash),transparent_72%)]" />
       {/* lưới liên kết phủ rộng cả nền, nằm dưới chữ và cuốn sách */}
-      <NetworkBackground className="pointer-events-none absolute inset-0 overflow-hidden [mask-image:radial-gradient(ellipse_70%_100%_at_76%_46%,#000_30%,rgba(0,0,0,0.5)_62%,rgba(0,0,0,0.16)_100%)] max-lg:[mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.12),rgba(0,0,0,0.12)_55%,#000_85%)]" />
+      <NetworkBackground className="pointer-events-none absolute inset-y-0 right-0 w-full overflow-hidden lg:w-[72%] [mask-image:radial-gradient(ellipse_60%_70%_at_58%_46%,#000_0%,rgba(0,0,0,0.55)_45%,transparent_100%)] max-lg:[mask-image:radial-gradient(ellipse_90%_40%_at_50%_92%,#000_0%,rgba(0,0,0,0.5)_50%,transparent_100%)]" />
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
         <div className="relative z-10 min-w-0">
           <h1 className="font-display text-[2.8rem] font-semibold leading-[1.04] sm:text-6xl lg:text-[4.1rem]">

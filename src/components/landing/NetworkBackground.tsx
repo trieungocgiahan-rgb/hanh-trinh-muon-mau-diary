@@ -67,7 +67,7 @@ export function NetworkBackground({ className }: { className?: string }) {
     }
 
     function build() {
-      const gap = Math.max(84, Math.min(124, W / 11));
+      const gap = Math.max(150, Math.min(210, W / 6.5));
       const cols = Math.ceil(W / gap) + 2;
       const rows = Math.ceil(H / (gap * 0.86)) + 2;
       nodes = [];
@@ -77,15 +77,15 @@ export function NetworkBackground({ className }: { className?: string }) {
           const hx = (c - 0.5 + (r % 2 ? 0.5 : 0)) * gap + (Math.random() - 0.5) * gap * 0.32;
           const hy = (r - 0.5) * gap * 0.86 + (Math.random() - 0.5) * gap * 0.3;
           const roll = Math.random();
-          const tone: Node["tone"] = roll < 0.07 ? 0 : roll < 0.11 ? 1 : roll < 0.14 ? 2 : 3;
+          const tone: Node["tone"] = roll < 0.1 ? 0 : roll < 0.13 ? 1 : roll < 0.15 ? 2 : 3;
           nodes.push({
             hx,
             hy,
             x: hx,
             y: hy,
             ph: Math.random() * Math.PI * 2,
-            sp: 0.25 + Math.random() * 0.35,
-            r: tone === 3 ? 2.4 + Math.random() * 0.8 : 5.2 + Math.random() * 1.6,
+            sp: 0.1 + Math.random() * 0.16,
+            r: tone === 3 ? 1.7 + Math.random() * 0.6 : 3.6 + Math.random() * 1.0,
             tone,
           });
         }
@@ -102,13 +102,13 @@ export function NetworkBackground({ className }: { className?: string }) {
           ];
           for (const [cc, rr] of cand) {
             if (cc < 0 || cc >= cols || rr >= rows) continue;
-            if (Math.random() < 0.12) continue; // bỏ vài đường cho tự nhiên
+            if (Math.random() < 0.28) continue; // bỏ nhiều đường cho thoáng
             edges.push([i, idx(cc, rr)]);
           }
         }
       }
       pulses = [];
-      const count = Math.max(8, Math.round((W * H) / 38000));
+      const count = Math.max(3, Math.round((W * H) / 130000));
       for (let k = 0; k < count; k++) pulses.push(newPulse(Math.random()));
     }
 
@@ -116,7 +116,7 @@ export function NetworkBackground({ className }: { className?: string }) {
       return {
         e: Math.floor(Math.random() * edges.length),
         t: t0,
-        v: 0.22 + Math.random() * 0.3,
+        v: 0.1 + Math.random() * 0.12,
         rev: Math.random() < 0.5,
         tone: Math.random() < 0.7 ? 0 : Math.random() < 0.5 ? 1 : 2,
       };
@@ -142,8 +142,8 @@ export function NetworkBackground({ className }: { className?: string }) {
 
       for (const n of nodes) {
         const wob = reduce ? 0 : 1;
-        n.x = n.hx + Math.sin(clock * n.sp + n.ph) * 9 * wob;
-        n.y = n.hy + Math.cos(clock * n.sp * 0.9 + n.ph) * 9 * wob;
+        n.x = n.hx + Math.sin(clock * n.sp + n.ph) * 7 * wob;
+        n.y = n.hy + Math.cos(clock * n.sp * 0.9 + n.ph) * 7 * wob;
         const dx = n.x - mouse.x;
         const dy = n.y - mouse.y;
         const d = Math.hypot(dx, dy);
@@ -156,7 +156,7 @@ export function NetworkBackground({ className }: { className?: string }) {
 
       // đường nối
       ctx!.lineCap = "round";
-      const base = dark ? 0.34 : 0.4;
+      const base = dark ? 0.2 : 0.2;
       const lineRgb = dark ? pink : ink;
       for (const [a, b] of edges) {
         const A = nodes[a]!;
@@ -164,9 +164,9 @@ export function NetworkBackground({ className }: { className?: string }) {
         const mx = (A.x + B.x) / 2;
         const my = (A.y + B.y) / 2;
         const near = Math.hypot(mx - mouse.x, my - mouse.y);
-        const boost = near < 170 ? 1 + (1 - near / 170) * 1.6 : 1;
+        const boost = near < 170 ? 1 + (1 - near / 170) * 1.3 : 1;
         ctx!.strokeStyle = `rgba(${lineRgb},${Math.min(0.9, base * boost)})`;
-        ctx!.lineWidth = boost > 1.2 ? 1.8 : 1.3;
+        ctx!.lineWidth = boost > 1.2 ? 1.3 : 1;
         ctx!.beginPath();
         ctx!.moveTo(A.x, A.y);
         ctx!.lineTo(B.x, B.y);
@@ -189,16 +189,16 @@ export function NetworkBackground({ className }: { className?: string }) {
         const y = A.y + (B.y - A.y) * t;
         const rgb = p.tone === 0 ? pink : TONES[p.tone]!;
         const fade = Math.sin(Math.PI * p.t);
-        const g = ctx!.createRadialGradient(x, y, 0, x, y, 13);
-        g.addColorStop(0, `rgba(${rgb},${0.85 * fade})`);
+        const g = ctx!.createRadialGradient(x, y, 0, x, y, 9);
+        g.addColorStop(0, `rgba(${rgb},${0.55 * fade})`);
         g.addColorStop(1, `rgba(${rgb},0)`);
         ctx!.fillStyle = g;
         ctx!.beginPath();
-        ctx!.arc(x, y, 13, 0, Math.PI * 2);
+        ctx!.arc(x, y, 9, 0, Math.PI * 2);
         ctx!.fill();
-        ctx!.fillStyle = `rgba(255,255,255,${0.95 * fade})`;
+        ctx!.fillStyle = `rgba(255,255,255,${0.9 * fade})`;
         ctx!.beginPath();
-        ctx!.arc(x, y, 2.2, 0, Math.PI * 2);
+        ctx!.arc(x, y, 1.6, 0, Math.PI * 2);
         ctx!.fill();
       }
 
@@ -206,24 +206,24 @@ export function NetworkBackground({ className }: { className?: string }) {
       for (const n of nodes) {
         const rgb = n.tone === 1 ? TONES[1]! : n.tone === 2 ? TONES[2]! : pink;
         if (n.tone === 3) {
-          ctx!.fillStyle = `rgba(${dark ? pink : ink},${dark ? 0.7 : 0.6})`;
+          ctx!.fillStyle = `rgba(${dark ? pink : ink},${dark ? 0.45 : 0.35})`;
           ctx!.beginPath();
           ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2);
           ctx!.fill();
           continue;
         }
         // quầng
-        const glow = ctx!.createRadialGradient(n.x, n.y, n.r, n.x, n.y, n.r * 3.6);
-        glow.addColorStop(0, `rgba(${rgb},${dark ? 0.4 : 0.32})`);
+        const glow = ctx!.createRadialGradient(n.x, n.y, n.r, n.x, n.y, n.r * 3);
+        glow.addColorStop(0, `rgba(${rgb},${dark ? 0.22 : 0.16})`);
         glow.addColorStop(1, `rgba(${rgb},0)`);
         ctx!.fillStyle = glow;
         ctx!.beginPath();
-        ctx!.arc(n.x, n.y, n.r * 3.6, 0, Math.PI * 2);
+        ctx!.arc(n.x, n.y, n.r * 3, 0, Math.PI * 2);
         ctx!.fill();
         // thân nút: viền màu, ruột trắng
         ctx!.fillStyle = dark ? `rgba(${rgb},1)` : "#fff";
         ctx!.strokeStyle = `rgba(${rgb},1)`;
-        ctx!.lineWidth = 2.6;
+        ctx!.lineWidth = 1.8;
         ctx!.beginPath();
         ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2);
         ctx!.fill();
