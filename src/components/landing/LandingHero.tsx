@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroDiary } from "./HeroDiary";
+import { NetworkBackground } from "./NetworkBackground";
 import { useI18n } from "@/lib/i18n";
 
 export function LandingHero() {
@@ -10,6 +11,8 @@ export function LandingHero() {
     <section className="relative overflow-hidden bg-[var(--page-tint)] pb-20 pt-28 sm:pb-28 sm:pt-36">
       {/* nền chuyển sắc nhẹ về phía cuốn sách + dải sáng quét ngang */}
       <span aria-hidden className="pointer-events-none absolute inset-0 [background:radial-gradient(60%_80%_at_74%_46%,var(--hero-wash),transparent_72%)]" />
+      {/* lưới liên kết phủ rộng cả nền, nằm dưới chữ và cuốn sách */}
+      <NetworkBackground className="pointer-events-none absolute inset-0 overflow-hidden [mask-image:radial-gradient(ellipse_90%_95%_at_62%_48%,#000_35%,transparent_100%)]" />
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
         <div className="relative z-10 min-w-0">
           <h1 className="font-display text-[2.8rem] font-semibold leading-[1.04] sm:text-6xl lg:text-[4.1rem]">
