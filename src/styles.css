@@ -271,6 +271,7 @@
   --cool: oklch(0.9 0.05 232);
   --cool-ink: oklch(0.46 0.12 245);
   --orb-cool: oklch(0.82 0.11 235 / 0.7);
+  --link: oklch(0.7 0.17 357 / 0.55);
   --hero-wash: oklch(0.93 0.07 12 / 0.9);
   --halo-core: oklch(0.98 0.07 80 / 0.95);
   --halo-mid: oklch(0.9 0.12 20 / 0.5);
@@ -371,6 +372,7 @@
   --cool: oklch(0.42 0.06 240);
   --cool-ink: oklch(0.86 0.07 232);
   --orb-cool: oklch(0.55 0.1 240 / 0.38);
+  --link: oklch(0.78 0.14 357 / 0.7);
   --hero-wash: oklch(0.38 0.1 355 / 0.55);
   --halo-core: oklch(0.8 0.15 60 / 0.55);
   --halo-mid: oklch(0.6 0.22 355 / 0.4);
@@ -689,7 +691,7 @@ html {
   0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.96); }
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
 }
-.animate-glow { animation: glow-breathe 5s ease-in-out infinite; }
+.animate-glow { animation: glow-breathe 5s ease-in-out infinite both; }
 @keyframes spin-slow { to { transform: rotate(360deg); } }
 .animate-spin-slow { animation: spin-slow 40s linear infinite; }
 
@@ -728,4 +730,26 @@ html {
 .dark .light-sweep { background: linear-gradient(90deg, transparent, oklch(0.8 0.15 355 / 0.35), transparent); mix-blend-mode: screen; }
 @media (prefers-reduced-motion: reduce) {
   .light-sweep, .streak-run { animation: none; }
+}
+
+/* mạng liên kết ở đầu trang: hạt sáng chạy từ giữa sách ra các nút */
+.link-pulse {
+  stroke-dasharray: 2.4 97.6;
+  stroke-dashoffset: 0;
+  opacity: 0.9;
+  animation: link-pulse 5s linear infinite;
+  filter: drop-shadow(0 0 4px var(--primary));
+}
+@keyframes link-pulse {
+  from { stroke-dashoffset: 4; }
+  to { stroke-dashoffset: -100; }
+}
+.node-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: ping-soft 2.8s ease-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .link-pulse, .node-ping { animation: none; }
 }

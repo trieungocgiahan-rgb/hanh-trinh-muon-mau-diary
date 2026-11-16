@@ -61,54 +61,107 @@ function OpenDiary({ className }: { className?: string }) {
   );
 }
 
-// Các dải sáng neon uốn quanh cuốn sách, có hạt sáng chạy dọc.
-function NeonStreaks({ className, style }: { className: string; style?: CSSProperties }) {
-  const paths = [
-    { d: "M16 330 C 140 250, 245 392, 400 250 S 600 112, 626 48", w: 5, c: "url(#ns1)", run: "5.2s", delay: "0s" },
-    { d: "M24 90 C 190 170, 300 20, 450 110 S 590 228, 622 300", w: 4, c: "url(#ns2)", run: "6.4s", delay: "1.1s" },
-    { d: "M60 380 C 200 330, 330 350, 470 300 S 580 268, 620 226", w: 3, c: "url(#ns3)", run: "7s", delay: "2.3s" },
-  ];
+// Mạng liên kết: mọi thứ trong cuốn nhật ký nối với nhau và nối về giữa sách.
+// Toạ độ theo ảnh gốc (1536 x 1024) để khớp với vị trí đồ vật trong ảnh.
+const HUB = { x: 760, y: 565 };
+const NODES = {
+  mic: { x: 232, y: 206 },
+  heart: { x: 770, y: 34 },
+  cal: { x: 1362, y: 196 },
+  pin: { x: 112, y: 382 },
+  chat: { x: 1348, y: 372 },
+  pic: { x: 1418, y: 522 },
+  cardA: { x: 508, y: 44 },
+  cardB: { x: 1120, y: 142 },
+  hl: { x: 208, y: 276 },
+  hr: { x: 1170, y: 86 },
+} as const;
+type NodeKey = keyof typeof NODES;
+
+// [từ, tới, độ cong] - độ cong dương uốn sang một bên, âm sang bên kia
+const LINKS: { a: NodeKey | "hub"; b: NodeKey; bend: number; hub?: boolean }[] = [
+  { a: "hub", b: "mic", bend: -90, hub: true },
+  { a: "hub", b: "heart", bend: 60, hub: true },
+  { a: "hub", b: "cal", bend: 90, hub: true },
+  { a: "hub", b: "pin", bend: 80, hub: true },
+  { a: "hub", b: "chat", bend: -80, hub: true },
+  { a: "hub", b: "pic", bend: -60, hub: true },
+  { a: "hub", b: "cardA", bend: 70, hub: true },
+  { a: "hub", b: "cardB", bend: -60, hub: true },
+  { a: "pin", b: "mic", bend: -70 },
+  { a: "mic", b: "cardA", bend: -50 },
+  { a: "cardA", b: "heart", bend: -40 },
+  { a: "heart", b: "cardB", bend: -40 },
+  { a: "cardB", b: "cal", bend: -40 },
+  { a: "cal", b: "chat", bend: -30 },
+  { a: "chat", b: "pic", bend: -30 },
+  { a: "hl", b: "mic", bend: 20 },
+  { a: "hr", b: "cal", bend: 30 },
+];
+
+function curve(from: { x: number; y: number }, to: { x: number; y: number }, bend: number) {
+  const mx = (from.x + to.x) / 2;
+  const my = (from.y + to.y) / 2;
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const cx = mx + (-dy / len) * bend;
+  const cy = my + (dx / len) * bend;
+  return `M${from.x} ${from.y} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${to.x} ${to.y}`;
+}
+
+function NetworkLinks({ className, style }: { className: string; style?: CSSProperties }) {
   return (
-    <svg aria-hidden viewBox="0 0 600 400" preserveAspectRatio="none" overflow="visible" className={`pointer-events-none ${className}`} style={style}>
-      <defs>
-        <linearGradient id="ns1" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#ff2d95" stopOpacity="0" />
-          <stop offset="0.45" stopColor="#ff2d95" />
-          <stop offset="0.8" stopColor="#ffb13b" />
-          <stop offset="1" stopColor="#ffd75e" stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="ns2" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#ffd75e" stopOpacity="0" />
-          <stop offset="0.4" stopColor="#ff7ab8" />
-          <stop offset="0.75" stopColor="#ff2d95" />
-          <stop offset="1" stopColor="#ff2d95" stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="ns3" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#2bb5ff" stopOpacity="0" />
-          <stop offset="0.5" stopColor="#6fd0ff" />
-          <stop offset="1" stopColor="#ff7ab8" stopOpacity="0" />
-        </linearGradient>
-        <filter id="nsBlur" filterUnits="userSpaceOnUse" x="-200" y="-200" width="1000" height="800">
-          <feGaussianBlur stdDeviation="7" />
-        </filter>
-      </defs>
-      {paths.map((p, i) => (
-        <g key={i} fill="none" strokeLinecap="round">
-          {/* lớp phát sáng mờ phía dưới */}
-          <path d={p.d} stroke={p.c} strokeWidth={p.w * 3.2} opacity="0.55" filter="url(#nsBlur)" vectorEffect="non-scaling-stroke" />
-          {/* đường sáng chính, mảnh */}
-          <path d={p.d} stroke={p.c} strokeWidth={p.w * 0.6} opacity="0.9" vectorEffect="non-scaling-stroke" />
-          {/* hạt sáng chạy dọc */}
-          <path
-            d={p.d}
-            stroke="#fff"
-            strokeWidth={p.w * 0.9}
-            className="streak-run"
-            style={{ animationDuration: p.run, animationDelay: p.delay }}
-            vectorEffect="non-scaling-stroke"
-          />
-        </g>
-      ))}
+    <svg aria-hidden viewBox="0 0 1536 1024" className={`pointer-events-none ${className}`} style={style}>
+      <g fill="none" strokeLinecap="round">
+        {LINKS.map((l, i) => {
+          const from = l.a === "hub" ? HUB : NODES[l.a];
+          const d = curve(from, NODES[l.b], l.bend);
+          return (
+            <g key={i}>
+              <path
+                d={d}
+                stroke="var(--link)"
+                strokeWidth={l.hub ? 5.5 : 4.5}
+                strokeDasharray={l.hub ? "1 9" : "1 12"}
+                opacity={l.hub ? 0.9 : 0.95}
+              />
+              <path
+                d={d}
+                pathLength={100}
+                stroke="var(--primary)"
+                strokeWidth={l.hub ? 12 : 9}
+                className="link-pulse"
+                style={{ animationDuration: `${l.hub ? 4.2 + (i % 4) * 0.7 : 5.6 + (i % 3) * 0.8}s`, animationDelay: `${(i * 0.55) % 3.4}s` }}
+              />
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
+// Các nút nối nằm phía trước ảnh, nhấp nháy nhẹ.
+function NetworkNodes({ className, style }: { className: string; style?: CSSProperties }) {
+  const keys = Object.keys(NODES) as NodeKey[];
+  return (
+    <svg aria-hidden viewBox="0 0 1536 1024" className={`pointer-events-none ${className}`} style={style}>
+      <g transform={`translate(${HUB.x} ${HUB.y})`}>
+        <circle r={34} className="node-ping" style={{ fill: "var(--primary)" }} />
+        <circle r={15} style={{ fill: "#fff", stroke: "var(--primary)", strokeWidth: 6 }} />
+      </g>
+      {keys.map((k, i) => {
+        const n = NODES[k];
+        const big = ["mic", "heart", "cal", "pin", "chat", "pic", "cardA", "cardB"].includes(k);
+        return (
+          <g key={k} transform={`translate(${n.x} ${n.y})`}>
+            <circle r={big ? 20 : 13} className="node-ping" style={{ fill: "var(--primary)", animationDelay: `${i * 0.37}s` }} />
+            <circle r={big ? 12 : 8} style={{ fill: "var(--card)", stroke: "var(--primary)", strokeWidth: big ? 5 : 4 }} />
+            <circle r={big ? 4.5 : 3} style={{ fill: "var(--primary)" }} />
+          </g>
+        );
+      })}
     </svg>
   );
 }
@@ -205,8 +258,6 @@ export function HeroDiary() {
           <span className="animate-glow absolute left-[48%] top-[50%] h-[86%] w-[86%] rounded-full [background:radial-gradient(closest-side,oklch(0.97_0.1_88/0.95),oklch(0.9_0.13_40/0.5)_55%,transparent)]" style={{ animationDelay: "1.4s" }} />
         </div>
 
-        {/* dải sáng neon phía sau sách */}
-        <NeonStreaks className="absolute -inset-[12%] h-[124%] w-[124%]" style={{ transform: "translateZ(-30px)" }} />
 
         {/* tia sáng quay chậm */}
         <div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[120%] w-[120%]" style={{ transform: "translateZ(-50px) translate(-50%, -50%)" }}>
@@ -224,6 +275,10 @@ export function HeroDiary() {
             />
           </div>
         </div>
+
+        {/* mạng liên kết và các nút nối nằm trước ảnh */}
+        <NetworkLinks className="absolute inset-0 h-full w-full" style={{ transform: "translateZ(50px)" }} />
+        <NetworkNodes className="absolute inset-0 h-full w-full" style={{ transform: "translateZ(60px)" }} />
 
         {/* hạt bay lên từ giữa sách */}
         <div aria-hidden className="pointer-events-none absolute left-1/2 top-[50%]" style={{ transform: "translateZ(90px)", transformStyle: "preserve-3d" }}>
