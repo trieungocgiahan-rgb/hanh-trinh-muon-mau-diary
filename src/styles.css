@@ -271,6 +271,10 @@
   --cool: oklch(0.9 0.05 232);
   --cool-ink: oklch(0.46 0.12 245);
   --orb-cool: oklch(0.82 0.11 235 / 0.7);
+  --hero-wash: oklch(0.93 0.07 12 / 0.9);
+  --halo-core: oklch(0.98 0.07 80 / 0.95);
+  --halo-mid: oklch(0.9 0.12 20 / 0.5);
+  --halo-edge: oklch(0.88 0.12 350 / 0.18);
   /* vàng và cam: điểm nhấn ấm để hồng đỡ chói */
   --azure: oklch(0.67 0.15 238);
   --azure-tint: oklch(0.966 0.024 235);
@@ -367,6 +371,10 @@
   --cool: oklch(0.42 0.06 240);
   --cool-ink: oklch(0.86 0.07 232);
   --orb-cool: oklch(0.55 0.1 240 / 0.38);
+  --hero-wash: oklch(0.38 0.1 355 / 0.55);
+  --halo-core: oklch(0.8 0.15 60 / 0.55);
+  --halo-mid: oklch(0.6 0.22 355 / 0.4);
+  --halo-edge: oklch(0.5 0.2 355 / 0.16);
   --azure: oklch(0.72 0.13 238);
   --azure-tint: oklch(0.31 0.03 238);
   --amber: oklch(0.84 0.15 90);
@@ -684,3 +692,40 @@ html {
 .animate-glow { animation: glow-breathe 5s ease-in-out infinite; }
 @keyframes spin-slow { to { transform: rotate(360deg); } }
 .animate-spin-slow { animation: spin-slow 40s linear infinite; }
+
+/* hạt sáng chạy dọc dải neon */
+.streak-run {
+  stroke-dasharray: 26 900;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px var(--primary));
+  animation: streak-run 5s linear infinite;
+}
+@keyframes streak-run {
+  from { stroke-dashoffset: 40; }
+  to { stroke-dashoffset: -936; }
+}
+/* dải sáng quét ngang phần đầu trang */
+@keyframes light-sweep {
+  0% { transform: translateX(-60%) skewX(-18deg); opacity: 0; }
+  15% { opacity: 1; }
+  55% { opacity: 1; }
+  100% { transform: translateX(260%) skewX(-18deg); opacity: 0; }
+}
+.light-sweep {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: 0;
+  width: 22%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.55), transparent);
+  filter: blur(14px);
+  mix-blend-mode: soft-light;
+  animation: light-sweep 11s ease-in-out infinite;
+}
+.dark .light-sweep { background: linear-gradient(90deg, transparent, oklch(0.8 0.15 355 / 0.35), transparent); mix-blend-mode: screen; }
+@media (prefers-reduced-motion: reduce) {
+  .light-sweep, .streak-run { animation: none; }
+}

@@ -61,6 +61,58 @@ function OpenDiary({ className }: { className?: string }) {
   );
 }
 
+// Các dải sáng neon uốn quanh cuốn sách, có hạt sáng chạy dọc.
+function NeonStreaks({ className, style }: { className: string; style?: CSSProperties }) {
+  const paths = [
+    { d: "M16 330 C 140 250, 245 392, 400 250 S 600 112, 626 48", w: 5, c: "url(#ns1)", run: "5.2s", delay: "0s" },
+    { d: "M24 90 C 190 170, 300 20, 450 110 S 590 228, 622 300", w: 4, c: "url(#ns2)", run: "6.4s", delay: "1.1s" },
+    { d: "M60 380 C 200 330, 330 350, 470 300 S 580 268, 620 226", w: 3, c: "url(#ns3)", run: "7s", delay: "2.3s" },
+  ];
+  return (
+    <svg aria-hidden viewBox="0 0 600 400" preserveAspectRatio="none" overflow="visible" className={`pointer-events-none ${className}`} style={style}>
+      <defs>
+        <linearGradient id="ns1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ff2d95" stopOpacity="0" />
+          <stop offset="0.45" stopColor="#ff2d95" />
+          <stop offset="0.8" stopColor="#ffb13b" />
+          <stop offset="1" stopColor="#ffd75e" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="ns2" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ffd75e" stopOpacity="0" />
+          <stop offset="0.4" stopColor="#ff7ab8" />
+          <stop offset="0.75" stopColor="#ff2d95" />
+          <stop offset="1" stopColor="#ff2d95" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="ns3" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#2bb5ff" stopOpacity="0" />
+          <stop offset="0.5" stopColor="#6fd0ff" />
+          <stop offset="1" stopColor="#ff7ab8" stopOpacity="0" />
+        </linearGradient>
+        <filter id="nsBlur" filterUnits="userSpaceOnUse" x="-200" y="-200" width="1000" height="800">
+          <feGaussianBlur stdDeviation="7" />
+        </filter>
+      </defs>
+      {paths.map((p, i) => (
+        <g key={i} fill="none" strokeLinecap="round">
+          {/* lớp phát sáng mờ phía dưới */}
+          <path d={p.d} stroke={p.c} strokeWidth={p.w * 3.2} opacity="0.55" filter="url(#nsBlur)" vectorEffect="non-scaling-stroke" />
+          {/* đường sáng chính, mảnh */}
+          <path d={p.d} stroke={p.c} strokeWidth={p.w * 0.6} opacity="0.9" vectorEffect="non-scaling-stroke" />
+          {/* hạt sáng chạy dọc */}
+          <path
+            d={p.d}
+            stroke="#fff"
+            strokeWidth={p.w * 0.9}
+            className="streak-run"
+            style={{ animationDuration: p.run, animationDelay: p.delay }}
+            vectorEffect="non-scaling-stroke"
+          />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 // Hạt nhỏ bay lên từ giữa cuốn sách
 const PARTICLES: { x: number; y: number; rot: number; dur: number; d: number; kind: "heart" | "spark" | "dot"; c: string }[] = [
   { x: -90, y: -170, rot: -20, dur: 5.2, d: 0, kind: "heart", c: "text-primary" },
@@ -139,7 +191,7 @@ export function HeroDiary() {
   const tiltRef = useRef<HTMLDivElement>(null);
   useTilt(tiltRef);
   return (
-    <div ref={tiltRef} className="relative mx-auto aspect-[3/2] w-full max-w-[40rem] [perspective:1200px] lg:max-w-none">
+    <div ref={tiltRef} className="relative z-0 mx-auto aspect-[3/2] w-full max-w-[40rem] [perspective:1200px] lg:max-w-none">
       <div
         className="absolute inset-0 will-change-transform"
         style={{
@@ -147,15 +199,18 @@ export function HeroDiary() {
           transform: "rotateY(calc(var(--px, 0) * 8deg)) rotateX(calc(var(--py, 0) * -6deg))",
         }}
       >
-        {/* ánh sáng phát ra từ giữa cuốn sách, nhịp thở nhẹ */}
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ transform: "translateZ(-60px)" }}>
-          <span className="animate-glow absolute left-1/2 top-[46%] h-[78%] w-[78%] rounded-full bg-[radial-gradient(closest-side,oklch(0.93_0.12_85/0.9),oklch(0.85_0.14_20/0.45)_55%,transparent)]" />
-          <span className="animate-glow absolute left-[56%] top-[30%] h-[40%] w-[40%] rounded-full bg-[radial-gradient(closest-side,var(--orb),transparent)]" style={{ animationDelay: "1.2s" }} />
+        {/* quầng sáng lớn hòa vào nền: rộng, mờ dần ra ngoài, không có mép */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ transform: "translateZ(-80px)" }}>
+          <span className="animate-glow absolute left-1/2 top-[48%] h-[130%] w-[130%] rounded-full [background:radial-gradient(closest-side,var(--halo-core),var(--halo-mid)_38%,var(--halo-edge)_66%,transparent)]" />
+          <span className="animate-glow absolute left-[48%] top-[50%] h-[86%] w-[86%] rounded-full [background:radial-gradient(closest-side,oklch(0.97_0.1_88/0.95),oklch(0.9_0.13_40/0.5)_55%,transparent)]" style={{ animationDelay: "1.4s" }} />
         </div>
 
-        {/* tia sáng quay chậm phía sau */}
-        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[46%] h-[110%] w-[110%]" style={{ transform: "translateZ(-40px) translate(-50%, -50%)" }}>
-          <span className="animate-spin-slow absolute inset-0 rounded-full opacity-60 [background:conic-gradient(from_0deg,transparent_0deg,oklch(0.95_0.1_88/0.55)_14deg,transparent_34deg,transparent_120deg,oklch(0.9_0.1_10/0.45)_134deg,transparent_156deg,transparent_240deg,oklch(0.93_0.1_70/0.4)_254deg,transparent_276deg)] [mask-image:radial-gradient(closest-side,transparent_18%,#000_45%,transparent_92%)]" />
+        {/* dải sáng neon phía sau sách */}
+        <NeonStreaks className="absolute -inset-[12%] h-[124%] w-[124%]" style={{ transform: "translateZ(-30px)" }} />
+
+        {/* tia sáng quay chậm */}
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[120%] w-[120%]" style={{ transform: "translateZ(-50px) translate(-50%, -50%)" }}>
+          <span className="animate-spin-slow absolute inset-0 rounded-full opacity-70 [background:conic-gradient(from_0deg,transparent_0deg,oklch(0.96_0.1_88/0.55)_12deg,transparent_30deg,transparent_95deg,oklch(0.9_0.14_10/0.5)_108deg,transparent_128deg,transparent_200deg,oklch(0.95_0.1_70/0.45)_214deg,transparent_236deg,transparent_290deg,oklch(0.9_0.12_350/0.4)_300deg,transparent_320deg)] [mask-image:radial-gradient(closest-side,transparent_14%,#000_40%,transparent_90%)]" />
         </div>
 
         {/* ảnh chính: cuốn nhật ký bay, các trang tung ra, đồ vật tỏa quanh */}
