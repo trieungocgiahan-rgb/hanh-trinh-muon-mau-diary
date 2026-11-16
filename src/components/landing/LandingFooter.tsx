@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BrandMark } from "@/components/BrandMark";
+import { Wordmark } from "@/components/BrandMark";
 import { BRAND } from "@/lib/brand";
 import { useI18n } from "@/lib/i18n";
 
@@ -9,9 +9,8 @@ export function LandingFooter() {
     <footer className="border-t border-border bg-background py-12">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-xs">
-          <Link to="/" className="flex items-center gap-2.5">
-            <BrandMark className="h-8 w-8" />
-            <span className="font-display text-base font-bold">{BRAND}</span>
+          <Link to="/" className="inline-flex">
+            <Wordmark className="text-3xl" />
           </Link>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("footer.line")}</p>
         </div>
